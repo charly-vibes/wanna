@@ -40,6 +40,7 @@ Persistence is not sufficient for continuity. After interruption, the human must
 | resume_unchanged_context | reorienting | resumed | [[continuity.contract.resume_reorients_user]] |
 | resume_reconciled_context | reconciling | resumed | [[continuity.contract.stale_context_reconciled]] |
 | handoff_task | active | handed_off | [[continuity.contract.handoff_preserves_ownership]] |
+| abandon_task | active | abandoned | [[continuity.contract.handoff_preserves_ownership]] |
 
 ## Properties
 | id | kind | derives_from | generator | predicate |
@@ -47,3 +48,7 @@ Persistence is not sufficient for continuity. After interruption, the human must
 | resume_explains_delta | unit | [[continuity.contract.resume_reorients_user]] | `any::<String>()` | `UX contract test: resumed task exposes completed/pending/changed/unresolved/next-action fields` |
 | stale_pending_action_not_silently_committed | unit | [[continuity.contract.stale_context_reconciled]] | `any::<String>()` | `Concurrency test: changed authoritative revision forces reconciliation before pending action can commit` |
 | reauth_does_not_authorize | unit | [[continuity.contract.reauthentication_preserves_task]] | `any::<String>()` | `Security test: successful reauthentication cannot satisfy a separate action authorization guard` |
+| p_checkpoint_scope_explicit | unit | [[continuity.contract.checkpoint_scope_explicit]] | `arbitrary_state()` | `a continuity checkpoint identifies persisted domain/workflow data, uncommitted drafts, active interactions, pending effects, evidence, and deliberately excluded ephemeral presentation state` |
+| p_interrupted_input_preserved | unit | [[continuity.contract.interrupted_input_preserved]] | `arbitrary_state()` | `validated but uncommitted user input is preserved across recoverable interruption unless security/privacy policy requires disposal, in which case the loss is explicit` |
+| p_handoff_preserves_ownership | unit | [[continuity.contract.handoff_preserves_ownership]] | `arbitrary_state()` | `human-to-human or human-to-agent handoff records current owner, transferred authority scope, pending decisions, unresolved risks, and evidence references` |
+| p_presentation_ephemera_not_authoritative | unit | [[continuity.contract.presentation_ephemera_not_authoritative]] | `arbitrary_state()` | `scroll position, cursor location, open panel, and host focus may aid restoration but cannot determine authoritative task progress` |

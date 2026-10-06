@@ -56,3 +56,4 @@ An interaction contract is a serializable, non-executable description of a reque
 | retirement_requires_command | unit | [[interaction.contract.retirement_requested]] | `any::<String>()` | `TypeScript test: validated contract remains active until explicit retirement, supersession, or expiry` |
 | contract_has_semantic_contribution | unit | [[interaction.contract.contract_declares_contribution]] | `any::<String>()` | `Cross-host test: same contract preserves contribution primitive/pattern identity` |
 | contract_has_accessibility_obligations | unit | [[interaction.contract.accessibility_obligations_carried]] | `any::<String>()` | `Schema test: renderable contracts expose required accessibility obligations` |
+| p_escape_paths_declared | unit | [[interaction.contract.escape_paths_declared]] | `arbitrary_state()` | `every contract declares supported reject, defer, cancel, dismiss, and timeout semantics instead of treating absence as an answer` |

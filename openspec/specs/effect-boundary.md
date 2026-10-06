@@ -22,6 +22,7 @@ Pure decision logic and reducers return effect intents as data. A trusted execut
 
 | effect_outcome_can_be_unknown | invariant | Effect execution supports an explicit unknown outcome when acknowledgement is lost or evidence is insufficient; unknown is not coerced to success or failure. | [[effect.boundary]] |
 | retry_requires_idempotency_or_reconciliation | invariant | A mutating effect is retryable after uncertain outcome only with a stable idempotency key/guarantee or successful reconciliation. | [[effect.boundary]] |
+| effect_outcome_failure | effect | `effect.boundary.effect_execution_failure(detail) — a protected effect terminates without a verifiable outcome because detail; the failure is typed and evidenced, and the effect is not retried without satisfying retry_requires_idempotency_or_reconciliation` | [[effect.boundary]] |
 | compensation_separate_effect | invariant | Compensation is modeled as a new effect with its own authority, failure, evidence, and verification rather than as rollback. | [[effect.boundary]] |
 
 ## Model
@@ -30,7 +31,7 @@ Pure decision logic and reducers return effect intents as data. A trusted execut
 - `authorized`
 - `running`
 - `succeeded`
-- `failed`
+- `failed` (emits: `[[effect.boundary.effect_outcome_failure]]`)
 - `partial`
 - `cancelled`
 
@@ -40,7 +41,7 @@ Pure decision logic and reducers return effect intents as data. A trusted execut
 | authorize_effect | proposed | authorized | [[effect.boundary.effect_authorization_checked]] |
 | start_effect | authorized | running | [[effect.boundary.effects_allowlisted]] |
 | complete_effect | running | succeeded | [[effect.boundary.idempotency_or_compensation_declared]] |
-| fail_effect | running | failed | ¬([[effect.boundary.timeouts_and_budgets_enforced]]) |
+| fail_effect | running | failed | ¬([[effect.boundary.idempotency_or_compensation_declared]] ∨ [[effect.boundary.partial_failure_reported]]) |
 | report_partial_effect | running | partial | [[effect.boundary.partial_failure_reported]] |
 | cancel_effect | authorized | cancelled | [[effect.boundary.preview_effects_isolated]] |
 
@@ -57,3 +58,5 @@ Pure decision logic and reducers return effect intents as data. A trusted execut
 | partial_failure_reported_holds | unit | [[effect.boundary.partial_failure_reported]] | `any::<String>()` | `TypeScript conformance test: assert invariant partial_failure_reported at its trust boundary and under its stated edge cases.` |
 | unknown_effect_is_representable | unit | [[effect.boundary.effect_outcome_can_be_unknown]] | `any::<String>()` | `Fault-injection test: transport failure after send can produce unknown outcome` |
 | compensation_can_fail_independently | unit | [[effect.boundary.compensation_separate_effect]] | `any::<String>()` | `Fault-injection test: failed compensation remains visible` |
+| p_retry_requires_idempotency_or_reconciliation | unit | [[effect.boundary.retry_requires_idempotency_or_reconciliation]] | `arbitrary_state()` | `a mutating effect is retryable after uncertain outcome only with a stable idempotency key/guarantee or successful reconciliation` |
+| p_effect_outcome_failure | unit | [[effect.boundary.effect_outcome_failure]] | `arbitrary_failed_effect()` | `failure is typed ∧ evidence retained ∧ no retry without idempotency or reconciliation` |

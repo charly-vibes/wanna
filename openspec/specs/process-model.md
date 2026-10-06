@@ -20,6 +20,7 @@ Process models represent lifecycle and control flow, not screen layout. The init
 | process_state_not_ui_state | invariant | Changing presentation state alone cannot advance or complete the underlying process. | [[process.model]] |
 
 | failure_recovery_edges_explicit | invariant | Processes that can perform effects declare failure containment and applicable recovery/reconciliation edges; a generic failed terminal state is insufficient for unknown or partial effects. | [[process.model]] |
+| process_failure_recorded | effect | `process.model.process_failure(detail) — a process terminates in failure because detail; failure provenance is retained and applicable recovery/reconciliation edges are surfaced per failure_recovery_edges_explicit` | [[process.model]] |
 | compound_human_activity_uses_patterns | invariant | Planning, diagnosis, review, coordination, monitoring, and clarification may be represented as interaction patterns composed of contribution primitives rather than assumed atomic states. | [[process.model]] |
 
 ## Model
@@ -29,7 +30,7 @@ Process models represent lifecycle and control flow, not screen layout. The init
 - `running`
 - `waiting`
 - `completed`
-- `failed`
+- `failed` (emits: `[[process.model.process_failure_recorded]]`)
 - `cancelled`
 
 ### Transitions
@@ -40,7 +41,7 @@ Process models represent lifecycle and control flow, not screen layout. The init
 | suspend_process | running | waiting | [[process.model.waits_correlated]] |
 | resume_correlated_wait | waiting | running | [[process.model.waits_correlated]] |
 | complete_process | running | completed | [[process.model.completion_criteria_explicit]] |
-| fail_process | running | failed | ¬([[process.model.completion_criteria_explicit]]) |
+| fail_process | running | failed | ¬([[process.model.completion_criteria_explicit]] ∨ [[process.model.waits_correlated]] ∨ [[process.model.cancellation_semantics_defined]]) |
 | cancel_process | running | cancelled | [[process.model.cancellation_semantics_defined]] |
 
 ## Properties
@@ -54,3 +55,5 @@ Process models represent lifecycle and control flow, not screen layout. The init
 | cancellation_semantics_defined_holds | unit | [[process.model.cancellation_semantics_defined]] | `any::<String>()` | `TypeScript conformance test: assert invariant cancellation_semantics_defined at its trust boundary and under its stated edge cases.` |
 | process_state_not_ui_state_holds | unit | [[process.model.process_state_not_ui_state]] | `any::<String>()` | `TypeScript conformance test: assert invariant process_state_not_ui_state at its trust boundary and under its stated edge cases.` |
 | effectful_process_has_recovery_path | unit | [[process.model.failure_recovery_edges_explicit]] | `any::<String>()` | `Graph test: effectful nodes expose typed failure/recovery edges` |
+| p_compound_human_activity_uses_patterns | unit | [[process.model.compound_human_activity_uses_patterns]] | `arbitrary_state()` | `planning, diagnosis, review, coordination, monitoring, and clarification may be represented as interaction patterns composed of contribution primitives rather than assumed atomic states` |
+| p_process_failure_recorded | unit | [[process.model.process_failure_recorded]] | `arbitrary_failed_process()` | `failure provenance retained ∧ recovery/reconciliation edges surfaced` |

@@ -18,6 +18,7 @@ Interaction patterns represent recurring compound human activities. Examples inc
 | review_separates_judgments | invariant | Review patterns distinguish inspection, evaluation, verification, annotation, rejection, and authorization rather than collapsing them into a generic approval event. | [[interaction.patterns]] |
 | diagnosis_is_iterative_bounded | invariant | Diagnosis patterns explicitly model inspect, hypothesis/evaluation, evidence acquisition, correction proposal, and exit conditions; loops have bounded or externally interruptible termination. | [[interaction.patterns]] |
 | clarification_reduces_unresolved_state | invariant | A clarification step is requested only when its expected response can reduce a represented ambiguity, missing fact, conflict, or decision uncertainty. | [[interaction.patterns]] |
+| pattern_failure_recorded | effect | `interaction.patterns.pattern_failure(detail) — a pattern terminates in failure because detail; the failure is one of the pattern's declared completion conditions per pattern_completion_explicit and is recorded with the pattern instance for replay and audit` | [[interaction.patterns]] |
 | pattern_versioned | invariant | Pattern definitions and their primitive mappings carry explicit versions used in replay and audit. | [[interaction.patterns]] |
 
 ## Model
@@ -29,7 +30,7 @@ Interaction patterns represent recurring compound human activities. Examples inc
 - `completed`
 - `unresolved`
 - `cancelled`
-- `failed`
+- `failed` (emits: `[[interaction.patterns.pattern_failure_recorded]]`)
 
 ### Transitions
 | id | from | to | guard |
@@ -41,6 +42,7 @@ Interaction patterns represent recurring compound human activities. Examples inc
 | complete_pattern | running | completed | [[interaction.patterns.pattern_completion_explicit]] |
 | preserve_unresolved_pattern | running | unresolved | ¬([[interaction.patterns.pattern_completion_explicit]]) |
 | cancel_pattern | running | cancelled | [[interaction.patterns.pattern_completion_explicit]] |
+| fail_pattern | running | failed | ¬([[interaction.patterns.pattern_completion_explicit]] ∨ [[interaction.patterns.patterns_compose_primitives]]) |
 
 ## Properties
 | id | kind | derives_from | generator | predicate |
@@ -49,3 +51,8 @@ Interaction patterns represent recurring compound human activities. Examples inc
 | review_does_not_conflate_authority | unit | [[interaction.patterns.review_separates_judgments]] | `any::<String>()` | `TypeScript test: review can verify without authorizing and authorize only through a distinct event` |
 | clarification_has_information_gain_target | unit | [[interaction.patterns.clarification_reduces_unresolved_state]] | `any::<String>()` | `Policy test: clarification without a named unresolved target is ineligible` |
 | pattern_replay_is_versioned | unit | [[interaction.patterns.pattern_versioned]] | `any::<String>()` | `Replay test: historical pattern events resolve against the recorded pattern version` |
+| p_pattern_completion_explicit | unit | [[interaction.patterns.pattern_completion_explicit]] | `arbitrary_state()` | `a pattern declares success, rejection, cancellation, deferral, failure, and unresolved completion conditions where applicable` |
+| p_pattern_does_not_override_primitive | unit | [[interaction.patterns.pattern_does_not_override_primitive]] | `arbitrary_state()` | `a pattern cannot change the response semantics, validation, authority meaning, or escape semantics of a referenced primitive` |
+| p_pattern_state_host_neutral | unit | [[interaction.patterns.pattern_state_host_neutral]] | `arbitrary_state()` | `pattern progression is independent of DOM, Pi, TUI, component-library, and layout state` |
+| p_diagnosis_is_iterative_bounded | unit | [[interaction.patterns.diagnosis_is_iterative_bounded]] | `arbitrary_state()` | `diagnosis patterns explicitly model inspect, hypothesis/evaluation, evidence acquisition, correction proposal, and exit conditions; loops have bounded or externally interruptible termination` |
+| p_pattern_failure_recorded | unit | [[interaction.patterns.pattern_failure_recorded]] | `arbitrary_failed_pattern()` | `failure is a declared completion condition ∧ instance recorded for replay and audit` |

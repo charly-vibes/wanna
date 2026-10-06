@@ -64,3 +64,4 @@ The runtime reduces validated input events against committed state. Host adapter
 | retirement_requires_lifecycle_event | unit | [[interaction.runtime.retirement_requested]] | `any::<String>()` | `TypeScript test: active interaction retires only on a permitted explicit lifecycle event` |
 | runtime_timeout_does_not_assume_failure | unit | [[interaction.runtime.failure_outcome_typed]] | `any::<String>()` | `Fault-injection test: lost acknowledgement can yield unknown effect` |
 | unsafe_runtime_retry_is_blocked | unit | [[interaction.runtime.unknown_effect_blocks_unsafe_retry]] | `any::<String>()` | `Property test: no unsafe retry path exists from unknown effect` |
+| p_continuity_checkpoint_on_suspend | unit | [[interaction.runtime.continuity_checkpoint_on_suspend]] | `arbitrary_state()` | `suspension or recoverable interruption records the continuity checkpoint required to reorient and reconcile on resume` |

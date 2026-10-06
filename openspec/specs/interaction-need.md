@@ -47,3 +47,8 @@ Several of these names describe compound activities. They remain need labels for
 | uncertainty_not_guessed | unit | [[interaction.need.ambiguity_preserved]] | `any::<String>()` | `TypeScript test: insufficient evidence yields unresolved` |
 | confidence_never_bypasses_policy | unit | [[interaction.need.confidence_advisory_only]] | `any::<String>()` | `Security test: changing model confidence alone cannot change a hard gate` |
 | unchanged_unresolved_need_does_not_loop | unit | [[interaction.need.unresolved_requires_change]] | `any::<String>()` | `Runtime test: unchanged unresolved need cannot self-trigger reclassification indefinitely` |
+| p_need_schema_valid | unit | [[interaction.need.need_schema_valid]] | `arbitrary_state()` | `a need validates against the versioned canonical schema before policy evaluation` |
+| p_need_taxonomy_versioned | unit | [[interaction.need.need_taxonomy_versioned]] | `arbitrary_state()` | `every normalized need records one supported need kind and taxonomy version` |
+| p_need_target_immediate | unit | [[interaction.need.need_target_immediate]] | `arbitrary_state()` | `a normalized need identifies one immediate participation bottleneck; independent gaps are represented separately` |
+| p_need_not_presentation | unit | [[interaction.need.need_not_presentation]] | `arbitrary_state()` | `need records contain no host components, layout instructions, executable renderer code, or UI-specific authorization instructions` |
+| p_need_provenance_retained | unit | [[interaction.need.need_provenance_retained]] | `arbitrary_state()` | `need records retain task revision, proposal identity, evidence references, taxonomy version, and model/normalizer provenance where applicable` |
