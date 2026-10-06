@@ -1,0 +1,20 @@
+# Hard commit and push gates — pretender / espectacular (ah) / testaruda
+# All commands are blocking: non-zero exit aborts the commit/push.
+# testaruda exit code 20 = "no tests selected" — treated as pass.
+# Managed blocks (specodelic) are appended below; do not remove the markers.
+
+pre-commit:
+  commands:
+    pretender-gate:
+      run: pretender check --staged --mode gate
+    ah-check-gate:
+      run: ah check
+
+pre-push:
+  commands:
+    pretender-gate:
+      run: pretender check --mode gate
+    ah-check-gate:
+      run: ah check --run-tests
+    testaruda-gate:
+      run: testaruda select; code=$?; test "$code" -eq 0 -o "$code" -eq 20
