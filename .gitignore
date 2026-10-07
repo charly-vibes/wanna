@@ -9,3 +9,5 @@
 .testaruda/
 .wai/pipeline-runs/
 .wai/resources/pipelines/.last-run
+# pretender runtime state — never tracked
+.pretender/last-check.json
