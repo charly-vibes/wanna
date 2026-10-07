@@ -1,0 +1,104 @@
+# wave-1 — orchestrates the four wave-1 implementation tickets (beads) via pi subagents.
+# Lead orchestrates only: claim → brief → spawn (named session) → verify → push → close.
+# Spawn contract: `pi -p -n "subagent:<ticket>:impl" "$(cat <brief>)"` — NEVER --no-session.
+[pipeline]
+name = "wave-1"
+description = "Wave-1 implementation queue: contribution-primitives, event-envelope, session-state, interaction-catalog — one pi subagent per ticket"
+
+[pipeline.metadata]
+when = "Working beads wanna-jmu/4mf/dhj/15r on the specodelic corpus"
+skills = ["beads", "commit"]
+
+[[steps]]
+id = "jmu-contribution-primitives"
+prompt = """
+{topic}: Implement contribution-primitives for bead `wanna-jmu` (P1) via pi subagent.
+1. `bd update wanna-jmu --claim` (atomically, before any code).
+2. Fill `.wai/resources/templates/subagent-brief.md` for this ticket →
+   `.wai/projects/wanna/briefs/wanna-jmu.md` (scope: contribution-primitives spec/contracts/src+tests).
+3. Commit any pending orchestrator files so the subagent starts from a clean tree.
+4. Spawn (ONLY execution path — the lead never edits code):
+   `pi -p -n "subagent:wanna-jmu:impl" "$(cat .wai/projects/wanna/briefs/wanna-jmu.md)"`
+   - NEVER `--no-session` (usage/cost records would be lost)
+   - ALWAYS `-n "subagent:wanna-jmu:<steps>"` so sessions are discoverable
+5. Verify: `git log --oneline <pre-spawn-head>..HEAD` matches the report;
+   `ah check --run-tests` (0 findings), `spk lint openspec`, pretender + eslint on new dirs.
+6. Push; `bd close wanna-jmu`; `bd export`.
+Record evidence: `wai add research "JMU-IMPL: session=subagent:wanna-jmu <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "mf-event-envelope"
+prompt = """
+{topic}: Implement event-envelope for bead `wanna-4mf` (P1) via pi subagent.
+Same flow as jmu-contribution-primitives: claim `bd update wanna-4mf --claim`;
+fill brief → `.wai/projects/wanna/briefs/wanna-4mf.md` (scope: event-envelope spec/contracts/src+tests);
+spawn `pi -p -n "subagent:wanna-4mf:impl" "$(cat .wai/projects/wanna/briefs/wanna-4mf.md)"`
+(never --no-session, always named); verify git log + `ah check --run-tests` +
+`spk lint openspec` + pretender + eslint; push; `bd close wanna-4mf`; `bd export`.
+Record evidence: `wai add research "MF-IMPL: session=subagent:wanna-4mf <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "dhj-session-state"
+prompt = """
+{topic}: Implement session-state for bead `wanna-dhj` (P1) via pi subagent.
+Same flow as jmu-contribution-primitives: claim `bd update wanna-dhj --claim`;
+fill brief → `.wai/projects/wanna/briefs/wanna-dhj.md` (scope: session-state spec/contracts/src+tests);
+spawn `pi -p -n "subagent:wanna-dhj:impl" "$(cat .wai/projects/wanna/briefs/wanna-dhj.md)"`
+(never --no-session, always named); verify git log + `ah check --run-tests` +
+`spk lint openspec` + pretender + eslint; push; `bd close wanna-dhj`; `bd export`.
+Record evidence: `wai add research "DHJ-IMPL: session=subagent:wanna-dhj <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "r-interaction-catalog"
+prompt = """
+{topic}: Implement interaction-catalog for bead `wanna-15r` (P1) via pi subagent.
+Same flow as jmu-contribution-primitives: claim `bd update wanna-15r --claim`;
+fill brief → `.wai/projects/wanna/briefs/wanna-15r.md` (scope: interaction-catalog spec/contracts/src+tests);
+spawn `pi -p -n "subagent:wanna-15r:impl" "$(cat .wai/projects/wanna/briefs/wanna-15r.md)"`
+(never --no-session, always named); verify git log + `ah check --run-tests` +
+`spk lint openspec` + pretender + eslint; push; `bd close wanna-15r`; `bd export`.
+Record evidence: `wai add research "R-IMPL: session=subagent:wanna-15r <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
