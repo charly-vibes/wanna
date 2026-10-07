@@ -1,0 +1,154 @@
+# corpus-gates — orchestrates the wanna spec-corpus ticket queue (beads).
+# Steps map 1:1 to beads; each step's gates enforce verification before advancement.
+[pipeline]
+name = "corpus-gates"
+description = "Ticket-queue pipeline: housekeeping, upstream filing, heading fix, scenario authoring, property-specific contract tests, README"
+
+[pipeline.metadata]
+when = "Working beads wanna-agl/fhl/bvp/u08/9nc on the specodelic corpus"
+skills = ["beads", "commit"]
+
+[[steps]]
+id = "housekeeping"
+prompt = """
+{topic}: Stop untracked artifacts from polluting the tree (no bead; housekeeping).
+1. Track `.whisper/` with `.whisper/private/` excluded; ignore `.pretender/history/` via .gitignore.
+2. Verify `git status` shows no untracked noise.
+3. Commit the housekeeping change.
+Record evidence: `wai add research "HOUSEKEEPING: gitignore updated, tree clean"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "tree-clean"
+description = "No untracked .whisper/.pretender-history noise in git status"
+scope = "all"
+
+[[steps]]
+id = "file-upstream-bug"
+prompt = """
+{topic}: File upstream espectacular bug for bead `wanna-agl` (P1, CORR-001).
+1. `bd update wanna-agl --claim`.
+2. `ah feedback bug --dry-run` — review, then file for real (report.rs maps scenarios
+   to contracts by (spec, scenario-slug) without resolve_verifies_coverage; VERIFIES-linked
+   scenarios count as missing while `ah check` reports 0 findings).
+3. Paste the upstream issue URL into the bead description.
+Do NOT close the bead — it stays open as tracking until upstream lands.
+Record evidence: `wai add research "AGL-UPSTREAM: filed <url>"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps]]
+id = "fix-article-defect"
+prompt = """
+{topic}: Fix the 'a <Vowel>' article defect for bead `wanna-fhl` (P2, CLAR-001).
+1. `bd update wanna-fhl --claim`.
+2. Fix the generated headings like `violating-a-accessibility-...` — rephrase per CLAR-001
+   (drop/repair the article). EDGE-003: rename the heading AND the contract slug/filename
+   in the SAME commit so slugs stay bound.
+3. Verify: `ah check --run-tests` (63 pass, 0 findings).
+4. Commit; `bd close wanna-fhl`.
+Record evidence: `wai add research "FHL-FIX: <n> headings renamed, slug+heading in one commit"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "no-article-defect"
+description = "No 'violating-a-' article defect remains in .espectacular"
+scope = "all"
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check clean AND contract tests pass"
+scope = "all"
+
+[[steps]]
+id = "author-scenarios"
+prompt = """
+{topic}: Author domain-behavior scenarios for bead `wanna-bvp` (P1, the main push).
+1. `bd update wanna-bvp --claim`.
+2. Per spec file under openspec/specs/<x>/spec.md: derive scenarios from its `## Model`
+   transitions (e.g. interaction-engine has accept_context, reject_invalid_context,
+   correct_invalid_context, evaluate_pinned_context, commit_current_decision,
+   reject_stale_decision, refresh_stale_context, retire_committed_decision) —
+   replacing the two boilerplate template scenarios (DRAFT-001).
+3. Contracts/tests stay structural (spk lint shell commands) until an implementation exists.
+4. Work file-by-file; verify each file: `ah check --run-tests`.
+5. Commit; `bd close wanna-bvp`.
+Record evidence: `wai add research "BVP-SCENARIOS: <n> files re-scenarioed, transitions mapped"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "no-template-scenarios"
+description = "Boilerplate template scenarios are replaced by domain-behavior scenarios"
+scope = "all"
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check clean AND contract tests pass"
+scope = "all"
+
+[[steps]]
+id = "property-specific-tests"
+prompt = """
+{topic}: Property-specific contract tests for bead `wanna-u08` (P2, DRAFT-002/CORR-002).
+1. `bd update wanna-u08 --claim`.
+2. Replace the shared per-file `spk lint` test command: use `spk parse` row assertions
+   so per-property attribution is real; switch to `spk verify` once proptest blocks exist.
+3. Verify: `ah check --run-tests` — every p-* contract now runs its own assertion.
+4. Commit; `bd close wanna-u08`.
+Record evidence: `wai add research "U08-TESTS: per-property assertions, no shared lint command"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check clean AND contract tests pass"
+scope = "all"
+
+[[steps]]
+id = "write-readme"
+prompt = """
+{topic}: Write repo README for bead `wanna-9nc` (P2, EXCL-001/CLAR-002).
+1. `bd update wanna-9nc --claim`.
+2. Document: pipeline (specodelic corpus -> ah contracts -> lefthook gates), a gate table,
+   and that the root zip is provenance for the deployed corpus.
+3. Commit; `bd close wanna-9nc`.
+Record evidence: `wai add research "README: pipeline + gate table + provenance documented"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "readme-documents-pipeline"
+description = "README documents specodelic corpus, ah contracts, lefthook gates"
+scope = "all"
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check clean AND contract tests pass"
+scope = "all"

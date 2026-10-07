@@ -1,0 +1,6 @@
+- 2026-10-07T00:09:23Z [id:799384f3b765dc7e89c0ec4f37d6ffc545504e4f4cee6ceda42baee20ad67ef6] (#snap) ### 2026-10-06 21:09 — snap
+  - Full toolchain built and verified: ddl init (wai/toolset), specodelic corpus deployed to openspec/specs/<name>/spec.md (id: spec, 30 files, dual-format), lint-clean (0 issues, 81 findings fixed).
+  - Hard gates wired in lefthook.yml via .beads/hooks shims: pre-commit = pretender gate + ah check + spk lint openspec; pre-push = + ah check --run-tests + testaruda select (exit 20 = pass). All green; pushed through d012f31.
+  - Scenario/contract/test layer: all 288 properties VERIFIES-traced, 288 derived + 29 hand-authored contracts, 63 tests passing (negative-scenario tests falsifiable: fixture must be lint-rejected).
+  - Rule-of-5 review done (TypeSafe-verified HIGH findings, FP 0%): report/check divergence is an upstream espectacular bug; scenario layer boilerplate; testaruda gate is a placeholder. Filed wanna-bvp, wanna-fhl, wanna-9nc, wanna-u08, wanna-agl.
+  - **Next:** /renew then bd ready — start with wanna-agl (upstream ah feedback bug) and wanna-bvp (domain scenarios from ## Model transitions); README (wanna-9nc) is quick filler.
