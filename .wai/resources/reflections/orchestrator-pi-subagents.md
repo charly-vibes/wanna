@@ -1,5 +1,8 @@
 # Orchestrator pattern: pi subagents + wai pipeline (wave-1)
 
+Canon: `~/.wai/resources/patterns/orchestrator-subagents.md` — invariants live
+there; on conflict, canon wins. This file is the wanna projection.
+
 Established 2026-10-07 for the wanna wave-1 tickets (jmu/4mf/dhj/15r), copied
 from specodelic's epic-orchestrator pattern (see
 `../specodelic/.wai/resources/reflections/orchestrator-pi-subagents.md`).
