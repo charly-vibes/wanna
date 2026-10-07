@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-engine/spec.md"
+command = "npx vitest run tests/engine/transitions.test.ts -t 'returns to draft only with a new explicit snapshot'"
 timeout_seconds = 120

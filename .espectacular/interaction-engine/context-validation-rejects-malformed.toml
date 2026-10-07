@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-engine/spec.md"
+command = "npx vitest run tests/engine/properties-core.test.ts -t 'rejects a context missing a required field'"
 timeout_seconds = 120
