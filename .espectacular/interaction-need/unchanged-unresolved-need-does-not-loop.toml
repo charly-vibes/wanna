@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-need/spec.md"
+command = "npx vitest run tests/interaction-need/properties.test.ts -t 'Runtime test: unchanged unresolved need cannot self-trigger reclassification indefinitely'"
 timeout_seconds = 120

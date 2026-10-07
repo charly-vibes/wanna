@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-need/spec.md"
+command = "npx vitest run tests/interaction-need/properties.test.ts -t 'Policy test: a review need may map to an inspect/evaluate/verify pattern rather than a primitive named review'"
 timeout_seconds = 120
