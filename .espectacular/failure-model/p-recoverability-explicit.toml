@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "p_recoverability_explicit@358d9beec00d"
+description = "`failure records classify recovery as automatic, user-assisted, operator-assisted, compensatable, restart-only, or unrecoverable/unknown`"
+falsifiability_class = "safety"
+id = "p-recoverability-explicit"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/failure-model/spec.md"
+timeout_seconds = 120

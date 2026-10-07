@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "unsupported_quality_claim_is_blocked@2aa8304a351b"
+description = "`Release gate test: absent lint/model-check/test evidence prevents the corresponding quality claim`"
+falsifiability_class = "safety"
+id = "unsupported-quality-claim-is-blocked"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/conformance-tests/spec.md"
+timeout_seconds = 120

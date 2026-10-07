@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "invalid_catalog_requires_correction@26120280103e"
+description = "`TypeScript test: invalid catalog returns to draft only after a corrected definition arrives`"
+falsifiability_class = "safety"
+id = "invalid-catalog-requires-correction"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-catalog/spec.md"
+timeout_seconds = 120

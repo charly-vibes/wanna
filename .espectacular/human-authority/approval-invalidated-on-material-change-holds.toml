@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "approval_invalidated_on_material_change_holds@bd132b56f952"
+description = "`TypeScript conformance test: assert invariant approval_invalidated_on_material_change at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "approval-invalidated-on-material-change-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/human-authority/spec.md"
+timeout_seconds = 120

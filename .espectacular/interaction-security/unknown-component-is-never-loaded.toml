@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "unknown_component_is_never_loaded@ceac078ebd62"
+description = "`Security test: unknown component names cause rejection and no dynamic import or component resolution`"
+falsifiability_class = "safety"
+id = "unknown-component-is-never-loaded"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-security/spec.md"
+timeout_seconds = 120

@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "p_checkpoint_scope_explicit@ebbfbaba7c54"
+description = "`a continuity checkpoint identifies persisted domain/workflow data, uncommitted drafts, active interactions, pending effects, evidence, and deliberately excluded ephemeral presentation state`"
+falsifiability_class = "safety"
+id = "p-checkpoint-scope-explicit"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/continuity-contract/spec.md"
+timeout_seconds = 120

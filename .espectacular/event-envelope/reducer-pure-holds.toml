@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "reducer_pure_holds@844ed600cbff"
+description = "`TypeScript conformance test: assert invariant reducer_pure at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "reducer-pure-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/event-envelope/spec.md"
+timeout_seconds = 120

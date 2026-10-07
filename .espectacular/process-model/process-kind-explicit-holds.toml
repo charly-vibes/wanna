@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "process_kind_explicit_holds@24561ea23071"
+description = "`TypeScript conformance test: assert invariant process_kind_explicit at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "process-kind-explicit-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/process-model/spec.md"
+timeout_seconds = 120

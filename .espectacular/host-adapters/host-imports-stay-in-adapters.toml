@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "host_imports_stay_in_adapters@64140157da58"
+description = "`Static dependency test: core package has no forbidden imports or leaked host types`"
+falsifiability_class = "safety"
+id = "host-imports-stay-in-adapters"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/host-adapters/spec.md"
+timeout_seconds = 120

@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_choice_complexity_bounded@42cb357a4cbc"
+description = "`large or heterogeneous option sets use search, filtering, grouping, staged comparison, or another documented strategy rather than an unstructured exhaustive choice surface`"
+falsifiability_class = "safety"
+id = "p-choice-complexity-bounded"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/cognitive-ergonomics/spec.md"
+timeout_seconds = 120

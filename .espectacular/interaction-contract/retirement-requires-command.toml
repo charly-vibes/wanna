@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "retirement_requires_command@8b243857c125"
+description = "`TypeScript test: validated contract remains active until explicit retirement, supersession, or expiry`"
+falsifiability_class = "safety"
+id = "retirement-requires-command"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-contract/spec.md"
+timeout_seconds = 120

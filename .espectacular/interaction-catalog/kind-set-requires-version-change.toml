@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "kind_set_requires_version_change@c81dd0e354f5"
+description = "`TypeScript test: adding/removing/renaming a kind without a catalog version change is rejected`"
+falsifiability_class = "safety"
+id = "kind-set-requires-version-change"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-catalog/spec.md"
+timeout_seconds = 120

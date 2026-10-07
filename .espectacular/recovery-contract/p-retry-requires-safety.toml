@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "p_retry_requires_safety@835f68394251"
+description = "`retry of a mutating operation is permitted only when idempotency is proven for the same operation key or reconciliation proves the prior effect did not occur`"
+falsifiability_class = "safety"
+id = "p-retry-requires-safety"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/recovery-contract/spec.md"
+timeout_seconds = 120

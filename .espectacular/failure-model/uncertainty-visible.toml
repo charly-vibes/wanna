@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "uncertainty_visible@c33e5b4bc71b"
+description = "`UX contract test: unknown effect state cannot render as definitely failed or definitely succeeded`"
+falsifiability_class = "safety"
+id = "uncertainty-visible"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/failure-model/spec.md"
+timeout_seconds = 120

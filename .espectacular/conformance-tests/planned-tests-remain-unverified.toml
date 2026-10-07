@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "planned_tests_remain_unverified@fab11cb3603d"
+description = "`Provenance test: absent evidence keeps acceptance status planned/unverified`"
+falsifiability_class = "safety"
+id = "planned-tests-remain-unverified"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/conformance-tests/spec.md"
+timeout_seconds = 120

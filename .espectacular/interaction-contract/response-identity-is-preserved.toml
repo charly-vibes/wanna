@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "response_identity_is_preserved@23131ee39ba3"
+description = "`TypeScript test: accepted response preserves all IDs and preconditions from the originating contract`"
+falsifiability_class = "safety"
+id = "response-identity-is-preserved"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-contract/spec.md"
+timeout_seconds = 120

@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "verify_cannot_authorize@66cde7435fd4"
+description = "`Security test: a verify event alone cannot satisfy an authorize guard`"
+falsifiability_class = "safety"
+id = "verify-cannot-authorize"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/contribution-primitives/spec.md"
+timeout_seconds = 120

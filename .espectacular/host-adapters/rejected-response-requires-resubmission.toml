@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "rejected_response_requires_resubmission@5a39db2711bd"
+description = "`Adapter contract test: response rejection requires a new user submission`"
+falsifiability_class = "safety"
+id = "rejected-response-requires-resubmission"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/host-adapters/spec.md"
+timeout_seconds = 120

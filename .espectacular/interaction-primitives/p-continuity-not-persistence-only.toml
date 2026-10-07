@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_continuity_not_persistence_only@7b60c63afdf6"
+description = "`resumption includes reorientation and reconciliation semantics, not merely reloading serialized state`"
+falsifiability_class = "safety"
+id = "p-continuity-not-persistence-only"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-primitives/spec.md"
+timeout_seconds = 120

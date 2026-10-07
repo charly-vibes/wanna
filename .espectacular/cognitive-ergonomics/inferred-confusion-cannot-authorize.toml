@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "inferred_confusion_cannot_authorize@451e03bb077f"
+description = "`Policy test: inferred human state never satisfies an authority guard`"
+falsifiability_class = "safety"
+id = "inferred-confusion-cannot-authorize"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/cognitive-ergonomics/spec.md"
+timeout_seconds = 120

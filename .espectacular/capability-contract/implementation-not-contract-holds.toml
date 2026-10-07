@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "implementation_not_contract_holds@d28ea437a4a6"
+description = "`TypeScript conformance test: assert invariant implementation_not_contract at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "implementation-not-contract-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/capability-contract/spec.md"
+timeout_seconds = 120

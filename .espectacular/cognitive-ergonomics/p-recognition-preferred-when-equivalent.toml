@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_recognition_preferred_when_equivalent@8817977423f9"
+description = "`when semantically equivalent and feasible, presentation exposes relevant choices/context rather than requiring recall of arbitrary identifiers or prior hidden state`"
+falsifiability_class = "safety"
+id = "p-recognition-preferred-when-equivalent"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/cognitive-ergonomics/spec.md"
+timeout_seconds = 120

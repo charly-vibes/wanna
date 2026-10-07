@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_pattern_does_not_override_primitive@5c6539fb82b6"
+description = "`a pattern cannot change the response semantics, validation, authority meaning, or escape semantics of a referenced primitive`"
+falsifiability_class = "safety"
+id = "p-pattern-does-not-override-primitive"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-patterns/spec.md"
+timeout_seconds = 120

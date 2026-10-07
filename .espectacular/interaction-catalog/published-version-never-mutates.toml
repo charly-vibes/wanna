@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "published_version_never_mutates@9d8118e3c332"
+description = "`TypeScript test: published catalog version hash/content remains stable; edits require a new version`"
+falsifiability_class = "safety"
+id = "published-version-never-mutates"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-catalog/spec.md"
+timeout_seconds = 120

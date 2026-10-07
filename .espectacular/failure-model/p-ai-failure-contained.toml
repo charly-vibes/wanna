@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_ai_failure_contained@b89b57ccaa07"
+description = "`malformed generated UI, invalid plans, tool loops, policy violations, or untrusted generated code cannot mutate authoritative state merely because generation succeeded`"
+falsifiability_class = "safety"
+id = "p-ai-failure-contained"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/failure-model/spec.md"
+timeout_seconds = 120

@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "quality_claims_have_measured_baseline@76b808dca2f1"
+description = "`Release gate test: performance/usability claims require baseline and advisor-guided measurements over the same scenario set`"
+falsifiability_class = "safety"
+id = "quality-claims-have-measured-baseline"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/conformance-tests/spec.md"
+timeout_seconds = 120

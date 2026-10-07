@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "interruption_requires_reason@11e0471dd036"
+description = "`Policy test: proactive interrupt without need/benefit/urgency/deferral rationale is ineligible`"
+falsifiability_class = "safety"
+id = "interruption-requires-reason"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/cognitive-ergonomics/spec.md"
+timeout_seconds = 120

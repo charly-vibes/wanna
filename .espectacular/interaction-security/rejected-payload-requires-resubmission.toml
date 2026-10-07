@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "rejected_payload_requires_resubmission@a59654e856fc"
+description = "`Security test: a rejected payload is not reconsidered without new or corrected input`"
+falsifiability_class = "safety"
+id = "rejected-payload-requires-resubmission"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-security/spec.md"
+timeout_seconds = 120

@@ -5,3 +5,6 @@ specs = "openspec/specs"
 changes = "openspec/changes"
 
 [runners]
+
+[spk]
+version = "0.5.1"

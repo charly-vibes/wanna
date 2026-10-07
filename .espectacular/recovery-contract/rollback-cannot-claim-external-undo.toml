@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "rollback_cannot_claim_external_undo@dd8487f7afab"
+description = "`TypeScript test: rollback result with external effects records residual effects unless compensation succeeds`"
+falsifiability_class = "safety"
+id = "rollback-cannot-claim-external-undo"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/recovery-contract/spec.md"
+timeout_seconds = 120

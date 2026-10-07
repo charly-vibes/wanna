@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "accepted_payload_passes_all_checks@4ee386e7750d"
+description = "`Security test: payload cannot reach validated state while any schema/catalog/size/rendering/ownership check fails`"
+falsifiability_class = "safety"
+id = "accepted-payload-passes-all-checks"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-security/spec.md"
+timeout_seconds = 120

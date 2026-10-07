@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_contribution_precedes_presentation@4a4ea8a3788f"
+description = "`interaction selection is grounded in a normalized need and semantic contribution before a host presentation is chosen`"
+falsifiability_class = "safety"
+id = "p-contribution-precedes-presentation"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-primitives/spec.md"
+timeout_seconds = 120

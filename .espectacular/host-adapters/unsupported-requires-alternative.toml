@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "unsupported_requires_alternative@5323bfa2dbdf"
+description = "`Adapter contract test: unsupported state exits only on a new interaction or explicit alternate contract`"
+falsifiability_class = "safety"
+id = "unsupported-requires-alternative"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/host-adapters/spec.md"
+timeout_seconds = 120

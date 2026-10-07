@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_continuity_checkpoint_on_suspend@e2f671f6978b"
+description = "`suspension or recoverable interruption records the continuity checkpoint required to reorient and reconcile on resume`"
+falsifiability_class = "safety"
+id = "p-continuity-checkpoint-on-suspend"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-runtime/spec.md"
+timeout_seconds = 120

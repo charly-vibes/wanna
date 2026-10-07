@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "policy_cannot_authorize_action@bb2184e7025b"
+description = "`TypeScript test: a recommendation alone cannot satisfy an authorization/approval precondition`"
+falsifiability_class = "safety"
+id = "policy-cannot-authorize-action"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-policy/spec.md"
+timeout_seconds = 120

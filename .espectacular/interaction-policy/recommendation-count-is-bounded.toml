@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "recommendation_count_is_bounded@2ad4c4efd1c8"
+description = "`TypeScript test: returned count never exceeds configured maximum and invalid maxima are rejected`"
+falsifiability_class = "safety"
+id = "recommendation-count-is-bounded"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-policy/spec.md"
+timeout_seconds = 120

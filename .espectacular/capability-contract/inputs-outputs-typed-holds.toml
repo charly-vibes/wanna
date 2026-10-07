@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "inputs_outputs_typed_holds@2813dc793c77"
+description = "`TypeScript conformance test: assert invariant inputs_outputs_typed at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "inputs-outputs-typed-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/capability-contract/spec.md"
+timeout_seconds = 120

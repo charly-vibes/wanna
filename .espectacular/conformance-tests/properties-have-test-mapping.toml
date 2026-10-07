@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "properties_have_test_mapping@1d7c233224cc"
+description = "`TypeScript CI test: every feature-spec Property ID resolves to at least one existing named test`"
+falsifiability_class = "safety"
+id = "properties-have-test-mapping"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/conformance-tests/spec.md"
+timeout_seconds = 120

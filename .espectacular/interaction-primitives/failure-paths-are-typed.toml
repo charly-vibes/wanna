@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "failure_paths_are_typed@a92c8a6be80c"
+description = "`Graph test: declared mutating operations have typed failure and recovery paths`"
+falsifiability_class = "safety"
+id = "failure-paths-are-typed"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-primitives/spec.md"
+timeout_seconds = 120

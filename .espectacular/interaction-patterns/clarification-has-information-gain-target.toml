@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "clarification_has_information_gain_target@79ef4c6f1aba"
+description = "`Policy test: clarification without a named unresolved target is ineligible`"
+falsifiability_class = "safety"
+id = "clarification-has-information-gain-target"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-patterns/spec.md"
+timeout_seconds = 120

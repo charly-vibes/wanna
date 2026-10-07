@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "declared_capabilities_are_tested@33ceae967cff"
+description = "`Adapter contract test: declared support matches actual capabilities for every catalog kind`"
+falsifiability_class = "safety"
+id = "declared-capabilities-are-tested"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/host-adapters/spec.md"
+timeout_seconds = 120

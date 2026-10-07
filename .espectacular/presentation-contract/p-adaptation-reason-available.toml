@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_adaptation_reason_available@4ca3cd88fa3f"
+description = "`material adaptive presentation changes carry a user-comprehensible reason and, where safety permits, a stable/revert option`"
+falsifiability_class = "safety"
+id = "p-adaptation-reason-available"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/presentation-contract/spec.md"
+timeout_seconds = 120

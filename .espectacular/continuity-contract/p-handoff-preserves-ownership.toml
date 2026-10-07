@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "p_handoff_preserves_ownership@a73dc5b06048"
+description = "`human-to-human or human-to-agent handoff records current owner, transferred authority scope, pending decisions, unresolved risks, and evidence references`"
+falsifiability_class = "safety"
+id = "p-handoff-preserves-ownership"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/continuity-contract/spec.md"
+timeout_seconds = 120

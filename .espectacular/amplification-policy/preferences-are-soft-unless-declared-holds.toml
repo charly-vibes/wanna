@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "preferences_are_soft_unless_declared_holds@3e38de5ea174"
+description = "`TypeScript conformance test: assert invariant preferences_are_soft_unless_declared at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "preferences-are-soft-unless-declared-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/amplification-policy/spec.md"
+timeout_seconds = 120

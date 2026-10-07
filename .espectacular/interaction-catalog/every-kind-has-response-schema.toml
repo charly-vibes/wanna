@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "every_kind_has_response_schema@33e6581f9b88"
+description = "`TypeScript test: every published kind has schema, outcomes, required fields, and a runtime validator`"
+falsifiability_class = "safety"
+id = "every-kind-has-response-schema"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-catalog/spec.md"
+timeout_seconds = 120

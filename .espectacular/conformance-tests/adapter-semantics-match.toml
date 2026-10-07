@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "adapter_semantics_match@ae98dd1babf2"
+description = "`TypeScript CI test: semantically equivalent web/TUI answers reduce to equivalent core events and outcomes`"
+falsifiability_class = "safety"
+id = "adapter-semantics-match"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/conformance-tests/spec.md"
+timeout_seconds = 120

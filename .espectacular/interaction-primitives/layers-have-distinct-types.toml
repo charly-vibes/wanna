@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "layers_have_distinct_types@2cf03960a8ad"
+description = "`TypeScript compile/schema test: semantic layers cannot be silently substituted for each other`"
+falsifiability_class = "safety"
+id = "layers-have-distinct-types"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-primitives/spec.md"
+timeout_seconds = 120

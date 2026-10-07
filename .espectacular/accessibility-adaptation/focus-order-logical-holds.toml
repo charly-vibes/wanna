@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "focus_order_logical_holds@daa24331f29a"
+description = "`TypeScript conformance test: assert invariant focus_order_logical at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "focus-order-logical-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/accessibility-adaptation/spec.md"
+timeout_seconds = 120

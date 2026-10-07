@@ -1,0 +1,11 @@
+archetype = "NR"
+authored_with = "0.9.2"
+description = "Violating a Task Continuity invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
+falsifiability_class = "safety"
+id = "violating-a-task-continuity-invariant-is-rejected"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "t=$(mktemp /tmp/violate-XXXXXX.md); printf -- '---\nid: violate\nkind: intent\nstatement: THE fixture SHALL produce a validated canonical result\n---\n\n# violate Specification\n' > $t; spk lint $t >/dev/null 2>&1; r=$?; rm -f $t; test $r -ne 0"
+timeout_seconds = 120

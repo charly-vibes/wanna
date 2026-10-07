@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_compound_human_activity_uses_patterns@721f29fa1e2a"
+description = "`planning, diagnosis, review, coordination, monitoring, and clarification may be represented as interaction patterns composed of contribution primitives rather than assumed atomic states`"
+falsifiability_class = "safety"
+id = "p-compound-human-activity-uses-patterns"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/process-model/spec.md"
+timeout_seconds = 120

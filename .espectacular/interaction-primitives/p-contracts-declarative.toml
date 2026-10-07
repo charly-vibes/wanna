@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "p_contracts_declarative@9956042de400"
+description = "`agent-proposed interaction, presentation, workflow, and capability contracts are declarative data and cannot execute generated code in the trusted core`"
+falsifiability_class = "safety"
+id = "p-contracts-declarative"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-primitives/spec.md"
+timeout_seconds = 120

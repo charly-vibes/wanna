@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "unchanged_unresolved_need_does_not_loop@ceb285cb4a82"
+description = "`Runtime test: unchanged unresolved need cannot self-trigger reclassification indefinitely`"
+falsifiability_class = "safety"
+id = "unchanged-unresolved-need-does-not-loop"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-need/spec.md"
+timeout_seconds = 120

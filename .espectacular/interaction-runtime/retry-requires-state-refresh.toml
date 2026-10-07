@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "retry_requires_state_refresh@d31f1fb78937"
+description = "`TypeScript test: stale precondition rejection can retry only after refreshed committed state is received`"
+falsifiability_class = "safety"
+id = "retry-requires-state-refresh"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-runtime/spec.md"
+timeout_seconds = 120

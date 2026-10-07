@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "waits_correlated_holds@b561b8ea7106"
+description = "`TypeScript conformance test: assert invariant waits_correlated at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "waits-correlated-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/process-model/spec.md"
+timeout_seconds = 120

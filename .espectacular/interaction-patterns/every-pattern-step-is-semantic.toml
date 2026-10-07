@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "every_pattern_step_is_semantic@eebc218d404b"
+description = "`Graph test: each human-contribution node references a registered primitive`"
+falsifiability_class = "safety"
+id = "every-pattern-step-is-semantic"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-patterns/spec.md"
+timeout_seconds = 120

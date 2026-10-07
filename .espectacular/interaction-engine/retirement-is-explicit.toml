@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "retirement_is_explicit@147ae419c017"
+description = "`TypeScript test: committed decision retires only after explicit retire/cancel/supersede/expiry command`"
+falsifiability_class = "safety"
+id = "retirement-is-explicit"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-engine/spec.md"
+timeout_seconds = 120

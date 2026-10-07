@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "risk_floor_preserved_holds@dd2a2f440427"
+description = "`TypeScript conformance test: assert invariant risk_floor_preserved at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "risk-floor-preserved-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/amplification-policy/spec.md"
+timeout_seconds = 120

@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "adapters_emit_equivalent_events@a22007604bd6"
+description = "`TypeScript test: equivalent answers in web and TUI yield equivalent host-neutral events`"
+falsifiability_class = "safety"
+id = "adapters-emit-equivalent-events"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/host-adapters/spec.md"
+timeout_seconds = 120

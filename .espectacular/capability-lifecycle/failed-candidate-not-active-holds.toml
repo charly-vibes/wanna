@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "failed_candidate_not_active_holds@57ebb32a7b93"
+description = "`TypeScript conformance test: assert invariant failed_candidate_not_active at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "failed-candidate-not-active-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/capability-lifecycle/spec.md"
+timeout_seconds = 120

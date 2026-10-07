@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "keyboard_flow_preserves_semantics@29cdbd2c97c8"
+description = "`Adapter test: every required interaction can be completed without a pointer where the host supports keyboard input`"
+falsifiability_class = "safety"
+id = "keyboard-flow-preserves-semantics"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/host-adapters/spec.md"
+timeout_seconds = 120

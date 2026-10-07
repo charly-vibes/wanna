@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "malformed_event_never_mutates_state@26e0d444db56"
+description = "`TypeScript test: missing, malformed, or mismatched event identity returns a rejection and leaves committed state unchanged`"
+falsifiability_class = "safety"
+id = "malformed-event-never-mutates-state"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-runtime/spec.md"
+timeout_seconds = 120

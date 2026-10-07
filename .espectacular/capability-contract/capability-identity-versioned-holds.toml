@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "capability_identity_versioned_holds@65b6ecbd2ef3"
+description = "`TypeScript conformance test: assert invariant capability_identity_versioned at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "capability-identity-versioned-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/capability-contract/spec.md"
+timeout_seconds = 120

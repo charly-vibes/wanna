@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "security_matrix_runs_in_ci@23d6270039fa"
+description = "`CI configuration test: security scenario groups run for each declared adapter target`"
+falsifiability_class = "safety"
+id = "security-matrix-runs-in-ci"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/conformance-tests/spec.md"
+timeout_seconds = 120

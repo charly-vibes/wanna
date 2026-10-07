@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "uncertainty_not_guessed@d41e9f3064d8"
+description = "`TypeScript test: insufficient evidence yields unresolved`"
+falsifiability_class = "safety"
+id = "uncertainty-not-guessed"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-need/spec.md"
+timeout_seconds = 120

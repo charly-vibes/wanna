@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "uncertainty_requires_evidence@eefff5e8c1a5"
+description = "`TypeScript test: UI cannot render a numeric confidence absent a source declaring that metric and semantics`"
+falsifiability_class = "safety"
+id = "uncertainty-requires-evidence"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/cognitive-ergonomics/spec.md"
+timeout_seconds = 120

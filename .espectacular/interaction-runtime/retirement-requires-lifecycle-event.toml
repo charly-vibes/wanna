@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "retirement_requires_lifecycle_event@93d8a768a1c1"
+description = "`TypeScript test: active interaction retires only on a permitted explicit lifecycle event`"
+falsifiability_class = "safety"
+id = "retirement-requires-lifecycle-event"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-runtime/spec.md"
+timeout_seconds = 120

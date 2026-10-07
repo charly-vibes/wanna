@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "p_interrupted_input_preserved@f05d9ea87061"
+description = "`validated but uncommitted user input is preserved across recoverable interruption unless security/privacy policy requires disposal, in which case the loss is explicit`"
+falsifiability_class = "safety"
+id = "p-interrupted-input-preserved"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/continuity-contract/spec.md"
+timeout_seconds = 120

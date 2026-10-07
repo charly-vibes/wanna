@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "unknown_nonidempotent_effect_never_retries@858a63f14644"
+description = "`Property test: all paths from effect_unknown + non-idempotent mutation to retry pass through successful reconciliation`"
+falsifiability_class = "safety"
+id = "unknown-nonidempotent-effect-never-retries"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/recovery-contract/spec.md"
+timeout_seconds = 120

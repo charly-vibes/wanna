@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "rejection_has_stable_reason@f89ad1dafc8a"
+description = "`TypeScript test: same invalid condition yields the same documented reason code without leaking secret data`"
+falsifiability_class = "safety"
+id = "rejection-has-stable-reason"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-contract/spec.md"
+timeout_seconds = 120

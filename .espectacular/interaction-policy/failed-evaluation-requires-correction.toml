@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "failed_evaluation_requires_correction@56865c91649a"
+description = "`TypeScript test: failed evaluation re-enters ready only after schema-valid corrected input`"
+falsifiability_class = "safety"
+id = "failed-evaluation-requires-correction"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-policy/spec.md"
+timeout_seconds = 120

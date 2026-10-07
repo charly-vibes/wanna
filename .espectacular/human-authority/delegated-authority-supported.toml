@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "delegated_authority_supported@8e523c863e02"
+description = "`Policy test: bounded unattended automation can proceed only inside an explicit grant`"
+falsifiability_class = "safety"
+id = "delegated-authority-supported"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/human-authority/spec.md"
+timeout_seconds = 120

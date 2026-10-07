@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "unknown_kind_never_renders@6006c895b07f"
+description = "`TypeScript test: unknown kinds are rejected without component lookup or dynamic import`"
+falsifiability_class = "safety"
+id = "unknown-kind-never-renders"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-contract/spec.md"
+timeout_seconds = 120

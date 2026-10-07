@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "timeouts_and_budgets_enforced_holds@a2e0fd2e466b"
+description = "`TypeScript conformance test: assert invariant timeouts_and_budgets_enforced at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "timeouts-and-budgets-enforced-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/effect-boundary/spec.md"
+timeout_seconds = 120

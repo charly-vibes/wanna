@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "continue_requires_next_event@7c834c540f90"
+description = "`TypeScript test: applied event does not re-enter active processing without next event or explicit poll`"
+falsifiability_class = "safety"
+id = "continue-requires-next-event"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-runtime/spec.md"
+timeout_seconds = 120

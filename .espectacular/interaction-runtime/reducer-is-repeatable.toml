@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "reducer_is_repeatable@67337ca2bdb8"
+description = "`TypeScript test: equal state/event pairs produce deeply equal next-state and transition outputs`"
+falsifiability_class = "safety"
+id = "reducer-is-repeatable"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-runtime/spec.md"
+timeout_seconds = 120

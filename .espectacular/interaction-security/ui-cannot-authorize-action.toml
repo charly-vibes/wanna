@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "ui_cannot_authorize_action@a8f0acc64049"
+description = "`Security test: forged interaction/approval UI events cannot satisfy host/domain authorization`"
+falsifiability_class = "safety"
+id = "ui-cannot-authorize-action"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-security/spec.md"
+timeout_seconds = 120

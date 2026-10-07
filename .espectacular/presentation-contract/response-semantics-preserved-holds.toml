@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "response_semantics_preserved_holds@b00749af32a9"
+description = "`TypeScript conformance test: assert invariant response_semantics_preserved at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "response-semantics-preserved-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/presentation-contract/spec.md"
+timeout_seconds = 120

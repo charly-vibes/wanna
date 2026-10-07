@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "catalog_cannot_load_arbitrary_renderer@0d4c275b4111"
+description = "`Security test: unknown renderer/module names cannot trigger dynamic component resolution`"
+falsifiability_class = "safety"
+id = "catalog-cannot-load-arbitrary-renderer"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-catalog/spec.md"
+timeout_seconds = 120

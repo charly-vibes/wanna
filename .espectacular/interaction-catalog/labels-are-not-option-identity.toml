@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "labels_are_not_option_identity@2b20c945dc50"
+description = "`TypeScript test: duplicate or changed display labels do not alias stable option IDs`"
+falsifiability_class = "safety"
+id = "labels-are-not-option-identity"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-catalog/spec.md"
+timeout_seconds = 120

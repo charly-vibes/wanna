@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "capability_check_uses_supported_kind@8de9ce127973"
+description = "`Adapter contract test: kind renders only when native support or registered semantic fallback exists`"
+falsifiability_class = "safety"
+id = "capability-check-uses-supported-kind"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/host-adapters/spec.md"
+timeout_seconds = 120

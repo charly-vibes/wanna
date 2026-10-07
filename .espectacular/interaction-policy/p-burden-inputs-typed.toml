@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_burden_inputs_typed@4de26cc08b18"
+description = "`policy distinguishes measurable burden attributes from uncertain inferred human-state attributes and records which influenced ranking`"
+falsifiability_class = "safety"
+id = "p-burden-inputs-typed"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-policy/spec.md"
+timeout_seconds = 120

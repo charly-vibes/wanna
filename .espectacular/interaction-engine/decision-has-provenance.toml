@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "decision_has_provenance@3a3787cd158e"
+description = "`TypeScript test: every result includes input revision, policy/catalog versions, candidates, exclusions and reason codes`"
+falsifiability_class = "safety"
+id = "decision-has-provenance"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-engine/spec.md"
+timeout_seconds = 120

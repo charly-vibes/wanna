@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_interruptions_require_justification@ab5c67f9c87d"
+description = "`a proactive interruption is eligible only with an unresolved target, expected benefit, urgency/risk rationale, and reason deferral is insufficient`"
+falsifiability_class = "safety"
+id = "p-interruptions-require-justification"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-policy/spec.md"
+timeout_seconds = 120

@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "suite_cannot_start_with_incomplete_manifest@8975f2a9b3cd"
+description = "`TypeScript CI test: a missing mapped property, edge/security scenario, replay version or adapter target blocks a passing result`"
+falsifiability_class = "safety"
+id = "suite-cannot-start-with-incomplete-manifest"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/conformance-tests/spec.md"
+timeout_seconds = 120

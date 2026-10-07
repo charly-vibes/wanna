@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "empty_result_requires_new_input@57fc4efdc55c"
+description = "`TypeScript test: unchanged context does not trigger an unbounded retry loop after no candidates are eligible`"
+falsifiability_class = "safety"
+id = "empty-result-requires-new-input"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-policy/spec.md"
+timeout_seconds = 120

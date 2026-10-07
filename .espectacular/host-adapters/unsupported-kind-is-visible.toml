@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "unsupported_kind_is_visible@aacb79949224"
+description = "`Adapter contract test: unsupported kind returns a visible typed result or a registered semantic fallback`"
+falsifiability_class = "safety"
+id = "unsupported-kind-is-visible"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/host-adapters/spec.md"
+timeout_seconds = 120

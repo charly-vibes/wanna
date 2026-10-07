@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "continuation_requires_accepted_response@eead2d00868c"
+description = "`Adapter contract test: accepted response advances only after the core commit result`"
+falsifiability_class = "safety"
+id = "continuation-requires-accepted-response"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/host-adapters/spec.md"
+timeout_seconds = 120

@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "motion_and_density_respect_preferences_holds@4fab676ef405"
+description = "`TypeScript conformance test: assert invariant motion_and_density_respect_preferences at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "motion-and-density-respect-preferences-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/accessibility-adaptation/spec.md"
+timeout_seconds = 120

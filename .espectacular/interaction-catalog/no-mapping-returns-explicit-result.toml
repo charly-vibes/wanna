@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "no_mapping_returns_explicit_result@8c62e2c410b8"
+description = "`TypeScript test: needs with no eligible catalog mapping return no-interaction rather than an invented kind`"
+falsifiability_class = "safety"
+id = "no-mapping-returns-explicit-result"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-catalog/spec.md"
+timeout_seconds = 120

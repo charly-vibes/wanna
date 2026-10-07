@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "shadow_effects_suppressed_holds@f234c77f6299"
+description = "`TypeScript conformance test: assert invariant shadow_effects_suppressed at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "shadow-effects-suppressed-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/evaluation-telemetry/spec.md"
+timeout_seconds = 120

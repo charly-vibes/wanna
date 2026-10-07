@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_retry_requires_idempotency_or_reconciliation@61a3738bcf8c"
+description = "`a mutating effect is retryable after uncertain outcome only with a stable idempotency key/guarantee or successful reconciliation`"
+falsifiability_class = "safety"
+id = "p-retry-requires-idempotency-or-reconciliation"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/effect-boundary/spec.md"
+timeout_seconds = 120

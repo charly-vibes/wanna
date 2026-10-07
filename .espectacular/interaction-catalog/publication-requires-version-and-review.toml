@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "publication_requires_version_and_review@1d1d9520232e"
+description = "`TypeScript test: catalog cannot publish without validation, compatibility review, and immutable version ID`"
+falsifiability_class = "safety"
+id = "publication-requires-version-and-review"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-catalog/spec.md"
+timeout_seconds = 120

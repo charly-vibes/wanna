@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "decision_reasons_stable_holds@707dc902c30a"
+description = "`TypeScript conformance test: assert invariant decision_reasons_stable at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "decision-reasons-stable-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/amplification-policy/spec.md"
+timeout_seconds = 120

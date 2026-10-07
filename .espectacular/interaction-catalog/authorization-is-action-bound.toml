@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "authorization_is_action_bound@06278c731e4a"
+description = "`Security test: approval for one action/revision/actor/expiry cannot authorize a different action`"
+falsifiability_class = "safety"
+id = "authorization-is-action-bound"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-catalog/spec.md"
+timeout_seconds = 120

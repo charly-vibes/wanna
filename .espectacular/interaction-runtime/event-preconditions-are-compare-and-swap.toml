@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "event_preconditions_are_compare_and_swap@f5e2061797e9"
+description = "`TypeScript test: only one response against a given interaction revision commits; a concurrent response becomes stale`"
+falsifiability_class = "safety"
+id = "event-preconditions-are-compare-and-swap"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-runtime/spec.md"
+timeout_seconds = 120

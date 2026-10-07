@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "p_adaptation_explainable_and_overridable@a17311078da3"
+description = "`material adaptive changes expose a reason and, where safety permits, a way to revert, disable, or choose a stable presentation`"
+falsifiability_class = "safety"
+id = "p-adaptation-explainable-and-overridable"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/cognitive-ergonomics/spec.md"
+timeout_seconds = 120

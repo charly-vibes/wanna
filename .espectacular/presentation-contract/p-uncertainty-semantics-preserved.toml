@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_uncertainty_semantics_preserved@0ce9e621f41d"
+description = "`presentation communicates only uncertainty metrics supplied with defined semantics and evidence; hosts do not fabricate confidence or force one visualization technique across modalities`"
+falsifiability_class = "safety"
+id = "p-uncertainty-semantics-preserved"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/presentation-contract/spec.md"
+timeout_seconds = 120

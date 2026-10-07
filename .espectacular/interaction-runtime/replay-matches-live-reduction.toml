@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "replay_matches_live_reduction@d7cdbbd71ec9"
+description = "`TypeScript test: replayed sequence reconstructs the exact final state and version`"
+falsifiability_class = "safety"
+id = "replay-matches-live-reduction"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-runtime/spec.md"
+timeout_seconds = 120

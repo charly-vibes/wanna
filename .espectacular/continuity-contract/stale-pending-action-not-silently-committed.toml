@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "stale_pending_action_not_silently_committed@4002496019ca"
+description = "`Concurrency test: changed authoritative revision forces reconciliation before pending action can commit`"
+falsifiability_class = "safety"
+id = "stale-pending-action-not-silently-committed"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/continuity-contract/spec.md"
+timeout_seconds = 120

@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "event_payload_bounded_holds@e6ed774409c7"
+description = "`TypeScript conformance test: assert invariant event_payload_bounded at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "event-payload-bounded-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/event-envelope/spec.md"
+timeout_seconds = 120

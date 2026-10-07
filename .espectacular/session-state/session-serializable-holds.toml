@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "session_serializable_holds@e74f0183ccb7"
+description = "`TypeScript conformance test: assert invariant session_serializable at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "session-serializable-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/session-state/spec.md"
+timeout_seconds = 120

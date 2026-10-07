@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "hostile_text_and_urls_are_inert@73f737922a31"
+description = "`Security test: HTML/script text is escaped and disallowed URL schemes/hosts are rejected`"
+falsifiability_class = "safety"
+id = "hostile-text-and-urls-are-inert"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-security/spec.md"
+timeout_seconds = 120

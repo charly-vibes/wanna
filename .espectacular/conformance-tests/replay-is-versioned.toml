@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "replay_is_versioned@0973fdc84f4f"
+description = "`TypeScript CI test: replay fixture without required version/initial-state fields is rejected`"
+falsifiability_class = "safety"
+id = "replay-is-versioned"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/conformance-tests/spec.md"
+timeout_seconds = 120

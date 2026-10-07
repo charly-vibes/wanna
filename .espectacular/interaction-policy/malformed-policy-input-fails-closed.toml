@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "malformed_policy_input_fails_closed@8f4a7aea8b6d"
+description = "`TypeScript test: malformed or version-incomplete input returns a typed failure and no recommendation`"
+falsifiability_class = "safety"
+id = "malformed-policy-input-fails-closed"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-policy/spec.md"
+timeout_seconds = 120

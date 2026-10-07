@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "regression_triggers_fallback_holds@5c8b33f417b7"
+description = "`TypeScript conformance test: assert invariant regression_triggers_fallback at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "regression-triggers-fallback-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/evaluation-telemetry/spec.md"
+timeout_seconds = 120

@@ -1,0 +1,12 @@
+archetype = "CE"
+authored_with = "0.9.2"
+derived_from = "p_effect_outcome_failure@ac03de3dabf8"
+description = "`failure is typed ∧ evidence retained ∧ no retry without idempotency or reconciliation`"
+falsifiability_class = "safety"
+id = "p-effect-outcome-failure"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/effect-boundary/spec.md"
+timeout_seconds = 120

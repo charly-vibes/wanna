@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "rendering_does_not_grant_authority@02e767974f16"
+description = "`TypeScript test: render/focus/enable interactions do not mutate authority state or satisfy an approval gate`"
+falsifiability_class = "safety"
+id = "rendering-does-not-grant-authority"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/host-adapters/spec.md"
+timeout_seconds = 120

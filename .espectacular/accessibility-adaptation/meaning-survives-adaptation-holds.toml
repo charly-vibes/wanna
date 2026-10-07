@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "meaning_survives_adaptation_holds@f6646f6dcac9"
+description = "`TypeScript conformance test: assert invariant meaning_survives_adaptation at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "meaning-survives-adaptation-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/accessibility-adaptation/spec.md"
+timeout_seconds = 120

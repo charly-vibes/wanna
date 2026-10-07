@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_stable_action_identity@93bce637beb5"
+description = "`frequently used or consequential actions retain stable semantic identity across adaptations and hosts even when visual placement differs`"
+falsifiability_class = "safety"
+id = "p-stable-action-identity"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/cognitive-ergonomics/spec.md"
+timeout_seconds = 120

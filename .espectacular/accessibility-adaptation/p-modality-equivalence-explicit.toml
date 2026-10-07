@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "p_modality_equivalence_explicit@6aa790675adf"
+description = "`when exact visual behavior cannot transfer across hosts, the adapter documents a semantically equivalent accessible operation or reports unsupported`"
+falsifiability_class = "safety"
+id = "p-modality-equivalence-explicit"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/accessibility-adaptation/spec.md"
+timeout_seconds = 120

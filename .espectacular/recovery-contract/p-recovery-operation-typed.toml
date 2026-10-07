@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "p_recovery_operation_typed@92f61415c9fc"
+description = "`every recovery attempt names one supported recovery operation and its preconditions`"
+falsifiability_class = "safety"
+id = "p-recovery-operation-typed"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/recovery-contract/spec.md"
+timeout_seconds = 120

@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "effectful_process_has_recovery_path@775609f6109f"
+description = "`Graph test: effectful nodes expose typed failure/recovery edges`"
+falsifiability_class = "safety"
+id = "effectful-process-has-recovery-path"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/process-model/spec.md"
+timeout_seconds = 120

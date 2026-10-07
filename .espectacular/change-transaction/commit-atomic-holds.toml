@@ -1,0 +1,12 @@
+archetype = "SA"
+authored_with = "0.9.2"
+derived_from = "commit_atomic_holds@b8eed7c8e03b"
+description = "`TypeScript conformance test: assert invariant commit_atomic at its trust boundary and under its stated edge cases.`"
+falsifiability_class = "safety"
+id = "commit-atomic-holds"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/change-transaction/spec.md"
+timeout_seconds = 120

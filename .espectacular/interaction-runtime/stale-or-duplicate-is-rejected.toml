@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "stale_or_duplicate_is_rejected@f627d42092df"
+description = "`TypeScript test: stale revision and repeated event ID do not produce a second committed state change and expose distinct reason codes`"
+falsifiability_class = "safety"
+id = "stale-or-duplicate-is-rejected"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/interaction-runtime/spec.md"
+timeout_seconds = 120

@@ -1,0 +1,12 @@
+archetype = "PF"
+authored_with = "0.9.2"
+derived_from = "compensation_has_own_failure_path@389fdeb3d1b2"
+description = "`Fault-injection test: compensation failure remains visible and cannot mark original operation recovered`"
+falsifiability_class = "safety"
+id = "compensation-has-own-failure-path"
+status = "active"
+superseded_by = ""
+
+[[tests.shell]]
+command = "spk lint openspec/specs/recovery-contract/spec.md"
+timeout_seconds = 120
