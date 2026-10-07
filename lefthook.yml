@@ -11,6 +11,9 @@ pre-commit:
     # <!-- SPK:END -->
     pretender-gate:
       run: pretender check --staged --mode gate
+    eslint-gate:
+      # boundary linting is independent of the test layer: runs on every commit
+      run: npx eslint src
     ah-check-gate:
       run: ah check
 

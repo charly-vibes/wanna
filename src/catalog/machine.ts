@@ -27,7 +27,7 @@ type TransitionRow = {
   readonly guardFailReason: string;
 };
 
-function transitionTable(catalog: Catalog, deps: CatalogMachineDeps): Record<TransitionId, TransitionRow> {
+function transitionTable(): Record<TransitionId, TransitionRow> {
   const row = (
     id: TransitionId,
     from: CatalogState,
@@ -35,18 +35,19 @@ function transitionTable(catalog: Catalog, deps: CatalogMachineDeps): Record<Tra
     guard: TransitionRow["guard"],
     guardFailReason: string,
   ): TransitionRow => ({ id, from, to, guard, guardFailReason });
-  return {
+  const table = {
     validate_catalog: row("validate_catalog", "draft", "validated", (c) => schemaMappingExplicit(c), "schema_mapping_explicit does not hold"),
     reject_catalog: row("reject_catalog", "draft", "deprecated", (c) => !schemaMappingExplicit(c), "schema_mapping_explicit holds, nothing to reject"),
     publish_catalog: row("publish_catalog", "validated", "published", (c) => catalogVersionPinned(c), "catalog_version_pinned does not hold"),
     deprecate_catalog: row("deprecate_catalog", "published", "deprecated", (_c, d) => (d.review ?? "").trim() !== "", "catalog_changes_reviewed does not hold (no review record)"),
   };
+  return table;
 }
 
 export function createCatalogMachine(catalog: Catalog, deps: CatalogMachineDeps = {}): CatalogMachine {
   let state: CatalogState = "draft";
   const log: RecordedTransition[] = [];
-  const table = transitionTable(catalog, deps);
+  const table = transitionTable();
 
   function fire(id: TransitionId): TransitionResult {
     const row = table[id];

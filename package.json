@@ -8,7 +8,11 @@
     "test:catalog": "vitest run tests/catalog"
   },
   "devDependencies": {
+    "@types/node": "^26.6.4",
+    "eslint": "^9.39.5",
+    "eslint-plugin-import": "^2.32.0",
     "typescript": "^5.6.0",
+    "typescript-eslint": "^8.71.1",
     "vitest": "^2.1.0"
   }
 }
