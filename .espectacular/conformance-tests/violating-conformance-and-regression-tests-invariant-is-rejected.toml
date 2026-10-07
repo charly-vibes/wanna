@@ -1,8 +1,8 @@
 archetype = "NR"
 authored_with = "0.9.2"
-description = "Violating a Reusable Capability Contract invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
+description = "Violating Conformance and Regression Tests invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
 falsifiability_class = "safety"
-id = "violating-a-reusable-capability-contract-invariant-is-rejected"
+id = "violating-conformance-and-regression-tests-invariant-is-rejected"
 status = "active"
 superseded_by = ""
 

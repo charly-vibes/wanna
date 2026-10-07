@@ -81,7 +81,7 @@ Every constraint this specification declares is carried by a deriving property, 
 - **VERIFIES** [[spec.decision_has_provenance]]
 - **VERIFIES** [[spec.core_evaluation_has_no_effects]]
 
-#### Scenario: Violating a Interaction Engine invariant is rejected
+#### Scenario: Violating Interaction Engine invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs

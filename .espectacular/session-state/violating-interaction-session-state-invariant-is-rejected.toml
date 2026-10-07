@@ -1,8 +1,8 @@
 archetype = "NR"
 authored_with = "0.9.2"
-description = "Violating a Evidence and Provenance invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
+description = "Violating Interaction Session State invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
 falsifiability_class = "safety"
-id = "violating-a-evidence-and-provenance-invariant-is-rejected"
+id = "violating-interaction-session-state-invariant-is-rejected"
 status = "active"
 superseded_by = ""
 

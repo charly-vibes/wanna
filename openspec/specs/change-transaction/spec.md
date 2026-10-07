@@ -73,7 +73,7 @@ Every constraint this specification declares is carried by a deriving property, 
 - **VERIFIES** [[spec.inflight_operations_not_replayed_holds]]
 - **VERIFIES** [[spec.migration_explicit_holds]]
 
-#### Scenario: Violating a Change Transaction and Revision History invariant is rejected
+#### Scenario: Violating Change Transaction and Revision History invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs

@@ -1,8 +1,8 @@
 archetype = "NR"
 authored_with = "0.9.2"
-description = "Violating a Trusted Component Catalog invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
+description = "Violating Capability Growth Lifecycle invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
 falsifiability_class = "safety"
-id = "violating-a-trusted-component-catalog-invariant-is-rejected"
+id = "violating-capability-growth-lifecycle-invariant-is-rejected"
 status = "active"
 superseded_by = ""
 

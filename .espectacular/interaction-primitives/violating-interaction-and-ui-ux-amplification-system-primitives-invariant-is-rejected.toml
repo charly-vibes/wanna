@@ -1,8 +1,8 @@
 archetype = "NR"
 authored_with = "0.9.2"
-description = "Violating a Interaction Engine invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
+description = "Violating Interaction and UI/UX Amplification System Primitives invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
 falsifiability_class = "safety"
-id = "violating-a-interaction-engine-invariant-is-rejected"
+id = "violating-interaction-and-ui-ux-amplification-system-primitives-invariant-is-rejected"
 status = "active"
 superseded_by = ""
 

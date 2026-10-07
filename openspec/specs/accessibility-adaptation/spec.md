@@ -71,7 +71,7 @@ Every constraint this specification declares is carried by a deriving property, 
 - **VERIFIES** [[spec.accessibility_exists_before_render]]
 - **VERIFIES** [[spec.p_modality_equivalence_explicit]]
 
-#### Scenario: Violating a Accessibility and Adaptive Presentation invariant is rejected
+#### Scenario: Violating Accessibility and Adaptive Presentation invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs

@@ -69,7 +69,7 @@ Every constraint this specification declares is carried by a deriving property, 
 - **VERIFIES** [[spec.rejection_typed_holds]]
 - **VERIFIES** [[spec.event_payload_bounded_holds]]
 
-#### Scenario: Violating a Typed Event Envelope invariant is rejected
+#### Scenario: Violating Typed Event Envelope invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs

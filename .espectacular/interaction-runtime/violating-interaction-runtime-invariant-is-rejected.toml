@@ -1,8 +1,8 @@
 archetype = "NR"
 authored_with = "0.9.2"
-description = "Violating a Failure Model invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
+description = "Violating Interaction Runtime invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
 falsifiability_class = "safety"
-id = "violating-a-failure-model-invariant-is-rejected"
+id = "violating-interaction-runtime-invariant-is-rejected"
 status = "active"
 superseded_by = ""
 

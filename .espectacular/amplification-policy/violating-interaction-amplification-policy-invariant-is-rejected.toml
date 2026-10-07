@@ -1,8 +1,8 @@
 archetype = "NR"
 authored_with = "0.9.2"
-description = "Violating a Human Contribution Primitives invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
+description = "Violating Interaction Amplification Policy invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
 falsifiability_class = "safety"
-id = "violating-a-human-contribution-primitives-invariant-is-rejected"
+id = "violating-interaction-amplification-policy-invariant-is-rejected"
 status = "active"
 superseded_by = ""
 

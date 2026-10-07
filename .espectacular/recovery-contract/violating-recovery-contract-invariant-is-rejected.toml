@@ -1,8 +1,8 @@
 archetype = "NR"
 authored_with = "0.9.2"
-description = "Violating a Change Transaction and Revision History invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
+description = "Violating Recovery Contract invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
 falsifiability_class = "safety"
-id = "violating-a-change-transaction-and-revision-history-invariant-is-rejected"
+id = "violating-recovery-contract-invariant-is-rejected"
 status = "active"
 superseded_by = ""
 

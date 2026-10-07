@@ -63,7 +63,7 @@ Every constraint this specification declares is carried by a deriving property, 
 - **VERIFIES** [[spec.catalog_changes_reviewed_holds]]
 - **VERIFIES** [[spec.limits_consistent_holds]]
 
-#### Scenario: Violating a Trusted Component Catalog invariant is rejected
+#### Scenario: Violating Trusted Component Catalog invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs

@@ -1,8 +1,8 @@
 archetype = "NR"
 authored_with = "0.9.2"
-description = "Violating a Process Model Primitives invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
+description = "Violating Failure Model invariant is rejected — the conformance gate rejects a revision that violates the spec's declared invariants"
 falsifiability_class = "safety"
-id = "violating-a-process-model-primitives-invariant-is-rejected"
+id = "violating-failure-model-invariant-is-rejected"
 status = "active"
 superseded_by = ""
 

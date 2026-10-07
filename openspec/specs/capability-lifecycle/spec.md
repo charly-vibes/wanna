@@ -73,7 +73,7 @@ Every constraint this specification declares is carried by a deriving property, 
 - **VERIFIES** [[spec.retirement_and_recovery_supported_holds]]
 - **VERIFIES** [[spec.composition_is_bounded_holds]]
 
-#### Scenario: Violating a Capability Growth Lifecycle invariant is rejected
+#### Scenario: Violating Capability Growth Lifecycle invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs

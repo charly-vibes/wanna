@@ -75,7 +75,7 @@ Every constraint this specification declares is carried by a deriving property, 
 - **VERIFIES** [[spec.rejected_payload_requires_resubmission]]
 - **VERIFIES** [[spec.retirement_requires_lifecycle_event]]
 
-#### Scenario: Violating a Interaction Security Boundary invariant is rejected
+#### Scenario: Violating Interaction Security Boundary invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs

@@ -91,7 +91,7 @@ Every constraint this specification declares is carried by a deriving property, 
 - **VERIFIES** [[spec.unsafe_runtime_retry_is_blocked]]
 - **VERIFIES** [[spec.p_continuity_checkpoint_on_suspend]]
 
-#### Scenario: Violating a Interaction Runtime invariant is rejected
+#### Scenario: Violating Interaction Runtime invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
