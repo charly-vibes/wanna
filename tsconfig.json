@@ -1,0 +1,17 @@
+// Purpose: TypeScript compiler options for the wanna corpus implementation
+// Responsibilities: strict module resolution for src/ and tests/
+// Rationale: tracer-bullet phase 1 (wanna-79h) — strict mode from the start
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "types": ["vitest/globals"]
+  },
+  "include": ["src", "tests"]
+}
