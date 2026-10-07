@@ -1,7 +1,7 @@
 // Purpose: the component-catalog model state machine
 // Responsibilities: draft/validated/published/deprecated with the four guarded transitions
-// Rationale: [[spec]] ## Model — guards cite schema_mapping_explicit / catalog_version_pinned / catalog_changes_reviewed
-import type { Catalog, CatalogState, RecordedTransition, TransitionResult } from "./types";
+// Rationale: transitions are table-driven, mirroring [[spec]] ## Model row for row
+import type { Catalog, CatalogState, RecordedTransition, TransitionId, TransitionResult } from "./types";
 import { catalogVersionPinned, schemaMappingExplicit } from "./invariants";
 
 export interface CatalogMachineDeps {
@@ -18,15 +18,42 @@ export interface CatalogMachine {
   deprecateCatalog(): TransitionResult;
 }
 
+/** One row per [[spec]] ## Model transition: id, from, to, guard. */
+type TransitionRow = {
+  readonly id: TransitionId;
+  readonly from: CatalogState;
+  readonly to: CatalogState;
+  readonly guard: (catalog: Catalog, deps: CatalogMachineDeps) => boolean;
+  readonly guardFailReason: string;
+};
+
+function transitionTable(catalog: Catalog, deps: CatalogMachineDeps): Record<TransitionId, TransitionRow> {
+  const row = (
+    id: TransitionId,
+    from: CatalogState,
+    to: CatalogState,
+    guard: TransitionRow["guard"],
+    guardFailReason: string,
+  ): TransitionRow => ({ id, from, to, guard, guardFailReason });
+  return {
+    validate_catalog: row("validate_catalog", "draft", "validated", (c) => schemaMappingExplicit(c), "schema_mapping_explicit does not hold"),
+    reject_catalog: row("reject_catalog", "draft", "deprecated", (c) => !schemaMappingExplicit(c), "schema_mapping_explicit holds, nothing to reject"),
+    publish_catalog: row("publish_catalog", "validated", "published", (c) => catalogVersionPinned(c), "catalog_version_pinned does not hold"),
+    deprecate_catalog: row("deprecate_catalog", "published", "deprecated", (_c, d) => (d.review ?? "").trim() !== "", "catalog_changes_reviewed does not hold (no review record)"),
+  };
+}
+
 export function createCatalogMachine(catalog: Catalog, deps: CatalogMachineDeps = {}): CatalogMachine {
   let state: CatalogState = "draft";
   const log: RecordedTransition[] = [];
+  const table = transitionTable(catalog, deps);
 
-  function transition(id: RecordedTransition["id"], from: CatalogState, to: CatalogState, guard: () => boolean, guardFailReason: string): TransitionResult {
-    if (state !== from) return { ok: false, reason: `${id}: expected state ${from}, found ${state}` };
-    if (!guard()) return { ok: false, reason: `${id}: guard failed — ${guardFailReason}` };
-    state = to;
-    log.push({ id, from, to });
+  function fire(id: TransitionId): TransitionResult {
+    const row = table[id];
+    if (state !== row.from) return { ok: false, reason: `${id}: expected state ${row.from}, found ${state}` };
+    if (!row.guard(catalog, deps)) return { ok: false, reason: `${id}: guard failed — ${row.guardFailReason}` };
+    state = row.to;
+    log.push({ id: row.id, from: row.from, to: row.to });
     return { ok: true };
   }
 
@@ -37,13 +64,9 @@ export function createCatalogMachine(catalog: Catalog, deps: CatalogMachineDeps 
     get log() {
       return log;
     },
-    validateCatalog: () =>
-      transition("validate_catalog", "draft", "validated", () => schemaMappingExplicit(catalog), "schema_mapping_explicit does not hold"),
-    rejectCatalog: () =>
-      transition("reject_catalog", "draft", "deprecated", () => !schemaMappingExplicit(catalog), "schema_mapping_explicit holds, nothing to reject"),
-    publishCatalog: () =>
-      transition("publish_catalog", "validated", "published", () => catalogVersionPinned(catalog), "catalog_version_pinned does not hold"),
-    deprecateCatalog: () =>
-      transition("deprecate_catalog", "published", "deprecated", () => (deps.review ?? "").trim() !== "", "catalog_changes_reviewed does not hold (no review record)"),
+    validateCatalog: () => fire("validate_catalog"),
+    rejectCatalog: () => fire("reject_catalog"),
+    publishCatalog: () => fire("publish_catalog"),
+    deprecateCatalog: () => fire("deprecate_catalog"),
   };
 }
