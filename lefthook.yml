@@ -17,7 +17,9 @@ pre-commit:
 pre-push:
   commands:
     pretender-gate:
-      run: pretender check --mode gate
+      # scope to first-party code: a full-scan pulls in node_modules vendor
+      # violations (9613 in typescript/vitest libs) that would gate every push
+      run: pretender check src tests tools --mode gate
     ah-check-gate:
       run: ah check --run-tests
     testaruda-gate:
