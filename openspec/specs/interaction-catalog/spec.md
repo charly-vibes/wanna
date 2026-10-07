@@ -74,32 +74,79 @@ A missing human contribution does not automatically imply that the catalog shoul
 
 ## Requirements
 
-### Requirement: Trusted Interaction Catalog declared invariants are observable
+### Requirement: Trusted Interaction Catalog model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Trusted Interaction Catalog invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: validate-catalog moves `draft` to `validated`
+- **WHEN** the model is in the `draft` state and the `validate_catalog` transition guard holds ([[spec.kind_response_schema_defined]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.every_kind_has_response_schema]]
-- **VERIFIES** [[spec.kind_set_requires_version_change]]
-- **VERIFIES** [[spec.labels_are_not_option_identity]]
-- **VERIFIES** [[spec.bounds_are_declared_and_enforced]]
-- **VERIFIES** [[spec.mapping_is_not_agent_controlled]]
-- **VERIFIES** [[spec.no_mapping_returns_explicit_result]]
-- **VERIFIES** [[spec.authorization_is_action_bound]]
-- **VERIFIES** [[spec.catalog_cannot_load_arbitrary_renderer]]
-- **VERIFIES** [[spec.published_version_never_mutates]]
-- **VERIFIES** [[spec.retirement_migration_is_explicit]]
+
+#### Scenario: reject-invalid-catalog moves `draft` to `invalid`
+- **WHEN** the model is in the `draft` state and the `reject_invalid_catalog` transition guard evaluates false (¬([[spec.kind_response_schema_defined]]))
+- **THEN** the model enters the `invalid` state and records the transition
+- **VERIFIES** [[spec.every_kind_has_response_schema]]
+
+#### Scenario: correct-catalog moves `invalid` to `draft`
+- **WHEN** the model is in the `invalid` state and the `correct_catalog` transition guard holds ([[spec.corrected_catalog_received]])
+- **THEN** the model enters the `draft` state and records the transition
 - **VERIFIES** [[spec.invalid_catalog_requires_correction]]
+
+#### Scenario: publish-pinned-catalog moves `validated` to `published`
+- **WHEN** the model is in the `validated` state and the `publish_pinned_catalog` transition guard holds ([[spec.publication_approved_and_versioned]])
+- **THEN** the model enters the `published` state and records the transition
 - **VERIFIES** [[spec.publication_requires_version_and_review]]
+
+#### Scenario: retire-catalog-version moves `published` to `retired`
+- **WHEN** the model is in the `published` state and the `retire_catalog_version` transition guard holds ([[spec.catalog_retirement_explicit]])
+- **THEN** the model enters the `retired` state and records the transition
+- **VERIFIES** [[spec.retirement_migration_is_explicit]]
+
+#### Scenario: catalog-kind-set-pinned invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "The published catalog defines a closed, versioned set of interaction kinds; a new kind requires a catalog version change and compatibility review."
+- **VERIFIES** [[spec.kind_set_requires_version_change]]
+
+#### Scenario: response-uses-stable-option-ids invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Choice and ranking responses refer to stable option IDs; labels are presentation-only and cannot be used as authoritative identifiers."
+- **VERIFIES** [[spec.labels_are_not_option_identity]]
+
+#### Scenario: bounds-defined-for-kind invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every kind defines maximum option/field counts, payload sizes, string lengths, nesting, and applicable numeric/cardinality bounds."
+- **VERIFIES** [[spec.bounds_are_declared_and_enforced]]
+
+#### Scenario: need-to-kind-mapping-trusted invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Need-kind to interaction-kind mappings are versioned catalog/policy data and cannot be authored or overridden by an untrusted agent proposal."
+- **VERIFIES** [[spec.mapping_is_not_agent_controlled]]
+
+#### Scenario: mapping-has-valid-fallback invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Each declared mapping either identifies an eligible primary kind and permitted alternatives or returns an explicit no-eligible-interaction outcome."
+- **VERIFIES** [[spec.no_mapping_returns_explicit_result]]
+
+#### Scenario: authorization-scope-bound invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "An `authorize` contract identifies one specific action/scope and its policy context; it cannot be reused as approval for a different action, task revision, actor, or expiry window."
+- **VERIFIES** [[spec.authorization_is_action_bound]]
+
+#### Scenario: host-renderer-trusted invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Each published kind is bound only to registered trusted host renderers; catalog text cannot name an arbitrary module or execute presentation code."
+- **VERIFIES** [[spec.catalog_cannot_load_arbitrary_renderer]]
+
+#### Scenario: published-catalog-immutable invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A published catalog version is immutable; changes create a new version and do not silently reinterpret active interactions."
+- **VERIFIES** [[spec.published_version_never_mutates]]
 
 #### Scenario: Violating Trusted Interaction Catalog invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

@@ -55,31 +55,74 @@ The agent may describe a need for human input and propose serializable values. I
 
 ## Requirements
 
-### Requirement: Interaction Security Boundary declared invariants are observable
+### Requirement: Interaction Security Boundary model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Interaction Security Boundary invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.agent_payload_never_executes]]
-- **VERIFIES** [[spec.unknown_component_is_never_loaded]]
-- **VERIFIES** [[spec.oversized_payload_fails_before_render]]
-- **VERIFIES** [[spec.ui_cannot_authorize_action]]
-- **VERIFIES** [[spec.hostile_text_and_urls_are_inert]]
-- **VERIFIES** [[spec.spoofed_event_is_rejected]]
-- **VERIFIES** [[spec.diagnostics_do_not_leak_secrets]]
-- **VERIFIES** [[spec.agent_cannot_relax_hard_gate]]
+#### Scenario: accept-validated-payload moves `untrusted` to `validated`
+- **WHEN** the model is in the `untrusted` state and the `accept_validated_payload` transition guard holds ([[spec.payload_passes_security_validation]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.accepted_payload_passes_all_checks]]
+
+#### Scenario: reject-untrusted-payload moves `untrusted` to `rejected`
+- **WHEN** the model is in the `untrusted` state and the `reject_untrusted_payload` transition guard evaluates false (¬([[spec.payload_passes_security_validation]]))
+- **THEN** the model enters the `rejected` state and records the transition
+- **VERIFIES** [[spec.accepted_payload_passes_all_checks]]
+
+#### Scenario: resubmit-after-rejection moves `rejected` to `untrusted`
+- **WHEN** the model is in the `rejected` state and the `resubmit_after_rejection` transition guard holds ([[spec.new_proposal_received]])
+- **THEN** the model enters the `untrusted` state and records the transition
 - **VERIFIES** [[spec.rejected_payload_requires_resubmission]]
+
+#### Scenario: retire-after-use moves `validated` to `retired`
+- **WHEN** the model is in the `validated` state and the `retire_after_use` transition guard holds ([[spec.interaction_consumed_or_expired]])
+- **THEN** the model enters the `retired` state and records the transition
 - **VERIFIES** [[spec.retirement_requires_lifecycle_event]]
+
+#### Scenario: agent-content-untrusted invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Agent-authored text, option labels, identifiers, URLs, candidate data, and response suggestions are untrusted until validated and safely rendered."
+- **VERIFIES** [[spec.agent_payload_never_executes]]
+
+#### Scenario: render-only-allowlisted-kinds invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Only catalog-registered interaction kinds and host-approved component mappings are rendered; strings from an agent never become scripts, handlers, component paths, or raw HTML."
+- **VERIFIES** [[spec.unknown_component_is_never_loaded]]
+
+#### Scenario: input-limits-enforced invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Payload byte/character size, option count, nesting depth, field lengths, and collection sizes are bounded before expensive parsing or rendering."
+- **VERIFIES** [[spec.oversized_payload_fails_before_render]]
+
+#### Scenario: permissions-are-host-owned invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Authentication, authorization, approval requirements, and external-effect permissions are determined by trusted host/domain policy, not by an agent proposal or UI state."
+- **VERIFIES** [[spec.ui_cannot_authorize_action]]
+
+#### Scenario: links-and-text-are-safe invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Untrusted labels and descriptions are rendered as inert text; URL fields, if a catalog kind permits them, are parsed and checked against an explicit scheme/host policy before use."
+- **VERIFIES** [[spec.hostile_text_and_urls_are_inert]]
+
+#### Scenario: event-identity-is-not-trusted-from-ui invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "The runtime verifies task/session ownership, active interaction identity, revisions, event deduplication, and authorization context rather than trusting client-supplied identifiers alone."
+- **VERIFIES** [[spec.spoofed_event_is_rejected]]
+
+#### Scenario: diagnostics-are-data-minimized invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Rejection diagnostics expose stable reason codes and actionable non-sensitive detail but do not echo secrets, private task data, tokens, or unbounded hostile payloads."
+- **VERIFIES** [[spec.diagnostics_do_not_leak_secrets]]
+
+#### Scenario: hard-gates-are-not-llm-policy invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Security and authorization hard gates are encoded in trusted code/configuration and cannot be relaxed solely by model-generated rationale, ranking, or contract fields."
+- **VERIFIES** [[spec.agent_cannot_relax_hard_gate]]
 
 #### Scenario: Violating Interaction Security Boundary invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

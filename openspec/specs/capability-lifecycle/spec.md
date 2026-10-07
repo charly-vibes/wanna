@@ -56,28 +56,59 @@ This lifecycle captures the Jiti-style idea of an application that grows through
 
 ## Requirements
 
-### Requirement: Capability Growth Lifecycle declared invariants are observable
+### Requirement: Capability Growth Lifecycle model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Capability Growth Lifecycle invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: inspect-candidate moves `proposed` to `inspected`
+- **WHEN** the model is in the `proposed` state and the `inspect_candidate` transition guard holds ([[spec.proposal_is_inspectable]])
+- **THEN** the model enters the `inspected` state and records the transition
 - **VERIFIES** [[spec.proposal_is_inspectable_holds]]
+
+#### Scenario: preview-candidate moves `inspected` to `previewed`
+- **WHEN** the model is in the `inspected` state and the `preview_candidate` transition guard holds ([[spec.preview_is_non_committing]])
+- **THEN** the model enters the `previewed` state and records the transition
 - **VERIFIES** [[spec.preview_is_non_committing_holds]]
+
+#### Scenario: evaluate-candidate moves `previewed` to `evaluated`
+- **WHEN** the model is in the `previewed` state and the `evaluate_candidate` transition guard holds ([[spec.goal_and_safety_checks_separate]])
+- **THEN** the model enters the `evaluated` state and records the transition
 - **VERIFIES** [[spec.goal_and_safety_checks_separate_holds]]
+
+#### Scenario: approve-candidate moves `evaluated` to `approved`
+- **WHEN** the model is in the `evaluated` state and the `approve_candidate` transition guard holds ([[spec.acceptance_requires_gate]])
+- **THEN** the model enters the `approved` state and records the transition
 - **VERIFIES** [[spec.acceptance_requires_gate_holds]]
-- **VERIFIES** [[spec.existing_use_distinct_from_development_holds]]
+
+#### Scenario: register-candidate moves `approved` to `registered`
+- **WHEN** the model is in the `approved` state and the `register_candidate` transition guard holds ([[spec.failed_candidate_not_active]])
+- **THEN** the model enters the `registered` state and records the transition
 - **VERIFIES** [[spec.failed_candidate_not_active_holds]]
+
+#### Scenario: reject-candidate moves `evaluated` to `rejected`
+- **WHEN** the model is in the `evaluated` state and the `reject_candidate` transition guard evaluates false (¬([[spec.failed_candidate_not_active]]))
+- **THEN** the model enters the `rejected` state and records the transition
+- **VERIFIES** [[spec.failed_candidate_not_active_holds]]
+
+#### Scenario: retire-capability moves `registered` to `retired`
+- **WHEN** the model is in the `registered` state and the `retire_capability` transition guard holds ([[spec.retirement_and_recovery_supported]])
+- **THEN** the model enters the `retired` state and records the transition
 - **VERIFIES** [[spec.retirement_and_recovery_supported_holds]]
+
+#### Scenario: existing-use-distinct-from-development invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Invoking an existing registered capability is a different operation from proposing or changing its implementation and uses a distinct policy path."
+- **VERIFIES** [[spec.existing_use_distinct_from_development_holds]]
+
+#### Scenario: composition-is-bounded invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Declarative capability composition validates dependency availability, type compatibility, cycle constraints, and execution budgets before registration."
 - **VERIFIES** [[spec.composition_is_bounded_holds]]
 
 #### Scenario: Violating Capability Growth Lifecycle invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

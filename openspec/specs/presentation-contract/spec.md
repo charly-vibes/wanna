@@ -59,30 +59,69 @@ Semantic intent is portable; exact visual rendering is host-specific. The same i
 
 ## Requirements
 
-### Requirement: Presentation Contract declared invariants are observable
+### Requirement: Presentation Contract model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Presentation Contract invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: validate-presentation moves `proposed` to `validated`
+- **WHEN** the model is in the `proposed` state and the `validate_presentation` transition guard holds ([[spec.semantic_role_required]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.semantic_role_required_holds]]
-- **VERIFIES** [[spec.host_component_names_forbidden_holds]]
-- **VERIFIES** [[spec.content_hierarchy_explicit_holds]]
-- **VERIFIES** [[spec.density_bounded_holds]]
+
+#### Scenario: reject-presentation moves `proposed` to `unsupported`
+- **WHEN** the model is in the `proposed` state and the `reject_presentation` transition guard evaluates false (¬([[spec.semantic_role_required]]))
+- **THEN** the model enters the `unsupported` state and records the transition
+- **VERIFIES** [[spec.semantic_role_required_holds]]
+
+#### Scenario: render-with-capabilities moves `validated` to `renderable`
+- **WHEN** the model is in the `validated` state and the `render_with_capabilities` transition guard holds ([[spec.response_semantics_preserved]])
+- **THEN** the model enters the `renderable` state and records the transition
 - **VERIFIES** [[spec.response_semantics_preserved_holds]]
+
+#### Scenario: use-semantic-fallback moves `validated` to `fallback`
+- **WHEN** the model is in the `validated` state and the `use_semantic_fallback` transition guard holds ([[spec.fallback_is_semantic]])
+- **THEN** the model enters the `fallback` state and records the transition
 - **VERIFIES** [[spec.fallback_is_semantic_holds]]
+
+#### Scenario: retire-presentation moves `renderable` to `retired`
+- **WHEN** the model is in the `renderable` state and the `retire_presentation` transition guard holds ([[spec.density_bounded]])
+- **THEN** the model enters the `retired` state and records the transition
+- **VERIFIES** [[spec.density_bounded_holds]]
+
+#### Scenario: host-component-names-forbidden invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Presentation data references semantic component roles, not arbitrary host component names, module paths, or executable render functions."
+- **VERIFIES** [[spec.host_component_names_forbidden_holds]]
+
+#### Scenario: content-hierarchy-explicit invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A presentation contract identifies primary task, supporting context, optional detail, and available actions as distinct fields."
+- **VERIFIES** [[spec.content_hierarchy_explicit_holds]]
+
+#### Scenario: untrusted-text-inert invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "User- or model-provided text is rendered as inert text and never interpreted as markup or executable content."
 - **VERIFIES** [[spec.untrusted_text_inert_holds]]
+
+#### Scenario: active-interaction-stable invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A host must not reorder, replace, or semantically remap the active response surface during input except for a safety-critical transition or explicit user acceptance."
 - **VERIFIES** [[spec.mid_input_layout_semantics_stable]]
+
+#### Scenario: adaptation-reason-available invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Material adaptive presentation changes carry a user-comprehensible reason and, where safety permits, a stable/revert option."
 - **VERIFIES** [[spec.p_adaptation_reason_available]]
+
+#### Scenario: uncertainty-semantics-preserved invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Presentation communicates only uncertainty metrics supplied with defined semantics and evidence; hosts do not fabricate confidence or force one visualization technique across modalities."
 - **VERIFIES** [[spec.p_uncertainty_semantics_preserved]]
 
 #### Scenario: Violating Presentation Contract invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

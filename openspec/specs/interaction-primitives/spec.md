@@ -69,28 +69,59 @@ Failure paths add `Failure Model -> Recovery Contract -> Continuity/Reorientatio
 
 ## Requirements
 
-### Requirement: Interaction and UI/UX Amplification System Primitives declared invariants are observable
+### Requirement: Interaction and UI/UX Amplification System Primitives model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Interaction and UI/UX Amplification System Primitives invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: validate-system-primitives moves `draft` to `validated`
+- **WHEN** the model is in the `draft` state and the `validate_system_primitives` transition guard holds ([[spec.semantic_layers_separated]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.layers_have_distinct_types]]
-- **VERIFIES** [[spec.host_specific_types_absent]]
-- **VERIFIES** [[spec.failure_paths_are_typed]]
-- **VERIFIES** [[spec.provenance_distinguishes_evidence_strength]]
-- **VERIFIES** [[spec.p_contribution_precedes_presentation]]
+
+#### Scenario: reject-collapsed-model moves `draft` to `rejected`
+- **WHEN** the model is in the `draft` state and the `reject_collapsed_model` transition guard evaluates false (¬([[spec.semantic_layers_separated]]))
+- **THEN** the model enters the `rejected` state and records the transition
+- **VERIFIES** [[spec.layers_have_distinct_types]]
+
+#### Scenario: activate-valid-model moves `validated` to `active`
+- **WHEN** the model is in the `validated` state and the `activate_valid_model` transition guard holds ([[spec.contracts_declarative]])
+- **THEN** the model enters the `active` state and records the transition
 - **VERIFIES** [[spec.p_contracts_declarative]]
+
+#### Scenario: retire-model-revision moves `active` to `retired`
+- **WHEN** the model is in the `active` state and the `retire_model_revision` transition guard holds ([[spec.evidence_strength_explicit]])
+- **THEN** the model enters the `retired` state and records the transition
+- **VERIFIES** [[spec.provenance_distinguishes_evidence_strength]]
+
+#### Scenario: contribution-precedes-presentation invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Interaction selection is grounded in a normalized need and semantic contribution before a host presentation is chosen."
+- **VERIFIES** [[spec.p_contribution_precedes_presentation]]
+
+#### Scenario: host-neutral-core invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Core models contain no Pi, DOM, React, browser, TUI toolkit, or MCP SDK types."
+- **VERIFIES** [[spec.host_specific_types_absent]]
+
+#### Scenario: authority-orthogonal invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Model confidence, recommendation, verification, acknowledgement, UI rendering, or a generic click cannot independently grant protected authority."
 - **VERIFIES** [[spec.p_authority_orthogonal]]
+
+#### Scenario: failure-and-recovery-first-class invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Failures and recovery actions are represented as typed state with effect certainty and recovery preconditions rather than generic exceptions."
+- **VERIFIES** [[spec.failure_paths_are_typed]]
+
+#### Scenario: continuity-not-persistence-only invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Resumption includes reorientation and reconciliation semantics, not merely reloading serialized state."
 - **VERIFIES** [[spec.p_continuity_not_persistence_only]]
 
 #### Scenario: Violating Interaction and UI/UX Amplification System Primitives invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

@@ -47,27 +47,54 @@ The catalog is a versioned allowlist and compatibility boundary. It defines the 
 
 ## Requirements
 
-### Requirement: Trusted Component Catalog declared invariants are observable
+### Requirement: Trusted Component Catalog model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Trusted Component Catalog invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.catalog_version_pinned_holds]]
-- **VERIFIES** [[spec.roles_allowlisted_holds]]
-- **VERIFIES** [[spec.host_capabilities_declared_holds]]
+#### Scenario: validate-catalog moves `draft` to `validated`
+- **WHEN** the model is in the `draft` state and the `validate_catalog` transition guard holds ([[spec.schema_mapping_explicit]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.schema_mapping_explicit_holds]]
-- **VERIFIES** [[spec.fallback_graph_acyclic_holds]]
+
+#### Scenario: reject-catalog moves `draft` to `deprecated`
+- **WHEN** the model is in the `draft` state and the `reject_catalog` transition guard evaluates false (¬([[spec.schema_mapping_explicit]]))
+- **THEN** the model enters the `deprecated` state and records the transition
+- **VERIFIES** [[spec.schema_mapping_explicit_holds]]
+
+#### Scenario: publish-catalog moves `validated` to `published`
+- **WHEN** the model is in the `validated` state and the `publish_catalog` transition guard holds ([[spec.catalog_version_pinned]])
+- **THEN** the model enters the `published` state and records the transition
+- **VERIFIES** [[spec.catalog_version_pinned_holds]]
+
+#### Scenario: deprecate-catalog moves `published` to `deprecated`
+- **WHEN** the model is in the `published` state and the `deprecate_catalog` transition guard holds ([[spec.catalog_changes_reviewed]])
+- **THEN** the model enters the `deprecated` state and records the transition
 - **VERIFIES** [[spec.catalog_changes_reviewed_holds]]
+
+#### Scenario: roles-allowlisted invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Only registered semantic roles can be rendered."
+- **VERIFIES** [[spec.roles_allowlisted_holds]]
+
+#### Scenario: host-capabilities-declared invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Each host declares supported roles and limits before policy selects a host-specific presentation."
+- **VERIFIES** [[spec.host_capabilities_declared_holds]]
+
+#### Scenario: fallback-graph-acyclic invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Fallback mappings form an acyclic graph and terminate in a supported role or explicit unsupported result."
+- **VERIFIES** [[spec.fallback_graph_acyclic_holds]]
+
+#### Scenario: limits-consistent invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Host-specific limits cannot exceed the global security and interaction-contract limits."
 - **VERIFIES** [[spec.limits_consistent_holds]]
 
 #### Scenario: Violating Trusted Component Catalog invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

@@ -56,28 +56,64 @@ The initial semantic families are: `express`, `provide`, `constrain`, `select`, 
 
 ## Requirements
 
-### Requirement: Human Contribution Primitives declared invariants are observable
+### Requirement: Human Contribution Primitives model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Human Contribution Primitives invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: validate-primitive moves `proposed` to `validated`
+- **WHEN** the model is in the `proposed` state and the `validate_primitive` transition guard holds ([[spec.primitive_semantically_atomic]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.compound_activity_not_mislabeled_atomic]]
-- **VERIFIES** [[spec.rendering_does_not_change_primitive]]
-- **VERIFIES** [[spec.need_and_primitive_are_distinct]]
-- **VERIFIES** [[spec.verify_cannot_authorize]]
-- **VERIFIES** [[spec.escape_is_not_answer]]
+
+#### Scenario: reject-invalid-primitive moves `proposed` to `invalid`
+- **WHEN** the model is in the `proposed` state and the `reject_invalid_primitive` transition guard evaluates false (¬([[spec.primitive_semantically_atomic]]))
+- **THEN** the model enters the `invalid` state and records the transition
+- **VERIFIES** [[spec.compound_activity_not_mislabeled_atomic]]
+
+#### Scenario: activate-primitive moves `validated` to `active`
+- **WHEN** the model is in the `validated` state and the `activate_primitive` transition guard holds ([[spec.primitive_event_typed]])
+- **THEN** the model enters the `active` state and records the transition
 - **VERIFIES** [[spec.primitive_events_are_typed]]
-- **VERIFIES** [[spec.p_primitive_not_authority]]
+
+#### Scenario: complete-primitive moves `active` to `completed`
+- **WHEN** the model is in the `active` state and the `complete_primitive` transition guard holds ([[spec.primitive_event_typed]])
+- **THEN** the model enters the `completed` state and records the transition
+- **VERIFIES** [[spec.primitive_events_are_typed]]
+
+#### Scenario: escape-primitive moves `active` to `escaped`
+- **WHEN** the model is in the `active` state and the `escape_primitive` transition guard holds ([[spec.escape_semantics_explicit]])
+- **THEN** the model enters the `escaped` state and records the transition
+- **VERIFIES** [[spec.escape_is_not_answer]]
+
+#### Scenario: retire-primitive moves `completed` to `retired`
+- **WHEN** the model is in the `completed` state and the `retire_primitive` transition guard holds ([[spec.primitive_taxonomy_versioned]])
+- **THEN** the model enters the `retired` state and records the transition
 - **VERIFIES** [[spec.p_primitive_taxonomy_versioned]]
+
+#### Scenario: primitive-not-presentation invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Primitive identity is independent of radio buttons, menus, dialogs, text boxes, terminal prompts, gestures, or host component names."
+- **VERIFIES** [[spec.rendering_does_not_change_primitive]]
+
+#### Scenario: primitive-not-need invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A human need may be satisfied by one or more primitives, and a primitive may satisfy multiple need kinds; neither taxonomy is silently substituted for the other."
+- **VERIFIES** [[spec.need_and_primitive_are_distinct]]
+
+#### Scenario: primitive-not-authority invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Emitting a primitive event does not by itself create authority; authorization is valid only when the event satisfies an applicable authority policy or grant."
+- **VERIFIES** [[spec.p_primitive_not_authority]]
+
+#### Scenario: verification-distinct-from-authorization invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "`verify` establishes a judgment about correctness or evidence; `authorize` grants permission for an action. A verification event cannot satisfy an authorization precondition unless policy explicitly requires and separately records both semantics."
+- **VERIFIES** [[spec.verify_cannot_authorize]]
 
 #### Scenario: Violating Human Contribution Primitives invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

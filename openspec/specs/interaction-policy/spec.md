@@ -68,35 +68,99 @@ The policy selects among catalog-defined interaction kinds after the task has be
 
 ## Requirements
 
-### Requirement: Interaction Policy declared invariants are observable
+### Requirement: Interaction Policy model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Interaction Policy invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.ineligible_candidates_never_return]]
-- **VERIFIES** [[spec.no_candidate_is_explicit]]
-- **VERIFIES** [[spec.deterministic_order_is_permutation_invariant]]
-- **VERIFIES** [[spec.recommendation_count_is_bounded]]
-- **VERIFIES** [[spec.exclusions_are_explainable]]
-- **VERIFIES** [[spec.policy_cannot_authorize_action]]
-- **VERIFIES** [[spec.policy_versions_are_recorded]]
+#### Scenario: begin-valid-evaluation moves `ready` to `evaluating`
+- **WHEN** the model is in the `ready` state and the `begin_valid_evaluation` transition guard holds ([[spec.policy_input_valid]])
+- **THEN** the model enters the `evaluating` state and records the transition
 - **VERIFIES** [[spec.malformed_policy_input_fails_closed]]
+
+#### Scenario: reject-invalid-input moves `ready` to `failed`
+- **WHEN** the model is in the `ready` state and the `reject_invalid_input` transition guard evaluates false (¬([[spec.policy_input_valid]]))
+- **THEN** the model enters the `failed` state and records the transition
+- **VERIFIES** [[spec.malformed_policy_input_fails_closed]]
+
+#### Scenario: return-ranked-candidates moves `evaluating` to `recommended`
+- **WHEN** the model is in the `evaluating` state and the `return_ranked_candidates` transition guard holds ([[spec.eligible_candidate_exists]])
+- **THEN** the model enters the `recommended` state and records the transition
+- **VERIFIES** [[spec.no_candidate_is_explicit]]
+
+#### Scenario: return-no-candidate moves `evaluating` to `no_candidate`
+- **WHEN** the model is in the `evaluating` state and the `return_no_candidate` transition guard evaluates false (¬([[spec.eligible_candidate_exists]]))
+- **THEN** the model enters the `no_candidate` state and records the transition
+- **VERIFIES** [[spec.no_candidate_is_explicit]]
+
+#### Scenario: reevaluate-after-recommendation moves `recommended` to `ready`
+- **WHEN** the model is in the `recommended` state and the `reevaluate_after_recommendation` transition guard holds ([[spec.reevaluation_requested]])
+- **THEN** the model enters the `ready` state and records the transition
 - **VERIFIES** [[spec.recommendation_retries_only_on_request]]
+
+#### Scenario: retry-after-empty-result moves `no_candidate` to `ready`
+- **WHEN** the model is in the `no_candidate` state and the `retry_after_empty_result` transition guard holds ([[spec.new_context_received]])
+- **THEN** the model enters the `ready` state and records the transition
 - **VERIFIES** [[spec.empty_result_requires_new_input]]
+
+#### Scenario: retry-after-failure moves `failed` to `ready`
+- **WHEN** the model is in the `failed` state and the `retry_after_failure` transition guard holds ([[spec.corrected_input_received]])
+- **THEN** the model enters the `ready` state and records the transition
 - **VERIFIES** [[spec.failed_evaluation_requires_correction]]
+
+#### Scenario: candidates-checked-for-eligibility invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every candidate is checked for kind support, required input availability, catalog constraints, host capability requirements, and applicable hard policy gates before ranking."
+- **VERIFIES** [[spec.ineligible_candidates_never_return]]
+
+#### Scenario: deterministic-tie-breaking invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Candidate ordering uses declared score fields and a stable final tie-break key independent of input array order, wall clock, randomness, or host iteration order."
+- **VERIFIES** [[spec.deterministic_order_is_permutation_invariant]]
+
+#### Scenario: output-count-bounded invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "The recommendation count is between zero and the configured maximum; the maximum is validated as a positive bounded configuration value."
+- **VERIFIES** [[spec.recommendation_count_is_bounded]]
+
+#### Scenario: exclusions-have-reason-codes invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every excluded candidate has at least one stable reason code tied to the gate that excluded it."
+- **VERIFIES** [[spec.exclusions_are_explainable]]
+
+#### Scenario: policy-never-grants-authority invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Policy results cannot authorize, approve, or execute a domain action; any independent permission or approval requirement remains mandatory."
+- **VERIFIES** [[spec.policy_cannot_authorize_action]]
+
+#### Scenario: policy-version-is-observable invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every result records policy/catalog versions, normalized input identity, ranking keys, exclusion reasons, and the tie-break rule version."
+- **VERIFIES** [[spec.policy_versions_are_recorded]]
+
+#### Scenario: policy-maps-need-to-semantics-before-ui invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Policy first selects eligible contribution primitives/patterns for the normalized need, then presentation capabilities; host widgets are not ranking inputs to semantic selection."
 - **VERIFIES** [[spec.need_maps_before_presentation]]
-- **VERIFIES** [[spec.disruptive_mid_input_adaptation_blocked]]
+
+#### Scenario: burden-inputs-typed invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Policy distinguishes measurable burden attributes from uncertain inferred human-state attributes and records which influenced ranking."
 - **VERIFIES** [[spec.p_burden_inputs_typed]]
+
+#### Scenario: interruptions-require-justification invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A proactive interruption is eligible only with an unresolved target, expected benefit, urgency/risk rationale, and reason deferral is insufficient."
 - **VERIFIES** [[spec.p_interruptions_require_justification]]
+
+#### Scenario: adaptation-stability-gate invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Policy rejects non-safety adaptations that would replace or semantically remap an active interaction during response entry."
+- **VERIFIES** [[spec.disruptive_mid_input_adaptation_blocked]]
 
 #### Scenario: Violating Interaction Policy invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

@@ -68,34 +68,99 @@ The runtime reduces validated input events against committed state. Host adapter
 
 ## Requirements
 
-### Requirement: Interaction Runtime declared invariants are observable
+### Requirement: Interaction Runtime model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Interaction Runtime invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: validate-envelope moves `active` to `validated`
+- **WHEN** the model is in the `active` state and the `validate_envelope` transition guard holds ([[spec.event_envelope_valid]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.malformed_event_never_mutates_state]]
-- **VERIFIES** [[spec.stale_or_duplicate_is_rejected]]
-- **VERIFIES** [[spec.reducer_is_repeatable]]
-- **VERIFIES** [[spec.replay_matches_live_reduction]]
-- **VERIFIES** [[spec.persistence_failure_semantics_are_declared]]
-- **VERIFIES** [[spec.cancellation_is_not_an_answer]]
-- **VERIFIES** [[spec.projection_cannot_mutate_authority]]
+
+#### Scenario: reject-malformed-envelope moves `active` to `malformed_event`
+- **WHEN** the model is in the `active` state and the `reject_malformed_envelope` transition guard evaluates false (¬([[spec.event_envelope_valid]]))
+- **THEN** the model enters the `malformed_event` state and records the transition
+- **VERIFIES** [[spec.malformed_event_never_mutates_state]]
+
+#### Scenario: apply-current-event moves `validated` to `applied`
+- **WHEN** the model is in the `validated` state and the `apply_current_event` transition guard holds ([[spec.event_commit_preconditions_satisfied]])
+- **THEN** the model enters the `applied` state and records the transition
 - **VERIFIES** [[spec.event_preconditions_are_compare_and_swap]]
+
+#### Scenario: reject-stale-or-duplicate moves `validated` to `rejected_commit`
+- **WHEN** the model is in the `validated` state and the `reject_stale_or_duplicate` transition guard evaluates false (¬([[spec.event_commit_preconditions_satisfied]]))
+- **THEN** the model enters the `rejected_commit` state and records the transition
+- **VERIFIES** [[spec.event_preconditions_are_compare_and_swap]]
+
+#### Scenario: continue-after-apply moves `applied` to `active`
+- **WHEN** the model is in the `applied` state and the `continue_after_apply` transition guard holds ([[spec.next_event_received]])
+- **THEN** the model enters the `active` state and records the transition
 - **VERIFIES** [[spec.continue_requires_next_event]]
+
+#### Scenario: retry-with-corrected-event moves `malformed_event` to `active`
+- **WHEN** the model is in the `malformed_event` state and the `retry_with_corrected_event` transition guard holds ([[spec.event_envelope_valid]])
+- **THEN** the model enters the `active` state and records the transition
+- **VERIFIES** [[spec.malformed_event_never_mutates_state]]
+
+#### Scenario: retry-after-state-refresh moves `rejected_commit` to `active`
+- **WHEN** the model is in the `rejected_commit` state and the `retry_after_state_refresh` transition guard holds ([[spec.state_refresh_received]])
+- **THEN** the model enters the `active` state and records the transition
 - **VERIFIES** [[spec.retry_requires_state_refresh]]
+
+#### Scenario: retire-interaction moves `active` to `retired`
+- **WHEN** the model is in the `active` state and the `retire_interaction` transition guard holds ([[spec.retirement_requested]])
+- **THEN** the model enters the `retired` state and records the transition
 - **VERIFIES** [[spec.retirement_requires_lifecycle_event]]
+
+#### Scenario: stale-or-duplicate-event-not-applied invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Stale, out-of-order, retired-interaction, contract-incompatible, or duplicate events do not mutate committed state and return a typed rejection reason."
+- **VERIFIES** [[spec.stale_or_duplicate_is_rejected]]
+
+#### Scenario: reducer-is-pure invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "The reducer is a deterministic pure function of prior state and a validated event; clock reads, random values, network calls, and persistence are outside it."
+- **VERIFIES** [[spec.reducer_is_repeatable]]
+
+#### Scenario: commit-and-replay-consistent invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Accepted state changes and replay records are committed atomically when supported by the persistence port; otherwise the adapter declares and tests the weaker failure semantics and never claims durable exactly-once processing."
+- **VERIFIES** [[spec.persistence_failure_semantics_are_declared]]
+
+#### Scenario: replay-reconstructs-state invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Replaying the accepted ordered event log from the recorded initial state and schema/policy versions reconstructs the same committed state."
+- **VERIFIES** [[spec.replay_matches_live_reduction]]
+
+#### Scenario: cancellation-is-explicit invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Cancellation, dismissal, expiry, supersession, and retirement are distinct typed outcomes where their semantics differ; they are not silently interpreted as an answer."
+- **VERIFIES** [[spec.cancellation_is_not_an_answer]]
+
+#### Scenario: derived-view-not-authoritative invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Presentation projections are derived from committed state and cannot mutate domain, process, or authority state."
+- **VERIFIES** [[spec.projection_cannot_mutate_authority]]
+
+#### Scenario: failure-outcome-typed invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Runtime failures produce or reference a typed failure record including effect certainty rather than only a generic exception."
 - **VERIFIES** [[spec.runtime_timeout_does_not_assume_failure]]
+
+#### Scenario: unknown-effect-blocks-unsafe-retry invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A mutating event with unknown external effect cannot be retried unless idempotency is proven or reconciliation resolves the prior outcome."
 - **VERIFIES** [[spec.unsafe_runtime_retry_is_blocked]]
+
+#### Scenario: continuity-checkpoint-on-suspend invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Suspension or recoverable interruption records the continuity checkpoint required to reorient and reconcile on resume."
 - **VERIFIES** [[spec.p_continuity_checkpoint_on_suspend]]
 
 #### Scenario: Violating Interaction Runtime invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

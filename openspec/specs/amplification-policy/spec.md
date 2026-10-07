@@ -53,27 +53,54 @@ The policy is deterministic after task state, normalized need, host capabilities
 
 ## Requirements
 
-### Requirement: Interaction Amplification Policy declared invariants are observable
+### Requirement: Interaction Amplification Policy model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Interaction Amplification Policy invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.risk_floor_preserved_holds]]
-- **VERIFIES** [[spec.least_burden_candidate_holds]]
-- **VERIFIES** [[spec.no_interaction_when_not_needed_holds]]
-- **VERIFIES** [[spec.uncertainty_can_escalate_holds]]
-- **VERIFIES** [[spec.decision_reasons_stable_holds]]
-- **VERIFIES** [[spec.preferences_are_soft_unless_declared_holds]]
+#### Scenario: normalize-context moves `received` to `normalized`
+- **WHEN** the model is in the `received` state and the `normalize_context` transition guard holds ([[spec.deterministic_after_normalization]])
+- **THEN** the model enters the `normalized` state and records the transition
 - **VERIFIES** [[spec.deterministic_after_normalization_holds]]
+
+#### Scenario: evaluate-candidates moves `normalized` to `evaluated`
+- **WHEN** the model is in the `normalized` state and the `evaluate_candidates` transition guard holds ([[spec.risk_floor_preserved]])
+- **THEN** the model enters the `evaluated` state and records the transition
+- **VERIFIES** [[spec.risk_floor_preserved_holds]]
+
+#### Scenario: select-candidate moves `evaluated` to `selected`
+- **WHEN** the model is in the `evaluated` state and the `select_candidate` transition guard holds ([[spec.least_burden_candidate]])
+- **THEN** the model enters the `selected` state and records the transition
+- **VERIFIES** [[spec.least_burden_candidate_holds]]
+
+#### Scenario: return-no-candidate moves `evaluated` to `no_candidate`
+- **WHEN** the model is in the `evaluated` state and the `return_no_candidate` transition guard holds ([[spec.no_interaction_when_not_needed]])
+- **THEN** the model enters the `no_candidate` state and records the transition
+- **VERIFIES** [[spec.no_interaction_when_not_needed_holds]]
+
+#### Scenario: reject-stale-context moves `evaluated` to `stale`
+- **WHEN** the model is in the `evaluated` state and the `reject_stale_context` transition guard evaluates false (¬([[spec.deterministic_after_normalization]]))
+- **THEN** the model enters the `stale` state and records the transition
+- **VERIFIES** [[spec.deterministic_after_normalization_holds]]
+
+#### Scenario: recompute-new-context moves `stale` to `received`
+- **WHEN** the model is in the `stale` state and the `recompute_new_context` transition guard holds ([[spec.decision_reasons_stable]])
+- **THEN** the model enters the `received` state and records the transition
+- **VERIFIES** [[spec.decision_reasons_stable_holds]]
+
+#### Scenario: uncertainty-can-escalate invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Uncertainty or conflicting evidence may increase the required review level but never silently decreases it."
+- **VERIFIES** [[spec.uncertainty_can_escalate_holds]]
+
+#### Scenario: preferences-are-soft-unless-declared invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "User presentation preferences affect ranking only unless an explicit accessibility, safety, or task constraint makes them mandatory."
+- **VERIFIES** [[spec.preferences_are_soft_unless_declared_holds]]
 
 #### Scenario: Violating Interaction Amplification Policy invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

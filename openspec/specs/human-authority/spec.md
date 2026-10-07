@@ -53,28 +53,64 @@ An interaction may collect consent, review, or approval, but rendering a button 
 
 ## Requirements
 
-### Requirement: Human Authority and Approval declared invariants are observable
+### Requirement: Human Authority and Approval model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Human Authority and Approval invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: request-approval moves `not_required` to `pending`
+- **WHEN** the model is in the `not_required` state and the `request_approval` transition guard holds ([[spec.approval_scope_explicit]])
+- **THEN** the model enters the `pending` state and records the transition
 - **VERIFIES** [[spec.approval_scope_explicit_holds]]
+
+#### Scenario: grant-approval moves `pending` to `approved`
+- **WHEN** the model is in the `pending` state and the `grant_approval` transition guard holds ([[spec.authorization_at_execution]])
+- **THEN** the model enters the `approved` state and records the transition
 - **VERIFIES** [[spec.authorization_at_execution_holds]]
+
+#### Scenario: deny-approval moves `pending` to `denied`
+- **WHEN** the model is in the `pending` state and the `deny_approval` transition guard evaluates false (¬([[spec.authorization_at_execution]]))
+- **THEN** the model enters the `denied` state and records the transition
+- **VERIFIES** [[spec.authorization_at_execution_holds]]
+
+#### Scenario: expire-approval moves `approved` to `expired`
+- **WHEN** the model is in the `approved` state and the `expire_approval` transition guard holds ([[spec.approval_scope_explicit]])
+- **THEN** the model enters the `expired` state and records the transition
+- **VERIFIES** [[spec.approval_scope_explicit_holds]]
+
+#### Scenario: invalidate-approval moves `approved` to `invalidated`
+- **WHEN** the model is in the `approved` state and the `invalidate_approval` transition guard holds ([[spec.approval_invalidated_on_material_change]])
+- **THEN** the model enters the `invalidated` state and records the transition
 - **VERIFIES** [[spec.approval_invalidated_on_material_change_holds]]
+
+#### Scenario: model-cannot-self-approve invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A model-generated proposal or confidence score cannot satisfy a required human or external authority requirement."
 - **VERIFIES** [[spec.model_cannot_self_approve_holds]]
+
+#### Scenario: denial-is-terminal-for-attempt invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A denied authorization attempt cannot be retried as authorized without a new approval or changed request under policy."
 - **VERIFIES** [[spec.denial_is_terminal_for_attempt_holds]]
+
+#### Scenario: approval-audited invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Approval and denial outcomes are recorded with sufficient provenance for later review while minimizing sensitive data."
 - **VERIFIES** [[spec.approval_audited_holds]]
+
+#### Scenario: authority-sources-explicit invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Protected authority may derive from immediate approval, prior delegated authority, bounded automation grants, role policy, or organizational policy; every source is explicit, scoped, revocable/expiring where applicable, and auditable."
 - **VERIFIES** [[spec.delegated_authority_supported]]
+
+#### Scenario: verification-not-authority invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Verification, acknowledgement, recommendation, model confidence, and authentication do not satisfy an authorization requirement unless a separate applicable authority grant exists."
 - **VERIFIES** [[spec.reauthentication_not_approval]]
 
 #### Scenario: Violating Human Authority and Approval invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

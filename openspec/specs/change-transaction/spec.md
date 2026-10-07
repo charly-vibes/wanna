@@ -56,28 +56,64 @@ A change transaction records a base revision, candidate revision, validation res
 
 ## Requirements
 
-### Requirement: Change Transaction and Revision History declared invariants are observable
+### Requirement: Change Transaction and Revision History model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Change Transaction and Revision History invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: preview-change moves `draft` to `previewed`
+- **WHEN** the model is in the `draft` state and the `preview_change` transition guard holds ([[spec.base_revision_pinned]])
+- **THEN** the model enters the `previewed` state and records the transition
 - **VERIFIES** [[spec.base_revision_pinned_holds]]
-- **VERIFIES** [[spec.optimistic_conflict_checked_holds]]
-- **VERIFIES** [[spec.commit_atomic_holds]]
+
+#### Scenario: validate-change moves `previewed` to `validated`
+- **WHEN** the model is in the `previewed` state and the `validate_change` transition guard holds ([[spec.validation_evidence_retained]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.validation_evidence_retained_holds]]
-- **VERIFIES** [[spec.failed_commit_preserves_active_holds]]
-- **VERIFIES** [[spec.rollback_is_new_revision_holds]]
+
+#### Scenario: request-approval moves `validated` to `awaiting_approval`
+- **WHEN** the model is in the `validated` state and the `request_approval` transition guard holds ([[spec.commit_atomic]])
+- **THEN** the model enters the `awaiting_approval` state and records the transition
+- **VERIFIES** [[spec.commit_atomic_holds]]
+
+#### Scenario: commit-change moves `awaiting_approval` to `committed`
+- **WHEN** the model is in the `awaiting_approval` state and the `commit_change` transition guard holds ([[spec.optimistic_conflict_checked]])
+- **THEN** the model enters the `committed` state and records the transition
+- **VERIFIES** [[spec.optimistic_conflict_checked_holds]]
+
+#### Scenario: reject-change moves `validated` to `rejected`
+- **WHEN** the model is in the `validated` state and the `reject_change` transition guard evaluates false (¬([[spec.validation_evidence_retained]]))
+- **THEN** the model enters the `rejected` state and records the transition
+- **VERIFIES** [[spec.validation_evidence_retained_holds]]
+
+#### Scenario: detect-revision-conflict moves `awaiting_approval` to `conflicted`
+- **WHEN** the model is in the `awaiting_approval` state and the `detect_revision_conflict` transition guard evaluates false (¬([[spec.optimistic_conflict_checked]]))
+- **THEN** the model enters the `conflicted` state and records the transition
+- **VERIFIES** [[spec.optimistic_conflict_checked_holds]]
+
+#### Scenario: recover-interrupted-change moves `conflicted` to `recovered`
+- **WHEN** the model is in the `conflicted` state and the `recover_interrupted_change` transition guard holds ([[spec.inflight_operations_not_replayed]])
+- **THEN** the model enters the `recovered` state and records the transition
 - **VERIFIES** [[spec.inflight_operations_not_replayed_holds]]
+
+#### Scenario: failed-commit-preserves-active invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A failed or rejected transaction leaves the active revision unchanged."
+- **VERIFIES** [[spec.failed_commit_preserves_active_holds]]
+
+#### Scenario: rollback-is-new-revision invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Rollback creates a new revision referencing the restored prior state and preserves all intervening revision history."
+- **VERIFIES** [[spec.rollback_is_new_revision_holds]]
+
+#### Scenario: migration-explicit invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Schema or state migrations are versioned, tested, and either committed atomically or leave the prior state active."
 - **VERIFIES** [[spec.migration_explicit_holds]]
 
 #### Scenario: Violating Change Transaction and Revision History invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

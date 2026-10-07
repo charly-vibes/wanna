@@ -69,34 +69,95 @@ Adapters translate validated interaction contracts into the capabilities of Pi's
 
 ## Requirements
 
-### Requirement: Host Adapter Layer declared invariants are observable
+### Requirement: Host Adapter Layer model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Host Adapter Layer invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.adapters_emit_equivalent_events]]
-- **VERIFIES** [[spec.unsupported_kind_is_visible]]
-- **VERIFIES** [[spec.stale_response_is_revalidated]]
-- **VERIFIES** [[spec.rendering_does_not_grant_authority]]
-- **VERIFIES** [[spec.host_imports_stay_in_adapters]]
-- **VERIFIES** [[spec.keyboard_flow_preserves_semantics]]
-- **VERIFIES** [[spec.host_loss_does_not_invent_answer]]
-- **VERIFIES** [[spec.invalid_contract_is_rejected]]
-- **VERIFIES** [[spec.declared_capabilities_are_tested]]
-- **VERIFIES** [[spec.capability_check_uses_supported_kind]]
+#### Scenario: validate-received-contract moves `received` to `capability_checked`
+- **WHEN** the model is in the `received` state and the `validate_received_contract` transition guard holds ([[spec.incoming_contract_valid]])
+- **THEN** the model enters the `capability_checked` state and records the transition
 - **VERIFIES** [[spec.rejected_contract_requires_new_input]]
+
+#### Scenario: reject-invalid-received-contract moves `received` to `invalid_contract`
+- **WHEN** the model is in the `received` state and the `reject_invalid_received_contract` transition guard evaluates false (¬([[spec.incoming_contract_valid]]))
+- **THEN** the model enters the `invalid_contract` state and records the transition
+- **VERIFIES** [[spec.rejected_contract_requires_new_input]]
+
+#### Scenario: render-supported-kind moves `capability_checked` to `rendered`
+- **WHEN** the model is in the `capability_checked` state and the `render_supported_kind` transition guard holds ([[spec.requested_kind_supported]])
+- **THEN** the model enters the `rendered` state and records the transition
+- **VERIFIES** [[spec.capability_check_uses_supported_kind]]
+
+#### Scenario: report-unsupported-kind moves `capability_checked` to `unsupported`
+- **WHEN** the model is in the `capability_checked` state and the `report_unsupported_kind` transition guard evaluates false (¬([[spec.requested_kind_supported]]))
+- **THEN** the model enters the `unsupported` state and records the transition
+- **VERIFIES** [[spec.capability_check_uses_supported_kind]]
+
+#### Scenario: accept-core-valid-response moves `rendered` to `accepted`
+- **WHEN** the model is in the `rendered` state and the `accept_core_valid_response` transition guard holds ([[spec.response_revalidated_by_core]])
+- **THEN** the model enters the `accepted` state and records the transition
+- **VERIFIES** [[spec.stale_response_is_revalidated]]
+
+#### Scenario: reject-core-invalid-response moves `rendered` to `rejected_response`
+- **WHEN** the model is in the `rendered` state and the `reject_core_invalid_response` transition guard evaluates false (¬([[spec.response_revalidated_by_core]]))
+- **THEN** the model enters the `rejected_response` state and records the transition
+- **VERIFIES** [[spec.stale_response_is_revalidated]]
+
+#### Scenario: retry-with-valid-contract moves `invalid_contract` to `received`
+- **WHEN** the model is in the `invalid_contract` state and the `retry_with_valid_contract` transition guard holds ([[spec.adapter_uses_shared_contract]])
+- **THEN** the model enters the `received` state and records the transition
+- **VERIFIES** [[spec.adapters_emit_equivalent_events]]
+- **VERIFIES** [[spec.invalid_contract_is_rejected]]
+
+#### Scenario: select-registered-fallback moves `unsupported` to `received`
+- **WHEN** the model is in the `unsupported` state and the `select_registered_fallback` transition guard holds ([[spec.new_compatible_interaction_received]])
+- **THEN** the model enters the `received` state and records the transition
 - **VERIFIES** [[spec.unsupported_requires_alternative]]
+
+#### Scenario: correct-rejected-response moves `rejected_response` to `received`
+- **WHEN** the model is in the `rejected_response` state and the `correct_rejected_response` transition guard holds ([[spec.new_response_received]])
+- **THEN** the model enters the `received` state and records the transition
 - **VERIFIES** [[spec.rejected_response_requires_resubmission]]
+
+#### Scenario: continue-after-acceptance moves `accepted` to `received`
+- **WHEN** the model is in the `accepted` state and the `continue_after_acceptance` transition guard holds ([[spec.interaction_flow_can_continue]])
+- **THEN** the model enters the `received` state and records the transition
 - **VERIFIES** [[spec.continuation_requires_accepted_response]]
+
+#### Scenario: host-capability-explicit invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Each adapter declares supported catalog kinds and limits; unsupported kinds return an explicit capability result or a registered semantically equivalent fallback."
+- **VERIFIES** [[spec.declared_capabilities_are_tested]]
+
+#### Scenario: visual-render-has-no-authority invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Showing, focusing, hiding, or enabling a control does not authorize an action or alter domain/process state."
+- **VERIFIES** [[spec.rendering_does_not_grant_authority]]
+
+#### Scenario: host-dependencies-confined invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Pi, browser/DOM, and TUI-library imports are confined to their adapter packages; core public types do not expose those dependencies."
+- **VERIFIES** [[spec.host_imports_stay_in_adapters]]
+
+#### Scenario: semantic-accessibility-preserved invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "An adapter provides an accessible path to the same response semantics using its supported input modes, including keyboard-only operation where the host supports input."
+- **VERIFIES** [[spec.keyboard_flow_preserves_semantics]]
+
+#### Scenario: unsupported-not-silent invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A requested interaction that cannot be rendered and has no registered equivalent produces an explicit unsupported result; it is never silently dropped or replaced with arbitrary markup."
+- **VERIFIES** [[spec.unsupported_kind_is_visible]]
+
+#### Scenario: host-loss-does-not-commit invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Closing a view, losing focus, or disconnecting a host does not imply a response or approval; any resume behavior is governed by the runtime lifecycle."
+- **VERIFIES** [[spec.host_loss_does_not_invent_answer]]
 
 #### Scenario: Violating Host Adapter Layer invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

@@ -60,30 +60,81 @@ Process models represent lifecycle and control flow, not screen layout. The init
 
 ## Requirements
 
-### Requirement: Process Model Primitives declared invariants are observable
+### Requirement: Process Model Primitives model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Process Model Primitives invariants hold on the canonical corpus
+#### Scenario: validate-process moves `draft` to `validated`
+- **WHEN** the model is in the `draft` state and the `validate_process` transition guard holds ([[spec.completion_criteria_explicit]])
+- **THEN** the model enters the `validated` state and records the transition
+- **VERIFIES** [[spec.completion_criteria_explicit_holds]]
 
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.process_kind_explicit_holds]]
+#### Scenario: start-process moves `validated` to `running`
+- **WHEN** the model is in the `validated` state and the `start_process` transition guard holds ([[spec.transitions_guarded]])
+- **THEN** the model enters the `running` state and records the transition
 - **VERIFIES** [[spec.transitions_guarded_holds]]
-- **VERIFIES** [[spec.dependencies_acyclic_or_declared_holds]]
+
+#### Scenario: suspend-process moves `running` to `waiting`
+- **WHEN** the model is in the `running` state and the `suspend_process` transition guard holds ([[spec.waits_correlated]])
+- **THEN** the model enters the `waiting` state and records the transition
+- **VERIFIES** [[spec.waits_correlated_holds]]
+
+#### Scenario: resume-correlated-wait moves `waiting` to `running`
+- **WHEN** the model is in the `waiting` state and the `resume_correlated_wait` transition guard holds ([[spec.waits_correlated]])
+- **THEN** the model enters the `running` state and records the transition
+- **VERIFIES** [[spec.waits_correlated_holds]]
+
+#### Scenario: complete-process moves `running` to `completed`
+- **WHEN** the model is in the `running` state and the `complete_process` transition guard holds ([[spec.completion_criteria_explicit]])
+- **THEN** the model enters the `completed` state and records the transition
+- **VERIFIES** [[spec.completion_criteria_explicit_holds]]
+
+#### Scenario: fail-process moves `running` to `failed`
+- **WHEN** the model is in the `running` state and the `fail_process` transition guard evaluates false (¬([[spec.completion_criteria_explicit]] ∨ [[spec.waits_correlated]] ∨ [[spec.cancellation_semantics_defined]]))
+- **THEN** the model enters the `failed` state and records the transition
+- **VERIFIES** [[spec.cancellation_semantics_defined_holds]]
 - **VERIFIES** [[spec.completion_criteria_explicit_holds]]
 - **VERIFIES** [[spec.waits_correlated_holds]]
+
+#### Scenario: cancel-process moves `running` to `cancelled`
+- **WHEN** the model is in the `running` state and the `cancel_process` transition guard holds ([[spec.cancellation_semantics_defined]])
+- **THEN** the model enters the `cancelled` state and records the transition
 - **VERIFIES** [[spec.cancellation_semantics_defined_holds]]
+
+#### Scenario: process-kind-explicit invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every process definition declares its model kind and schema version."
+- **VERIFIES** [[spec.process_kind_explicit_holds]]
+
+#### Scenario: dependencies-acyclic-or-declared invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A dependency graph is acyclic unless an explicit bounded loop construct defines termination and iteration limits."
+- **VERIFIES** [[spec.dependencies_acyclic_or_declared_holds]]
+
+#### Scenario: process-state-not-ui-state invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Changing presentation state alone cannot advance or complete the underlying process."
 - **VERIFIES** [[spec.process_state_not_ui_state_holds]]
+
+#### Scenario: failure-recovery-edges-explicit invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Processes that can perform effects declare failure containment and applicable recovery/reconciliation edges; a generic failed terminal state is insufficient for unknown or partial effects."
 - **VERIFIES** [[spec.effectful_process_has_recovery_path]]
-- **VERIFIES** [[spec.p_compound_human_activity_uses_patterns]]
+
+#### Scenario: process-failure-recorded invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "`process.model.process_failure(detail) — a process terminates in failure because detail; failure provenance is retained and applicable recovery/reconciliation edges are surfaced per failure_recovery_edges_explicit`"
 - **VERIFIES** [[spec.p_process_failure_recorded]]
+
+#### Scenario: compound-human-activity-uses-patterns invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Planning, diagnosis, review, coordination, monitoring, and clarification may be represented as interaction patterns composed of contribution primitives rather than assumed atomic states."
+- **VERIFIES** [[spec.p_compound_human_activity_uses_patterns]]
 
 #### Scenario: Violating Process Model Primitives invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

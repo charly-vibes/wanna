@@ -60,33 +60,84 @@ An interaction contract is a serializable, non-executable description of a reque
 
 ## Requirements
 
-### Requirement: Interaction Contract Layer declared invariants are observable
+### Requirement: Interaction Contract Layer model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Interaction Contract Layer invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: validate-contract moves `proposed` to `validated`
+- **WHEN** the model is in the `proposed` state and the `validate_contract` transition guard holds ([[spec.contract_payload_valid]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.malformed_contract_is_rejected]]
-- **VERIFIES** [[spec.unknown_kind_never_renders]]
-- **VERIFIES** [[spec.limits_are_enforced_at_boundary]]
-- **VERIFIES** [[spec.executable_content_is_rejected]]
-- **VERIFIES** [[spec.response_identity_is_preserved]]
-- **VERIFIES** [[spec.incompatible_version_never_silently_loads]]
-- **VERIFIES** [[spec.rejection_has_stable_reason]]
-- **VERIFIES** [[spec.contract_identity_is_complete]]
+
+#### Scenario: reject-contract moves `proposed` to `invalid`
+- **WHEN** the model is in the `proposed` state and the `reject_contract` transition guard evaluates false (¬([[spec.contract_payload_valid]]))
+- **THEN** the model enters the `invalid` state and records the transition
+- **VERIFIES** [[spec.malformed_contract_is_rejected]]
+
+#### Scenario: revise-invalid-contract moves `invalid` to `proposed`
+- **WHEN** the model is in the `invalid` state and the `revise_invalid_contract` transition guard holds ([[spec.corrected_contract_received]])
+- **THEN** the model enters the `proposed` state and records the transition
 - **VERIFIES** [[spec.invalid_contract_requires_correction]]
+
+#### Scenario: retire-contract moves `validated` to `retired`
+- **WHEN** the model is in the `validated` state and the `retire_contract` transition guard holds ([[spec.retirement_requested]])
+- **THEN** the model enters the `retired` state and records the transition
 - **VERIFIES** [[spec.retirement_requires_command]]
+
+#### Scenario: contract-has-identity-and-version invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every contract has a stable interaction ID, contract-schema version, interaction revision, task ID, and task revision precondition."
+- **VERIFIES** [[spec.contract_identity_is_complete]]
+
+#### Scenario: contract-kind-allowlisted invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every contract kind is present in the pinned host-neutral catalog; unknown kinds are rejected without dynamic imports or implicit fallback."
+- **VERIFIES** [[spec.unknown_kind_never_renders]]
+
+#### Scenario: contract-has-bounded-content invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Labels, descriptions, option counts, option values, numeric bounds, and serialized payload size obey catalog-defined limits."
+- **VERIFIES** [[spec.limits_are_enforced_at_boundary]]
+
+#### Scenario: contract-is-data-only invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A contract contains no executable scripts, event-handler code, arbitrary component names, untrusted HTML, or host-evaluated expressions."
+- **VERIFIES** [[spec.executable_content_is_rejected]]
+
+#### Scenario: response-correlated invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every accepted response preserves interaction ID, contract version, interaction revision, task revision precondition, and a unique event ID."
+- **VERIFIES** [[spec.response_identity_is_preserved]]
+
+#### Scenario: contract-version-migration-explicit invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A contract with an unsupported schema version is rejected or migrated by an explicit, tested migration; it is never silently reinterpreted."
+- **VERIFIES** [[spec.incompatible_version_never_silently_loads]]
+
+#### Scenario: contract-rejection-explained invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A rejected contract returns a stable machine-readable reason code and a non-sensitive diagnostic."
+- **VERIFIES** [[spec.rejection_has_stable_reason]]
+
+#### Scenario: contract-declares-contribution invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every interaction contract identifies the contribution primitive or versioned pattern it requests; semantic purpose is not inferred from a widget kind."
 - **VERIFIES** [[spec.contract_has_semantic_contribution]]
+
+#### Scenario: accessibility-obligations-carried invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every contract carries or references semantic accessibility obligations required of every host realization, including naming, operation, focus/navigation, status/error communication, and timing where applicable."
 - **VERIFIES** [[spec.contract_has_accessibility_obligations]]
+
+#### Scenario: escape-paths-declared invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every contract declares supported reject, defer, cancel, dismiss, and timeout semantics instead of treating absence as an answer."
 - **VERIFIES** [[spec.p_escape_paths_declared]]
 
 #### Scenario: Violating Interaction Contract Layer invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

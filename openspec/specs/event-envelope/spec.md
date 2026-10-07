@@ -52,28 +52,59 @@ Events are immutable facts or commands crossing a boundary. A response event car
 
 ## Requirements
 
-### Requirement: Typed Event Envelope declared invariants are observable
+### Requirement: Typed Event Envelope model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Typed Event Envelope invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.event_identity_unique_holds]]
-- **VERIFIES** [[spec.event_origin_correlated_holds]]
+#### Scenario: validate-event moves `received` to `validated`
+- **WHEN** the model is in the `received` state and the `validate_event` transition guard holds ([[spec.payload_schema_checked]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.payload_schema_checked_holds]]
+
+#### Scenario: reject-malformed-event moves `received` to `rejected`
+- **WHEN** the model is in the `received` state and the `reject_malformed_event` transition guard evaluates false (¬([[spec.payload_schema_checked]]))
+- **THEN** the model enters the `rejected` state and records the transition
+- **VERIFIES** [[spec.payload_schema_checked_holds]]
+
+#### Scenario: commit-event moves `validated` to `committed`
+- **WHEN** the model is in the `validated` state and the `commit_event` transition guard holds ([[spec.event_origin_correlated]])
+- **THEN** the model enters the `committed` state and records the transition
+- **VERIFIES** [[spec.event_origin_correlated_holds]]
+
+#### Scenario: ignore-duplicate moves `validated` to `duplicate`
+- **WHEN** the model is in the `validated` state and the `ignore_duplicate` transition guard holds ([[spec.duplicate_idempotent]])
+- **THEN** the model enters the `duplicate` state and records the transition
 - **VERIFIES** [[spec.duplicate_idempotent_holds]]
+
+#### Scenario: reject-stale-event moves `validated` to `stale`
+- **WHEN** the model is in the `validated` state and the `reject_stale_event` transition guard evaluates false (¬([[spec.stale_events_rejected]]))
+- **THEN** the model enters the `stale` state and records the transition
 - **VERIFIES** [[spec.stale_events_rejected_holds]]
+
+#### Scenario: event-identity-unique invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every event has a globally unique or session-scoped unique event ID and a stable event type."
+- **VERIFIES** [[spec.event_identity_unique_holds]]
+
+#### Scenario: reducer-pure invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "The reducer performs no I/O, rendering, model calls, clock reads, or random generation."
 - **VERIFIES** [[spec.reducer_pure_holds]]
+
+#### Scenario: rejection-typed invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Invalid, duplicate, stale, unauthorized, and unsupported events have distinct stable result codes."
 - **VERIFIES** [[spec.rejection_typed_holds]]
+
+#### Scenario: event-payload-bounded invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Event payloads enforce byte, nesting, string, collection, and numeric bounds at ingress."
 - **VERIFIES** [[spec.event_payload_bounded_holds]]
 
 #### Scenario: Violating Typed Event Envelope invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

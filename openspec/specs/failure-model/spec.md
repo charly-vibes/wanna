@@ -56,28 +56,64 @@ A particularly important distinction is between a known failed effect and an **u
 
 ## Requirements
 
-### Requirement: Failure Model declared invariants are observable
+### Requirement: Failure Model model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Failure Model invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.timeout_never_implies_no_effect]]
-- **VERIFIES** [[spec.unsafe_retry_blocked]]
-- **VERIFIES** [[spec.preserved_draft_survives_failure]]
-- **VERIFIES** [[spec.uncertainty_visible]]
+#### Scenario: contain-failure moves `detected` to `contained`
+- **WHEN** the model is in the `detected` state and the `contain_failure` transition guard holds ([[spec.failure_is_typed]])
+- **THEN** the model enters the `contained` state and records the transition
 - **VERIFIES** [[spec.p_failure_is_typed]]
+
+#### Scenario: assess-failure moves `contained` to `assessing`
+- **WHEN** the model is in the `contained` state and the `assess_failure` transition guard holds ([[spec.effect_certainty_explicit]])
+- **THEN** the model enters the `assessing` state and records the transition
+- **VERIFIES** [[spec.timeout_never_implies_no_effect]]
+
+#### Scenario: classify-known-failure moves `assessing` to `known`
+- **WHEN** the model is in the `assessing` state and the `classify_known_failure` transition guard holds ([[spec.effect_certainty_explicit]])
+- **THEN** the model enters the `known` state and records the transition
+- **VERIFIES** [[spec.timeout_never_implies_no_effect]]
+
+#### Scenario: classify-uncertain-failure moves `assessing` to `uncertain`
+- **WHEN** the model is in the `assessing` state and the `classify_uncertain_failure` transition guard holds ([[spec.effect_certainty_explicit]])
+- **THEN** the model enters the `uncertain` state and records the transition
+- **VERIFIES** [[spec.timeout_never_implies_no_effect]]
+
+#### Scenario: resolve-known-failure moves `known` to `resolved`
+- **WHEN** the model is in the `known` state and the `resolve_known_failure` transition guard holds ([[spec.recoverability_explicit]])
+- **THEN** the model enters the `resolved` state and records the transition
 - **VERIFIES** [[spec.p_recoverability_explicit]]
+
+#### Scenario: escalate-uncertain-failure moves `uncertain` to `escalated`
+- **WHEN** the model is in the `uncertain` state and the `escalate_uncertain_failure` transition guard evaluates false (¬([[spec.retry_safety_explicit]]))
+- **THEN** the model enters the `escalated` state and records the transition
+- **VERIFIES** [[spec.unsafe_retry_blocked]]
+
+#### Scenario: user-work-preserved-when-possible invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Failure containment preserves validated user input, drafts, evidence, and audit history unless preservation would violate security or privacy policy."
+- **VERIFIES** [[spec.preserved_draft_survives_failure]]
+
+#### Scenario: failure-diagnostic-non-deceptive invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "User-facing failure status distinguishes what is known, what failed, what may have succeeded, and what remains uncertain."
+- **VERIFIES** [[spec.uncertainty_visible]]
+
+#### Scenario: ai-failure-contained invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Malformed generated UI, invalid plans, tool loops, policy violations, or untrusted generated code cannot mutate authoritative state merely because generation succeeded."
 - **VERIFIES** [[spec.p_ai_failure_contained]]
+
+#### Scenario: failure-provenance-retained invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Failure records retain relevant event IDs, effect IDs, tool/adapter identity, versions, timestamps supplied by trusted ports, and evidence references."
 - **VERIFIES** [[spec.p_failure_provenance_retained]]
 
 #### Scenario: Violating Failure Model invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

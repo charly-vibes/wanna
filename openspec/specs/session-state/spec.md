@@ -54,29 +54,64 @@ A session groups related tasks and interactions. It records active revisions, pe
 
 ## Requirements
 
-### Requirement: Interaction Session State declared invariants are observable
+### Requirement: Interaction Session State model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Interaction Session State invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.session_identity_stable_holds]]
-- **VERIFIES** [[spec.pending_interactions_indexed_holds]]
+#### Scenario: suspend-session moves `open` to `suspended`
+- **WHEN** the model is in the `open` state and the `suspend_session` transition guard holds ([[spec.session_serializable]])
+- **THEN** the model enters the `suspended` state and records the transition
 - **VERIFIES** [[spec.session_serializable_holds]]
+
+#### Scenario: begin-recovery moves `suspended` to `recovering`
+- **WHEN** the model is in the `suspended` state and the `begin_recovery` transition guard holds ([[spec.resume_validates_revisions]])
+- **THEN** the model enters the `recovering` state and records the transition
 - **VERIFIES** [[spec.resume_validates_revisions_holds]]
-- **VERIFIES** [[spec.presentation_ephemeral_separate_holds]]
+
+#### Scenario: resume-session moves `recovering` to `open`
+- **WHEN** the model is in the `recovering` state and the `resume_session` transition guard holds ([[spec.resume_validates_revisions]])
+- **THEN** the model enters the `open` state and records the transition
+- **VERIFIES** [[spec.resume_validates_revisions_holds]]
+
+#### Scenario: detect-conflict moves `open` to `conflicted`
+- **WHEN** the model is in the `open` state and the `detect_conflict` transition guard holds ([[spec.concurrent_updates_detected]])
+- **THEN** the model enters the `conflicted` state and records the transition
 - **VERIFIES** [[spec.concurrent_updates_detected_holds]]
+
+#### Scenario: close-session moves `open` to `closed`
+- **WHEN** the model is in the `open` state and the `close_session` transition guard holds ([[spec.session_close_explicit]])
+- **THEN** the model enters the `closed` state and records the transition
 - **VERIFIES** [[spec.session_close_explicit_holds]]
+
+#### Scenario: session-identity-stable invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every session has a stable ID and monotonically increasing session revision."
+- **VERIFIES** [[spec.session_identity_stable_holds]]
+
+#### Scenario: pending-interactions-indexed invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Pending interactions are indexed by stable interaction ID and identify their task and contract revision."
+- **VERIFIES** [[spec.pending_interactions_indexed_holds]]
+
+#### Scenario: presentation-ephemeral-separate invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Purely visual transient state is not required for domain correctness and is stored separately from durable session state."
+- **VERIFIES** [[spec.presentation_ephemeral_separate_holds]]
+
+#### Scenario: resume-reorientation-required invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Restoring serialized session data is not sufficient for resume; continuity state identifies completed, pending, changed, unresolved, and next-attention items."
 - **VERIFIES** [[spec.restored_session_reorients]]
+
+#### Scenario: presentation-state-non-authoritative invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Host focus, scroll, cursor, open panels, and similar ephemera may be restored but cannot determine task completion or authority."
 - **VERIFIES** [[spec.p_presentation_state_non_authoritative]]
 
 #### Scenario: Violating Interaction Session State invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

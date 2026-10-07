@@ -58,28 +58,69 @@ Rollback restores managed internal state. Compensation performs a new action int
 
 ## Requirements
 
-### Requirement: Recovery Contract declared invariants are observable
+### Requirement: Recovery Contract model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Recovery Contract invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.unknown_nonidempotent_effect_never_retries]]
-- **VERIFIES** [[spec.rollback_cannot_claim_external_undo]]
-- **VERIFIES** [[spec.compensation_has_own_failure_path]]
-- **VERIFIES** [[spec.recovery_requires_postcheck]]
+#### Scenario: validate-recovery moves `proposed` to `eligible`
+- **WHEN** the model is in the `proposed` state and the `validate_recovery` transition guard holds ([[spec.recovery_operation_typed]])
+- **THEN** the model enters the `eligible` state and records the transition
 - **VERIFIES** [[spec.p_recovery_operation_typed]]
+
+#### Scenario: block-unsafe-recovery moves `proposed` to `blocked`
+- **WHEN** the model is in the `proposed` state and the `block_unsafe_recovery` transition guard evaluates false (¬([[spec.recovery_operation_typed]]))
+- **THEN** the model enters the `blocked` state and records the transition
+- **VERIFIES** [[spec.p_recovery_operation_typed]]
+
+#### Scenario: execute-recovery moves `eligible` to `executing`
+- **WHEN** the model is in the `eligible` state and the `execute_recovery` transition guard holds ([[spec.retry_requires_safety]])
+- **THEN** the model enters the `executing` state and records the transition
 - **VERIFIES** [[spec.p_retry_requires_safety]]
-- **VERIFIES** [[spec.p_recovery_preserves_evidence]]
+
+#### Scenario: verify-recovery moves `executing` to `verifying`
+- **WHEN** the model is in the `executing` state and the `verify_recovery` transition guard holds ([[spec.recovery_verification_required]])
+- **THEN** the model enters the `verifying` state and records the transition
+- **VERIFIES** [[spec.recovery_requires_postcheck]]
+
+#### Scenario: accept-recovery moves `verifying` to `recovered`
+- **WHEN** the model is in the `verifying` state and the `accept_recovery` transition guard holds ([[spec.recovery_verification_required]])
+- **THEN** the model enters the `recovered` state and records the transition
+- **VERIFIES** [[spec.recovery_requires_postcheck]]
+
+#### Scenario: preserve-failed-recovery moves `verifying` to `unresolved`
+- **WHEN** the model is in the `verifying` state and the `preserve_failed_recovery` transition guard evaluates false (¬([[spec.recovery_verification_required]]))
+- **THEN** the model enters the `unresolved` state and records the transition
+- **VERIFIES** [[spec.recovery_requires_postcheck]]
+
+#### Scenario: escalate-recovery moves `unresolved` to `escalated`
+- **WHEN** the model is in the `unresolved` state and the `escalate_recovery` transition guard holds ([[spec.user_control_available]])
+- **THEN** the model enters the `escalated` state and records the transition
 - **VERIFIES** [[spec.p_user_control_available]]
+
+#### Scenario: reconcile-precedes-unknown-retry invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "An `effect_unknown` failure cannot retry a non-idempotent mutation before reconciliation resolves effect state."
+- **VERIFIES** [[spec.unknown_nonidempotent_effect_never_retries]]
+
+#### Scenario: rollback-not-compensation invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Internal rollback cannot be represented as undoing an external effect; external effects require a declared compensation or explicit residual-effect record."
+- **VERIFIES** [[spec.rollback_cannot_claim_external_undo]]
+
+#### Scenario: compensation-is-new-effect invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A compensating action is itself authorized, observable, failure-prone, and auditable as a new effect."
+- **VERIFIES** [[spec.compensation_has_own_failure_path]]
+
+#### Scenario: recovery-preserves-evidence invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Recovery never deletes the original failure/effect evidence; new recovery events append lineage."
+- **VERIFIES** [[spec.p_recovery_preserves_evidence]]
 
 #### Scenario: Violating Recovery Contract invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

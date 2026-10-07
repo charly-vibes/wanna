@@ -55,27 +55,64 @@ Persistence is not sufficient for continuity. After interruption, the human must
 
 ## Requirements
 
-### Requirement: Task Continuity declared invariants are observable
+### Requirement: Task Continuity model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Task Continuity invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.resume_explains_delta]]
-- **VERIFIES** [[spec.stale_pending_action_not_silently_committed]]
-- **VERIFIES** [[spec.reauth_does_not_authorize]]
+#### Scenario: checkpoint-active-task moves `active` to `checkpointed`
+- **WHEN** the model is in the `active` state and the `checkpoint_active_task` transition guard holds ([[spec.checkpoint_scope_explicit]])
+- **THEN** the model enters the `checkpointed` state and records the transition
 - **VERIFIES** [[spec.p_checkpoint_scope_explicit]]
+
+#### Scenario: suspend-checkpoint moves `checkpointed` to `suspended`
+- **WHEN** the model is in the `checkpointed` state and the `suspend_checkpoint` transition guard holds ([[spec.interrupted_input_preserved]])
+- **THEN** the model enters the `suspended` state and records the transition
 - **VERIFIES** [[spec.p_interrupted_input_preserved]]
+
+#### Scenario: begin-reorientation moves `suspended` to `reorienting`
+- **WHEN** the model is in the `suspended` state and the `begin_reorientation` transition guard holds ([[spec.resume_reorients_user]])
+- **THEN** the model enters the `reorienting` state and records the transition
+- **VERIFIES** [[spec.resume_explains_delta]]
+
+#### Scenario: reconcile-changed-context moves `reorienting` to `reconciling`
+- **WHEN** the model is in the `reorienting` state and the `reconcile_changed_context` transition guard holds ([[spec.stale_context_reconciled]])
+- **THEN** the model enters the `reconciling` state and records the transition
+- **VERIFIES** [[spec.stale_pending_action_not_silently_committed]]
+
+#### Scenario: resume-unchanged-context moves `reorienting` to `resumed`
+- **WHEN** the model is in the `reorienting` state and the `resume_unchanged_context` transition guard holds ([[spec.resume_reorients_user]])
+- **THEN** the model enters the `resumed` state and records the transition
+- **VERIFIES** [[spec.resume_explains_delta]]
+
+#### Scenario: resume-reconciled-context moves `reconciling` to `resumed`
+- **WHEN** the model is in the `reconciling` state and the `resume_reconciled_context` transition guard holds ([[spec.stale_context_reconciled]])
+- **THEN** the model enters the `resumed` state and records the transition
+- **VERIFIES** [[spec.stale_pending_action_not_silently_committed]]
+
+#### Scenario: handoff-task moves `active` to `handed_off`
+- **WHEN** the model is in the `active` state and the `handoff_task` transition guard holds ([[spec.handoff_preserves_ownership]])
+- **THEN** the model enters the `handed_off` state and records the transition
 - **VERIFIES** [[spec.p_handoff_preserves_ownership]]
+
+#### Scenario: abandon-task moves `active` to `abandoned`
+- **WHEN** the model is in the `active` state and the `abandon_task` transition guard holds ([[spec.handoff_preserves_ownership]])
+- **THEN** the model enters the `abandoned` state and records the transition
+- **VERIFIES** [[spec.p_handoff_preserves_ownership]]
+
+#### Scenario: presentation-ephemera-not-authoritative invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Scroll position, cursor location, open panel, and host focus may aid restoration but cannot determine authoritative task progress."
 - **VERIFIES** [[spec.p_presentation_ephemera_not_authoritative]]
+
+#### Scenario: reauthentication-preserves-task invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Where policy permits, reauthentication restores the same task context and validated draft without treating authentication success as approval of pending actions."
+- **VERIFIES** [[spec.reauth_does_not_authorize]]
 
 #### Scenario: Violating Task Continuity invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

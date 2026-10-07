@@ -53,29 +53,59 @@ Evidence records connect a result to its inputs, transformations, model-produced
 
 ## Requirements
 
-### Requirement: Evidence and Provenance declared invariants are observable
+### Requirement: Evidence and Provenance model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Evidence and Provenance invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: validate-evidence moves `proposed` to `validated`
+- **WHEN** the model is in the `proposed` state and the `validate_evidence` transition guard holds ([[spec.evidence_has_identity]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.evidence_has_identity_holds]]
+
+#### Scenario: commit-evidence moves `validated` to `committed`
+- **WHEN** the model is in the `validated` state and the `commit_evidence` transition guard holds ([[spec.transformations_linked]])
+- **THEN** the model enters the `committed` state and records the transition
 - **VERIFIES** [[spec.transformations_linked_holds]]
-- **VERIFIES** [[spec.model_proposal_attributed_holds]]
-- **VERIFIES** [[spec.review_action_attributed_holds]]
-- **VERIFIES** [[spec.unknown_evidence_explicit_holds]]
-- **VERIFIES** [[spec.sensitive_data_minimized_holds]]
+
+#### Scenario: supersede-evidence moves `committed` to `superseded`
+- **WHEN** the model is in the `committed` state and the `supersede_evidence` transition guard holds ([[spec.audit_records_append_only]])
+- **THEN** the model enters the `superseded` state and records the transition
 - **VERIFIES** [[spec.audit_records_append_only_holds]]
+
+#### Scenario: restrict-sensitive-evidence moves `committed` to `restricted`
+- **WHEN** the model is in the `committed` state and the `restrict_sensitive_evidence` transition guard holds ([[spec.sensitive_data_minimized]])
+- **THEN** the model enters the `restricted` state and records the transition
+- **VERIFIES** [[spec.sensitive_data_minimized_holds]]
+
+#### Scenario: model-proposal-attributed invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Model-produced proposals record the model/provider identifier when available, prompt or task revision reference, and proposal ID without requiring sensitive prompt content to be retained indefinitely."
+- **VERIFIES** [[spec.model_proposal_attributed_holds]]
+
+#### Scenario: review-action-attributed invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Human review records the reviewed revision, action taken, and review scope; approval is not represented as proof of truth."
+- **VERIFIES** [[spec.review_action_attributed_holds]]
+
+#### Scenario: unknown-evidence-explicit invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Missing, conflicting, stale, or unverifiable evidence is marked with an explicit status."
+- **VERIFIES** [[spec.unknown_evidence_explicit_holds]]
+
+#### Scenario: evidence-class-recorded invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Imported design claims distinguish normative_standard, empirical_evidence, established_guidance, architectural_synthesis, and design_hypothesis."
 - **VERIFIES** [[spec.research_claims_classified]]
+
+#### Scenario: source-quality-not-normativity invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A claim does not become normative merely because it appears in a research report; normative strength is explicitly assigned and traceable."
 - **VERIFIES** [[spec.p_source_quality_not_normativity]]
 
 #### Scenario: Violating Evidence and Provenance invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

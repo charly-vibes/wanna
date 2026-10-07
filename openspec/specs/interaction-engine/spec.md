@@ -62,30 +62,79 @@ The engine orchestrates the decision boundary between an agent's proposed human-
 
 ## Requirements
 
-### Requirement: Interaction Engine declared invariants are observable
+### Requirement: Interaction Engine model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Interaction Engine invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: accept-context moves `draft` to `normalized`
+- **WHEN** the model is in the `draft` state and the `accept_context` transition guard holds ([[spec.context_schema_valid]])
+- **THEN** the model enters the `normalized` state and records the transition
 - **VERIFIES** [[spec.context_validation_rejects_malformed]]
-- **VERIFIES** [[spec.evaluation_versions_are_pinned]]
-- **VERIFIES** [[spec.identical_inputs_are_deterministic]]
-- **VERIFIES** [[spec.stale_result_is_not_committed]]
-- **VERIFIES** [[spec.core_has_no_host_or_io_imports]]
-- **VERIFIES** [[spec.rejection_preserves_state]]
+
+#### Scenario: reject-invalid-context moves `draft` to `invalid_context`
+- **WHEN** the model is in the `draft` state and the `reject_invalid_context` transition guard evaluates false (¬([[spec.context_schema_valid]]))
+- **THEN** the model enters the `invalid_context` state and records the transition
+- **VERIFIES** [[spec.context_validation_rejects_malformed]]
+
+#### Scenario: correct-invalid-context moves `invalid_context` to `draft`
+- **WHEN** the model is in the `invalid_context` state and the `correct_invalid_context` transition guard holds ([[spec.corrected_context_received]])
+- **THEN** the model enters the `draft` state and records the transition
 - **VERIFIES** [[spec.corrected_context_reenters_draft]]
+
+#### Scenario: evaluate-pinned-context moves `normalized` to `evaluated`
+- **WHEN** the model is in the `normalized` state and the `evaluate_pinned_context` transition guard holds ([[spec.policy_catalog_versions_pinned]])
+- **THEN** the model enters the `evaluated` state and records the transition
+- **VERIFIES** [[spec.evaluation_versions_are_pinned]]
+
+#### Scenario: commit-current-decision moves `evaluated` to `committed`
+- **WHEN** the model is in the `evaluated` state and the `commit_current_decision` transition guard holds ([[spec.context_version_current]])
+- **THEN** the model enters the `committed` state and records the transition
+- **VERIFIES** [[spec.stale_result_is_not_committed]]
+
+#### Scenario: reject-stale-decision moves `evaluated` to `stale_context`
+- **WHEN** the model is in the `evaluated` state and the `reject_stale_decision` transition guard evaluates false (¬([[spec.context_version_current]]))
+- **THEN** the model enters the `stale_context` state and records the transition
+- **VERIFIES** [[spec.stale_result_is_not_committed]]
+
+#### Scenario: refresh-stale-context moves `stale_context` to `draft`
+- **WHEN** the model is in the `stale_context` state and the `refresh_stale_context` transition guard holds ([[spec.corrected_context_received]])
+- **THEN** the model enters the `draft` state and records the transition
+- **VERIFIES** [[spec.corrected_context_reenters_draft]]
+
+#### Scenario: retire-committed-decision moves `committed` to `retired`
+- **WHEN** the model is in the `committed` state and the `retire_committed_decision` transition guard holds ([[spec.retirement_requested]])
+- **THEN** the model enters the `retired` state and records the transition
 - **VERIFIES** [[spec.retirement_is_explicit]]
-- **VERIFIES** [[spec.decision_has_provenance]]
+
+#### Scenario: deterministic-decision invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Equal canonical contexts evaluated with equal policy/catalog versions produce structurally equal decision results, including proposal ordering and reason codes."
+- **VERIFIES** [[spec.identical_inputs_are_deterministic]]
+
+#### Scenario: no-effects-in-core invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Evaluation and reduction expose requested external work as data and perform no filesystem, network, UI, model, or domain side effects."
 - **VERIFIES** [[spec.core_evaluation_has_no_effects]]
+
+#### Scenario: host-neutral-types invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Public core types contain no Pi, DOM, browser, React, TUI-library, or MCP-SDK types."
+- **VERIFIES** [[spec.core_has_no_host_or_io_imports]]
+
+#### Scenario: rejected-context-not-committed invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A malformed or stale context never produces a committed active interaction and leaves the prior committed task state unchanged."
+- **VERIFIES** [[spec.rejection_preserves_state]]
+
+#### Scenario: retain-decision-provenance invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every decision result records normalized need, task revision, policy/catalog versions, ordered candidates, exclusions, and stable reason codes."
+- **VERIFIES** [[spec.decision_has_provenance]]
 
 #### Scenario: Violating Interaction Engine invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

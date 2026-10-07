@@ -63,32 +63,80 @@ Pure decision logic and reducers return effect intents as data. A trusted execut
 
 ## Requirements
 
-### Requirement: Execution and Effect Boundary declared invariants are observable
+### Requirement: Execution and Effect Boundary model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Execution and Effect Boundary invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.core_returns_effect_intents_holds]]
-- **VERIFIES** [[spec.effects_allowlisted_holds]]
-- **VERIFIES** [[spec.preview_effects_isolated_holds]]
+#### Scenario: authorize-effect moves `proposed` to `authorized`
+- **WHEN** the model is in the `proposed` state and the `authorize_effect` transition guard holds ([[spec.effect_authorization_checked]])
+- **THEN** the model enters the `authorized` state and records the transition
 - **VERIFIES** [[spec.effect_authorization_checked_holds]]
+
+#### Scenario: start-effect moves `authorized` to `running`
+- **WHEN** the model is in the `authorized` state and the `start_effect` transition guard holds ([[spec.effects_allowlisted]])
+- **THEN** the model enters the `running` state and records the transition
+- **VERIFIES** [[spec.effects_allowlisted_holds]]
+
+#### Scenario: complete-effect moves `running` to `succeeded`
+- **WHEN** the model is in the `running` state and the `complete_effect` transition guard holds ([[spec.idempotency_or_compensation_declared]])
+- **THEN** the model enters the `succeeded` state and records the transition
 - **VERIFIES** [[spec.idempotency_or_compensation_declared_holds]]
-- **VERIFIES** [[spec.timeouts_and_budgets_enforced_holds]]
-- **VERIFIES** [[spec.untrusted_code_not_in_process_holds]]
+
+#### Scenario: fail-effect moves `running` to `failed`
+- **WHEN** the model is in the `running` state and the `fail_effect` transition guard evaluates false (¬([[spec.idempotency_or_compensation_declared]] ∨ [[spec.partial_failure_reported]]))
+- **THEN** the model enters the `failed` state and records the transition
+- **VERIFIES** [[spec.idempotency_or_compensation_declared_holds]]
 - **VERIFIES** [[spec.partial_failure_reported_holds]]
+
+#### Scenario: report-partial-effect moves `running` to `partial`
+- **WHEN** the model is in the `running` state and the `report_partial_effect` transition guard holds ([[spec.partial_failure_reported]])
+- **THEN** the model enters the `partial` state and records the transition
+- **VERIFIES** [[spec.partial_failure_reported_holds]]
+
+#### Scenario: cancel-effect moves `authorized` to `cancelled`
+- **WHEN** the model is in the `authorized` state and the `cancel_effect` transition guard holds ([[spec.preview_effects_isolated]])
+- **THEN** the model enters the `cancelled` state and records the transition
+- **VERIFIES** [[spec.preview_effects_isolated_holds]]
+
+#### Scenario: core-returns-effect-intents invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Core evaluation and reduction produce effect intents as data and do not perform I/O."
+- **VERIFIES** [[spec.core_returns_effect_intents_holds]]
+
+#### Scenario: timeouts-and-budgets-enforced invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Executions enforce declared time, resource, recursion, output-size, and retry budgets."
+- **VERIFIES** [[spec.timeouts_and_budgets_enforced_holds]]
+
+#### Scenario: untrusted-code-not-in-process invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "If executable model-generated code is supported, it runs behind a separately specified isolation boundary rather than in the trusted host process."
+- **VERIFIES** [[spec.untrusted_code_not_in_process_holds]]
+
+#### Scenario: effect-outcome-can-be-unknown invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Effect execution supports an explicit unknown outcome when acknowledgement is lost or evidence is insufficient; unknown is not coerced to success or failure."
 - **VERIFIES** [[spec.unknown_effect_is_representable]]
-- **VERIFIES** [[spec.compensation_can_fail_independently]]
+
+#### Scenario: retry-requires-idempotency-or-reconciliation invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A mutating effect is retryable after uncertain outcome only with a stable idempotency key/guarantee or successful reconciliation."
 - **VERIFIES** [[spec.p_retry_requires_idempotency_or_reconciliation]]
+
+#### Scenario: effect-outcome-failure invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "`effect.boundary.effect_execution_failure(detail) — a protected effect terminates without a verifiable outcome because detail; the failure is typed and evidenced, and the effect is not retried without satisfying retry_requires_idempotency_or_reconciliation`"
 - **VERIFIES** [[spec.p_effect_outcome_failure]]
+
+#### Scenario: compensation-separate-effect invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Compensation is modeled as a new effect with its own authority, failure, evidence, and verification rather than as rollback."
+- **VERIFIES** [[spec.compensation_can_fail_independently]]
 
 #### Scenario: Violating Execution and Effect Boundary invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

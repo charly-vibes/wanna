@@ -50,27 +50,54 @@ Telemetry informs improvement but does not itself authorize policy changes. Meas
 
 ## Requirements
 
-### Requirement: Evaluation, Telemetry, and Optimization declared invariants are observable
+### Requirement: Evaluation, Telemetry, and Optimization model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Evaluation, Telemetry, and Optimization invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: evaluate-candidate moves `collecting` to `evaluated`
+- **WHEN** the model is in the `collecting` state and the `evaluate_candidate` transition guard holds ([[spec.metrics_have_definitions]])
+- **THEN** the model enters the `evaluated` state and records the transition
 - **VERIFIES** [[spec.metrics_have_definitions_holds]]
-- **VERIFIES** [[spec.privacy_minimized_holds]]
-- **VERIFIES** [[spec.agreement_not_correctness_holds]]
+
+#### Scenario: mark-eligible moves `evaluated` to `eligible`
+- **WHEN** the model is in the `evaluated` state and the `mark_eligible` transition guard holds ([[spec.promotion_requires_evidence]])
+- **THEN** the model enters the `eligible` state and records the transition
 - **VERIFIES** [[spec.promotion_requires_evidence_holds]]
-- **VERIFIES** [[spec.shadow_effects_suppressed_holds]]
+
+#### Scenario: promote-candidate moves `eligible` to `promoted`
+- **WHEN** the model is in the `eligible` state and the `promote_candidate` transition guard holds ([[spec.metrics_versioned]])
+- **THEN** the model enters the `promoted` state and records the transition
 - **VERIFIES** [[spec.metrics_versioned_holds]]
+
+#### Scenario: detect-degradation moves `promoted` to `degraded`
+- **WHEN** the model is in the `promoted` state and the `detect_degradation` transition guard holds ([[spec.regression_triggers_fallback]])
+- **THEN** the model enters the `degraded` state and records the transition
 - **VERIFIES** [[spec.regression_triggers_fallback_holds]]
+
+#### Scenario: rollback-candidate moves `degraded` to `rolled_back`
+- **WHEN** the model is in the `degraded` state and the `rollback_candidate` transition guard holds ([[spec.regression_triggers_fallback]])
+- **THEN** the model enters the `rolled_back` state and records the transition
+- **VERIFIES** [[spec.regression_triggers_fallback_holds]]
+
+#### Scenario: privacy-minimized invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Telemetry collection applies purpose limitation, data minimization, access controls, and configured retention."
+- **VERIFIES** [[spec.privacy_minimized_holds]]
+
+#### Scenario: agreement-not-correctness invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Agreement with an incumbent model or implementation is recorded as agreement, not as correctness ground truth."
+- **VERIFIES** [[spec.agreement_not_correctness_holds]]
+
+#### Scenario: shadow-effects-suppressed invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Shadow evaluation suppresses live effects or uses isolated test doubles."
+- **VERIFIES** [[spec.shadow_effects_suppressed_holds]]
 
 #### Scenario: Violating Evaluation, Telemetry, and Optimization invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

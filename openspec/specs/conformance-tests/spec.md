@@ -67,35 +67,94 @@ Specodelic owns the specification structure and abstract lifecycle. The TypeScri
 
 ## Requirements
 
-### Requirement: Conformance and Regression Tests declared invariants are observable
+### Requirement: Conformance and Regression Tests model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Conformance and Regression Tests invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: map-property-tests moves `unmapped` to `mapped`
+- **WHEN** the model is in the `unmapped` state and the `map_property_tests` transition guard holds ([[spec.every_property_mapped_to_test]])
+- **THEN** the model enters the `mapped` state and records the transition
 - **VERIFIES** [[spec.properties_have_test_mapping]]
-- **VERIFIES** [[spec.adapter_semantics_match]]
-- **VERIFIES** [[spec.mandatory_edge_matrix_runs]]
-- **VERIFIES** [[spec.replay_is_versioned]]
-- **VERIFIES** [[spec.security_matrix_runs_in_ci]]
-- **VERIFIES** [[spec.failure_is_reproducible]]
-- **VERIFIES** [[spec.quality_claims_have_measured_baseline]]
-- **VERIFIES** [[spec.unsupported_quality_claim_is_blocked]]
+
+#### Scenario: begin-test-run moves `mapped` to `running`
+- **WHEN** the model is in the `mapped` state and the `begin_test_run` transition guard holds ([[spec.suite_manifest_complete]])
+- **THEN** the model enters the `running` state and records the transition
 - **VERIFIES** [[spec.suite_cannot_start_with_incomplete_manifest]]
+
+#### Scenario: accept-test-run moves `running` to `passed`
+- **WHEN** the model is in the `running` state and the `accept_test_run` transition guard holds ([[spec.test_suite_passed]])
+- **THEN** the model enters the `passed` state and records the transition
 - **VERIFIES** [[spec.all_mandatory_targets_must_pass]]
+
+#### Scenario: reject-test-run moves `running` to `failed`
+- **WHEN** the model is in the `running` state and the `reject_test_run` transition guard evaluates false (¬([[spec.test_suite_passed]]))
+- **THEN** the model enters the `failed` state and records the transition
+- **VERIFIES** [[spec.all_mandatory_targets_must_pass]]
+
+#### Scenario: rerun-after-correction moves `failed` to `mapped`
+- **WHEN** the model is in the `failed` state and the `rerun_after_correction` transition guard holds ([[spec.fix_committed]])
+- **THEN** the model enters the `mapped` state and records the transition
 - **VERIFIES** [[spec.failed_run_requires_committed_fix]]
+
+#### Scenario: prepare-next-release moves `passed` to `unmapped`
+- **WHEN** the model is in the `passed` state and the `prepare_next_release` transition guard holds ([[spec.new_release_candidate]])
+- **THEN** the model enters the `unmapped` state and records the transition
 - **VERIFIES** [[spec.new_revision_requires_new_run]]
+
+#### Scenario: cross-host-semantics-checked invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Shared scenario fixtures run against each supported adapter and compare normalized event semantics, not pixel or layout identity."
+- **VERIFIES** [[spec.adapter_semantics_match]]
+
+#### Scenario: edge-cases-covered invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "The regression suite covers invalid context/contract, zero eligible candidates, deterministic ties, stale and duplicate events, concurrent submissions, cancellation, version skew, unsupported capabilities, host loss, and persistence faults."
+- **VERIFIES** [[spec.mandatory_edge_matrix_runs]]
+
+#### Scenario: replay-fixtures-versioned invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every replay fixture records schema, catalog, policy and fixture versions plus initial state and ordered input events."
+- **VERIFIES** [[spec.replay_is_versioned]]
+
+#### Scenario: security-fixtures-run-in-ci invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Hostile payload, forged event, authorization bypass, resource-limit and diagnostic-leak scenarios run in CI for each supported adapter."
+- **VERIFIES** [[spec.security_matrix_runs_in_ci]]
+
+#### Scenario: test-outcomes-reproducible invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A failing scenario emits its test ID, input fixture ID, policy/catalog/schema versions, expected outcome, actual outcome and minimized reproduction where supported."
+- **VERIFIES** [[spec.failure_is_reproducible]]
+
+#### Scenario: quality-metrics-have-baseline invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Before release claims, the team records baseline and advisor-guided results on the same task scenarios for completion time, corrections, redundant/invalid interactions, abandonment and user understanding."
+- **VERIFIES** [[spec.quality_claims_have_measured_baseline]]
+
+#### Scenario: no-claim-without-evidence invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A release is not labelled lint-clean, model-checked, verified, portable or secure unless its recorded gate results support that exact claim."
+- **VERIFIES** [[spec.unsupported_quality_claim_is_blocked]]
+
+#### Scenario: conformance-classes-distinct invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Conformance distinguishes formal/schema-state tests, automated interaction/accessibility tests, and empirical human usability evaluation; passing one class cannot claim the others."
 - **VERIFIES** [[spec.machine_tests_do_not_claim_usability]]
-- **VERIFIES** [[spec.planned_tests_remain_unverified]]
+
+#### Scenario: empirical-claims-not-auto-verified invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Learnability, comprehension, perceived control, trust calibration, and similar human outcomes remain empirical properties requiring representative user evidence unless a narrower machine-verifiable proxy is explicitly named."
 - **VERIFIES** [[spec.p_empirical_claims_not_auto_verified]]
+
+#### Scenario: research-acceptance-not-claimed-complete invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Specification acceptance criteria are marked planned/unverified until corresponding implementation and evidence exist."
+- **VERIFIES** [[spec.planned_tests_remain_unverified]]
 
 #### Scenario: Violating Conformance and Regression Tests invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

@@ -59,29 +59,90 @@ Interaction patterns represent recurring compound human activities. Examples inc
 
 ## Requirements
 
-### Requirement: Interaction Patterns declared invariants are observable
+### Requirement: Interaction Patterns model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Interaction Patterns invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: validate-pattern moves `draft` to `validated`
+- **WHEN** the model is in the `draft` state and the `validate_pattern` transition guard holds ([[spec.patterns_compose_primitives]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.every_pattern_step_is_semantic]]
-- **VERIFIES** [[spec.review_does_not_conflate_authority]]
-- **VERIFIES** [[spec.clarification_has_information_gain_target]]
-- **VERIFIES** [[spec.pattern_replay_is_versioned]]
+
+#### Scenario: start-pattern moves `validated` to `running`
+- **WHEN** the model is in the `validated` state and the `start_pattern` transition guard holds ([[spec.pattern_completion_explicit]])
+- **THEN** the model enters the `running` state and records the transition
 - **VERIFIES** [[spec.p_pattern_completion_explicit]]
+
+#### Scenario: wait-for-contribution moves `running` to `waiting`
+- **WHEN** the model is in the `running` state and the `wait_for_contribution` transition guard holds ([[spec.patterns_compose_primitives]])
+- **THEN** the model enters the `waiting` state and records the transition
+- **VERIFIES** [[spec.every_pattern_step_is_semantic]]
+
+#### Scenario: resume-pattern moves `waiting` to `running`
+- **WHEN** the model is in the `waiting` state and the `resume_pattern` transition guard holds ([[spec.patterns_compose_primitives]])
+- **THEN** the model enters the `running` state and records the transition
+- **VERIFIES** [[spec.every_pattern_step_is_semantic]]
+
+#### Scenario: complete-pattern moves `running` to `completed`
+- **WHEN** the model is in the `running` state and the `complete_pattern` transition guard holds ([[spec.pattern_completion_explicit]])
+- **THEN** the model enters the `completed` state and records the transition
+- **VERIFIES** [[spec.p_pattern_completion_explicit]]
+
+#### Scenario: preserve-unresolved-pattern moves `running` to `unresolved`
+- **WHEN** the model is in the `running` state and the `preserve_unresolved_pattern` transition guard evaluates false (¬([[spec.pattern_completion_explicit]]))
+- **THEN** the model enters the `unresolved` state and records the transition
+- **VERIFIES** [[spec.p_pattern_completion_explicit]]
+
+#### Scenario: cancel-pattern moves `running` to `cancelled`
+- **WHEN** the model is in the `running` state and the `cancel_pattern` transition guard holds ([[spec.pattern_completion_explicit]])
+- **THEN** the model enters the `cancelled` state and records the transition
+- **VERIFIES** [[spec.p_pattern_completion_explicit]]
+
+#### Scenario: fail-pattern moves `running` to `failed`
+- **WHEN** the model is in the `running` state and the `fail_pattern` transition guard evaluates false (¬([[spec.pattern_completion_explicit]] ∨ [[spec.patterns_compose_primitives]]))
+- **THEN** the model enters the `failed` state and records the transition
+- **VERIFIES** [[spec.every_pattern_step_is_semantic]]
+- **VERIFIES** [[spec.p_pattern_completion_explicit]]
+
+#### Scenario: pattern-does-not-override-primitive invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A pattern cannot change the response semantics, validation, authority meaning, or escape semantics of a referenced primitive."
 - **VERIFIES** [[spec.p_pattern_does_not_override_primitive]]
+
+#### Scenario: pattern-state-host-neutral invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Pattern progression is independent of DOM, Pi, TUI, component-library, and layout state."
 - **VERIFIES** [[spec.p_pattern_state_host_neutral]]
+
+#### Scenario: review-separates-judgments invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Review patterns distinguish inspection, evaluation, verification, annotation, rejection, and authorization rather than collapsing them into a generic approval event."
+- **VERIFIES** [[spec.review_does_not_conflate_authority]]
+
+#### Scenario: diagnosis-is-iterative-bounded invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Diagnosis patterns explicitly model inspect, hypothesis/evaluation, evidence acquisition, correction proposal, and exit conditions; loops have bounded or externally interruptible termination."
 - **VERIFIES** [[spec.p_diagnosis_is_iterative_bounded]]
+
+#### Scenario: clarification-reduces-unresolved-state invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "A clarification step is requested only when its expected response can reduce a represented ambiguity, missing fact, conflict, or decision uncertainty."
+- **VERIFIES** [[spec.clarification_has_information_gain_target]]
+
+#### Scenario: pattern-failure-recorded invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "`interaction.patterns.pattern_failure(detail) — a pattern terminates in failure because detail; the failure is one of the pattern's declared completion conditions per pattern_completion_explicit and is recorded with the pattern instance for replay and audit`"
 - **VERIFIES** [[spec.p_pattern_failure_recorded]]
+
+#### Scenario: pattern-versioned invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Pattern definitions and their primitive mappings carry explicit versions used in replay and audit."
+- **VERIFIES** [[spec.pattern_replay_is_versioned]]
 
 #### Scenario: Violating Interaction Patterns invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

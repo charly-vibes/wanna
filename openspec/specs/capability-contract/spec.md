@@ -48,27 +48,54 @@ A capability is a reusable operation the agent can invoke after it has been regi
 
 ## Requirements
 
-### Requirement: Reusable Capability Contract declared invariants are observable
+### Requirement: Reusable Capability Contract model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Reusable Capability Contract invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
-- **VERIFIES** [[spec.capability_identity_versioned_holds]]
+#### Scenario: validate-capability moves `proposed` to `validated`
+- **WHEN** the model is in the `proposed` state and the `validate_capability` transition guard holds ([[spec.inputs_outputs_typed]])
+- **THEN** the model enters the `validated` state and records the transition
 - **VERIFIES** [[spec.inputs_outputs_typed_holds]]
-- **VERIFIES** [[spec.pre_postconditions_declared_holds]]
-- **VERIFIES** [[spec.effects_declared_holds]]
+
+#### Scenario: reject-capability moves `proposed` to `rejected`
+- **WHEN** the model is in the `proposed` state and the `reject_capability` transition guard evaluates false (¬([[spec.inputs_outputs_typed]]))
+- **THEN** the model enters the `rejected` state and records the transition
+- **VERIFIES** [[spec.inputs_outputs_typed_holds]]
+
+#### Scenario: register-capability moves `validated` to `registered`
+- **WHEN** the model is in the `validated` state and the `register_capability` transition guard holds ([[spec.evaluation_contract_declared]])
+- **THEN** the model enters the `registered` state and records the transition
 - **VERIFIES** [[spec.evaluation_contract_declared_holds]]
-- **VERIFIES** [[spec.implementation_not_contract_holds]]
+
+#### Scenario: deprecate-capability moves `registered` to `deprecated`
+- **WHEN** the model is in the `registered` state and the `deprecate_capability` transition guard holds ([[spec.compatibility_explicit]])
+- **THEN** the model enters the `deprecated` state and records the transition
 - **VERIFIES** [[spec.compatibility_explicit_holds]]
+
+#### Scenario: capability-identity-versioned invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every capability has a stable ID, semantic version, owner or provenance, and immutable revision identifier."
+- **VERIFIES** [[spec.capability_identity_versioned_holds]]
+
+#### Scenario: pre-postconditions-declared invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every capability declares applicable preconditions, postconditions, and a typed result for unmet conditions."
+- **VERIFIES** [[spec.pre_postconditions_declared_holds]]
+
+#### Scenario: effects-declared invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Every capability declares possible effects, resource requirements, idempotency behavior, and whether effects are reversible or compensatable."
+- **VERIFIES** [[spec.effects_declared_holds]]
+
+#### Scenario: implementation-not-contract invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Implementation code or provider-specific prompts are not treated as the public capability contract."
+- **VERIFIES** [[spec.implementation_not_contract_holds]]
 
 #### Scenario: Violating Reusable Capability Contract invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and

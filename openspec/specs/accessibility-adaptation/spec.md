@@ -53,29 +53,59 @@ Accessibility is a correctness constraint, not a decorative preference. The host
 
 ## Requirements
 
-### Requirement: Accessibility and Adaptive Presentation declared invariants are observable
+### Requirement: Accessibility and Adaptive Presentation model transitions are observable
 
-Every constraint this specification declares is carried by a deriving property, and the corpus keeps those properties lint-clean and resolvable so the invariant remains checkable on every revision.
+Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
-#### Scenario: Accessibility and Adaptive Presentation invariants hold on the canonical corpus
-
-- **WHEN** the specification's property set is evaluated against the deployed corpus
-- **THEN** every listed property remains lint-clean, derives from its owning constraint, and resolves in the reference graph
+#### Scenario: check-accessibility moves `proposed` to `checked`
+- **WHEN** the model is in the `proposed` state and the `check_accessibility` transition guard holds ([[spec.controls_have_names]])
+- **THEN** the model enters the `checked` state and records the transition
 - **VERIFIES** [[spec.controls_have_names_holds]]
-- **VERIFIES** [[spec.keyboard_equivalent_holds]]
-- **VERIFIES** [[spec.focus_order_logical_holds]]
-- **VERIFIES** [[spec.status_changes_announced_holds]]
+
+#### Scenario: accept-accessible-render moves `checked` to `accessible`
+- **WHEN** the model is in the `checked` state and the `accept_accessible_render` transition guard holds ([[spec.meaning_survives_adaptation]])
+- **THEN** the model enters the `accessible` state and records the transition
 - **VERIFIES** [[spec.meaning_survives_adaptation_holds]]
-- **VERIFIES** [[spec.motion_and_density_respect_preferences_holds]]
+
+#### Scenario: use-accessible-fallback moves `checked` to `fallback`
+- **WHEN** the model is in the `checked` state and the `use_accessible_fallback` transition guard holds ([[spec.keyboard_equivalent]])
+- **THEN** the model enters the `fallback` state and records the transition
+- **VERIFIES** [[spec.keyboard_equivalent_holds]]
+
+#### Scenario: reject-inaccessible-render moves `checked` to `unsupported`
+- **WHEN** the model is in the `checked` state and the `reject_inaccessible_render` transition guard evaluates false (¬([[spec.inaccessible_interaction_not_silently_rendered]]))
+- **THEN** the model enters the `unsupported` state and records the transition
 - **VERIFIES** [[spec.inaccessible_interaction_not_silently_rendered_holds]]
+
+#### Scenario: focus-order-logical invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Focus order follows the task's semantic reading and action order rather than incidental render order."
+- **VERIFIES** [[spec.focus_order_logical_holds]]
+
+#### Scenario: status-changes-announced invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Asynchronous completion, validation errors, and important state changes are exposed through the host's appropriate status-announcement mechanism."
+- **VERIFIES** [[spec.status_changes_announced_holds]]
+
+#### Scenario: motion-and-density-respect-preferences invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Presentation respects declared reduced-motion, text-size, and density preferences where the host can support them."
+- **VERIFIES** [[spec.motion_and_density_respect_preferences_holds]]
+
+#### Scenario: accessibility-obligations-semantic invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "Accessibility requirements attach to semantic interaction/contribution obligations before host rendering, not only as post-render checks."
 - **VERIFIES** [[spec.accessibility_exists_before_render]]
+
+#### Scenario: modality-equivalence-explicit invariant holds under canonical operation
+- **WHEN** the system performs any operation governed by this specification
+- **THEN** the invariant holds: "When exact visual behavior cannot transfer across hosts, the adapter documents a semantically equivalent accessible operation or reports unsupported."
 - **VERIFIES** [[spec.p_modality_equivalence_explicit]]
 
 #### Scenario: Violating Accessibility and Adaptive Presentation invariant is rejected
 
 - **WHEN** a revision drops a declared property, breaks a deriving link, or leaves a constraint uncovered
 - **THEN** the revision is rejected by the conformance gate with a finding naming the violated row, and no partial deploy occurs
-
 ## Non-Goals
 
 - Concrete host presentation — widget choice, layout, visual styling, and
