@@ -12,3 +12,4 @@
 # pretender runtime state — never tracked
 .pretender/last-check.json
 node_modules/
+specodelic/
