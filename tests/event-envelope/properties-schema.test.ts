@@ -57,10 +57,10 @@ describe("event-envelope schema and bounds properties", () => {
     expect(payloadWithinBounds(fat.payload).reason).toBe(
       `payload exceeds byte bound of ${PAYLOAD_BOUNDS.maxBytes} (got ${bytes})`,
     );
-    // nesting bound — a value nine containers deep exceeds the depth bound of 8
+    // nesting bound — a value nested ten objects deep (innermost at depth 9) exceeds the depth bound of 8
     const deep: Record<string, unknown> = {};
     let cursor: Record<string, unknown> = deep;
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 9; i++) {
       const next: Record<string, unknown> = {};
       cursor.a = next;
       cursor = next;

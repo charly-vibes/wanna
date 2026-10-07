@@ -4,6 +4,7 @@
 // Rationale: ah check binds .espectacular/event-envelope/*.toml to these tests via `vitest run -t '<name>'`
 import { describe, it, expect } from "vitest";
 import { reduceEvent } from "../../src/event-envelope/reducer";
+import { createEnvelopeMachine } from "../../src/event-envelope/machine";
 import { RESULT_CODES } from "../../src/event-envelope/types";
 import { validEnvelope, validContext } from "./fixtures";
 import type { EnvelopeContext, EventEnvelope, ResultCode, ReduceOutcome } from "../../src/event-envelope/types";
@@ -57,25 +58,26 @@ describe("event-envelope purity and rejection-typing properties", () => {
     expect(new Set<string>(RESULT_CODES).size).toBe(RESULT_CODES.length);
     // each class is reachable with its own stable code
     const observed = new Map<ResultCode, string>();
+    function record(outcome: ReduceOutcome): void {
+      if (!outcome.ok) observed.set(outcome.code, outcome.reason);
+    }
     const cases: readonly [EventEnvelope, EnvelopeContext][] = [
       // invalid payload
       [validEnvelope({ payload: null }), validContext()],
       // unsupported event type
       [validEnvelope({ eventType: "widget.click" }), validContext()],
-      // duplicate event
-      [validEnvelope(), validContext({ committedEventIds: ["evt-1"] })],
       // stale revision
       [validEnvelope({ expectedTaskRevision: "task-6" }), validContext({ currentTaskRevision: "task-7" })],
       // unauthorized source
       [validEnvelope({ source: "render-plugin" }), validContext()],
     ];
     for (const [envelope, context] of cases) {
-      const outcome = reduceEvent(envelope, context);
-      expect(outcome.ok).toBe(false);
-      if (!outcome.ok) {
-        observed.set(outcome.code, outcome.reason);
-      }
+      record(reduceEvent(envelope, context));
     }
+    // the duplicate class is emitted by the commit guard when a committed id tries to commit again
+    const dup = createEnvelopeMachine(validEnvelope(), validContext({ committedEventIds: ["evt-1"] }));
+    dup.fire("validate_event");
+    record(dup.fire("commit_event"));
     expect(observed.size).toBe(RESULT_CODES.length);
     for (const code of RESULT_CODES) {
       expect(observed.get(code)).toBeTruthy();
