@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/contribution-primitives/spec.md"
+command = "npx vitest run tests/contribution-primitives/properties*.test.ts -t 'primitive identifiers are interpreted under an explicit taxonomy version and cannot be added or redefined silently'"
 timeout_seconds = 120
