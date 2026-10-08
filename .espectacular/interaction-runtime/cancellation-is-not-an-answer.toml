@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-runtime/spec.md"
+command = "npx vitest run tests/interaction-runtime/properties*.test.ts -t 'TypeScript test: cancel/dismiss/expire/supersede produce their defined event types and do not fabricate response payloads'"
 timeout_seconds = 120

@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-runtime/spec.md"
+command = "npx vitest run tests/interaction-runtime/properties*.test.ts -t 'TypeScript test: stale revision and repeated event ID do not produce a second committed state change and expose distinct reason codes'"
 timeout_seconds = 120
