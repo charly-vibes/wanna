@@ -1,0 +1,159 @@
+# wave-4 — six ready tickets via pi subagents (orchestrator-only lead).
+# Spawn contract: `pi -p -n "subagent:<ticket>:impl" "$(cat <brief>)"` — NEVER --no-session.
+[pipeline]
+name = "wave-4"
+description = "Wave-4: interaction-security, recovery-contract, continuity-contract, capability-contract, evaluation-telemetry, then tsc-drift cleanup (pps)"
+
+[pipeline.metadata]
+when = "Continuing the capability epic on the specodelic corpus"
+skills = ["beads", "commit"]
+
+[[steps]]
+id = "agv-interaction-security"
+prompt = """
+{topic}: Implement for bead `wanna-agv` (via pi subagent).
+1. `bd update wanna-agv --claim`.
+2. Derive brief: read the bead description and write a direct brief →
+   `.wai/projects/wanna/briefs/wanna-agv.md`. SHALL: Interaction Security — treat agent proposals and host surfaces as untrusted until validated
+   Scope dirs: openspec/specs/interaction-security, .espectacular/interaction-security, src/interaction-security, tests/interaction-security
+3. Commit brief; spawn `pi -p -n "subagent:wanna-agv:impl" "$(cat .wai/projects/wanna/briefs/wanna-agv.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-agv`; `bd export`.
+Record evidence: `wai add research "AGV-INTERACTION-SECURITY-IMPL: gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "uvw-recovery-contract"
+prompt = """
+{topic}: Implement for bead `wanna-uvw` (via pi subagent).
+1. `bd update wanna-uvw --claim`.
+2. Derive brief: read the bead description and write a direct brief →
+   `.wai/projects/wanna/briefs/wanna-uvw.md`. SHALL: Recovery — select only recovery operations whose preconditions are satisfied
+   Scope dirs: openspec/specs/recovery-contract, .espectacular/recovery-contract, src/recovery-contract, tests/recovery-contract
+3. Commit brief; spawn `pi -p -n "subagent:wanna-uvw:impl" "$(cat .wai/projects/wanna/briefs/wanna-uvw.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-uvw`; `bd export`.
+Record evidence: `wai add research "UVW-RECOVERY-CONTRACT-IMPL: gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "cr9-continuity-contract"
+prompt = """
+{topic}: Implement for bead `wanna-cr9` (via pi subagent).
+1. `bd update wanna-cr9 --claim`.
+2. Derive brief: read the bead description and write a direct brief →
+   `.wai/projects/wanna/briefs/wanna-cr9.md`. SHALL: Continuity — safe resumption after interruption or transfer
+   Scope dirs: openspec/specs/continuity-contract, .espectacular/continuity-contract, src/continuity-contract, tests/continuity-contract
+3. Commit brief; spawn `pi -p -n "subagent:wanna-cr9:impl" "$(cat .wai/projects/wanna/briefs/wanna-cr9.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-cr9`; `bd export`.
+Record evidence: `wai add research "CR9-CONTINUITY-CONTRACT-IMPL: gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "iw-capability-contract"
+prompt = """
+{topic}: Implement for bead `wanna-3iw` (via pi subagent).
+1. `bd update wanna-3iw --claim`.
+2. Derive brief: read the bead description and write a direct brief →
+   `.wai/projects/wanna/briefs/wanna-3iw.md`. SHALL: Capability Contract — typed reusable operation descriptions
+   Scope dirs: openspec/specs/capability-contract, .espectacular/capability-contract, src/capability-contract, tests/capability-contract
+3. Commit brief; spawn `pi -p -n "subagent:wanna-3iw:impl" "$(cat .wai/projects/wanna/briefs/wanna-3iw.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-3iw`; `bd export`.
+Record evidence: `wai add research "IW-CAPABILITY-CONTRACT-IMPL: gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "mwy-evaluation-telemetry"
+prompt = """
+{topic}: Implement for bead `wanna-mwy` (via pi subagent).
+1. `bd update wanna-mwy --claim`.
+2. Derive brief: read the bead description and write a direct brief →
+   `.wai/projects/wanna/briefs/wanna-mwy.md`. SHALL: Evaluation Telemetry — interaction quality without proxy/correctness confusion
+   Scope dirs: openspec/specs/evaluation-telemetry, .espectacular/evaluation-telemetry, src/evaluation-telemetry, tests/evaluation-telemetry
+3. Commit brief; spawn `pi -p -n "subagent:wanna-mwy:impl" "$(cat .wai/projects/wanna/briefs/wanna-mwy.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-mwy`; `bd export`.
+Record evidence: `wai add research "MWY-EVALUATION-TELEMETRY-IMPL: gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "pps-tsc-drift"
+prompt = """
+{topic}: Implement for bead `wanna-pps` (via pi subagent).
+1. `bd update wanna-pps --claim`.
+2. Derive brief: read the bead description and write a direct brief →
+   `.wai/projects/wanna/briefs/wanna-pps.md`.
+   Scope dirs: (repo-wide: src/** tests/** lefthook; no spec/contract edits)
+3. Commit brief; spawn `pi -p -n "subagent:wanna-pps:impl" "$(cat .wai/projects/wanna/briefs/wanna-pps.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint (repo-wide clean incl. tsc --noEmit).
+5. Push; `bd close wanna-pps`; `bd export`.
+Record evidence: `wai add research "PPS-TSC-DRIFT-IMPL: gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
