@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-catalog/spec.md"
+command = "npx vitest run tests/interaction-catalog/properties*.test.ts -t 'TypeScript test: catalog cannot publish without validation, compatibility review, and immutable version ID'"
 timeout_seconds = 120
