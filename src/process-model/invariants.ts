@@ -12,10 +12,7 @@ import type {
 } from "./types";
 import { COMPOUND_ACTIVITIES, MODEL_KINDS, RECOVERY_EDGE_TYPES, SCHEMA_VERSION, TRANSITION_IDS } from "./types";
 
-export interface Check {
-  readonly ok: boolean;
-  readonly reason?: string;
-}
+export type Check = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };
 
 export const OK: Check = { ok: true };
 

@@ -21,7 +21,7 @@ export type ContinuityTransitionId =
   | "handoff_task"
   | "abandon_task";
 
-export type Check = { ok: true } | { ok: false; reason: string };
+export type Check = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
 export type TransitionResult = Check;
 

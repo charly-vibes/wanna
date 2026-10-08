@@ -61,14 +61,12 @@ export type EffectIntent = {
 };
 
 export type TransitionResult =
-  | { ok: true; effects: readonly EffectIntent[] }
-  | { ok: false; reason: string; code?: ResultCode };
+  | { ok: true; reason?: undefined; code?: undefined; effects: readonly EffectIntent[] }
+  | { ok: false; reason: string; code?: ResultCode; effects?: undefined };
 
-export interface Check {
-  readonly ok: boolean;
-  readonly reason?: string;
-  readonly code?: ResultCode;
-}
+export type Check =
+  | { readonly ok: true; readonly reason?: undefined; readonly code?: ResultCode }
+  | { readonly ok: false; readonly reason: string; readonly code?: ResultCode };
 
 export const PAYLOAD_BOUNDS = {
   maxBytes: 65536,

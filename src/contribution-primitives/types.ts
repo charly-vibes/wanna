@@ -90,6 +90,6 @@ export type TransitionId =
   | "escape_primitive"
   | "retire_primitive";
 
-export type Check = { ok: true } | { ok: false; reason: string };
+export type Check = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };

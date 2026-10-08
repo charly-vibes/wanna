@@ -2,7 +2,7 @@
 // Responsibilities: effect states, transition ids, effect intents, authorization contexts, executor config, outcome and failure records
 // Rationale: pure decision logic returns effect intents as data; every outcome — including unknown — is an explicit record, never coerced
 
-export type Check = { readonly ok: true } | { readonly ok: false; readonly reason: string };
+export type Check = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };
 
 export type EffectState =
   | "proposed"
@@ -94,5 +94,5 @@ export type FireArg =
   | { readonly kind: "outcome"; readonly outcome: OutcomeRecord };
 
 export type TransitionResult =
-  | { readonly ok: true }
+  | { readonly ok: true; readonly reason?: undefined }
   | { readonly ok: false; readonly reason: string };

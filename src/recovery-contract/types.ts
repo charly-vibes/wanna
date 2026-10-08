@@ -56,12 +56,9 @@ export type TransitionId =
   | "preserve_failed_recovery"
   | "escalate_recovery";
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
-export interface Check {
-  readonly ok: boolean;
-  readonly reason?: string;
-}
+export type Check = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };
 
 export interface RecoveryEvent {
   /** strictly increasing lineage sequence number */

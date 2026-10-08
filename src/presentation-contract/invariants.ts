@@ -13,10 +13,7 @@ export {
   SEMANTIC_ROLES,
 } from "./types";
 
-export interface Check {
-  readonly ok: boolean;
-  readonly reason?: string;
-}
+export type Check = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };
 
 const HOST_REFERENCE_PATTERN = /[/]|\.(tsx?|jsx?)$|https?:|require\(|=>/;
 

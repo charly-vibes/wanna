@@ -62,4 +62,4 @@ export type TransitionId =
   | "preserve_unresolved_need"
   | "retry_unresolved";
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };

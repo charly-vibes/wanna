@@ -85,9 +85,9 @@ export interface EvaluationRecord {
   readonly recovery: RecoveryPolicy;
 }
 
-export type Check = { ok: true } | { ok: false; reason: string };
+export type Check = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
 export type TransitionPayloadMap = {
   evaluate_candidate: undefined;

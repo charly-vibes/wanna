@@ -31,7 +31,7 @@ interface Internals {
   applied: AppliedTransition[];
 }
 
-type TransitionResult = { ok: true } | { ok: false; reason: string };
+type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
 type Guard = (internals: Internals, arg: FireArg | undefined) => TransitionResult;
 

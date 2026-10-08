@@ -11,9 +11,9 @@ export type ContractTransitionId =
   | "revise_invalid_contract"
   | "retire_contract";
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
-export type Check = { ok: true } | { ok: false; reason: string };
+export type Check = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
 export type ContributionRef =
   | { readonly primitive: string }
@@ -74,7 +74,7 @@ export interface TransitionPayload {
 }
 
 export type MigrateResult =
-  | { ok: true; version: string }
+  | { ok: true; reason?: undefined; version: string }
   | { ok: false; reason: string };
 
 export interface ContractContentLimits {

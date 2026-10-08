@@ -1,7 +1,7 @@
 // Purpose: vocabulary and record shapes for the evidence and provenance layer
 // Responsibilities: evidence classes, normative strengths, explicit statuses, record shapes, audit entries, states and transition ids
 // Rationale: provenance supports explanation and audit — it never implies an input source is true or that approval proves correctness
-export type Check = { readonly ok: true } | { readonly ok: false; readonly reason: string };
+export type Check = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };
 
 export const EVIDENCE_CLASSES = [
   "normative_standard",
@@ -77,7 +77,7 @@ export type TransitionId =
   | "supersede_evidence"
   | "restrict_sensitive_evidence";
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
 export interface AppliedTransition {
   readonly id: TransitionId;

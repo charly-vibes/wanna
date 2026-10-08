@@ -20,7 +20,7 @@ export type TransitionId = (typeof TRANSITION_IDS)[number];
 export const RECOVERY_EDGE_TYPES = ["retry", "compensate", "escalate", "rollback"] as const;
 export type RecoveryEdgeType = (typeof RECOVERY_EDGE_TYPES)[number];
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
 export interface RecoveryEdge {
   readonly onFailure: string;

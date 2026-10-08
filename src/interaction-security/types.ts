@@ -68,13 +68,11 @@ export interface ValidatedInteraction {
   readonly validatedBy: string;
 }
 
-export interface Check {
-  readonly ok: boolean;
-  readonly code?: string;
-  readonly reason?: string;
-}
+export type Check =
+  | { readonly ok: true; readonly reason?: undefined; readonly code?: string }
+  | { readonly ok: false; readonly reason: string; readonly code?: string };
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
 export interface TransitionRow {
   readonly id: TransitionId;

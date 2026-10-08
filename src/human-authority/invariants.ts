@@ -15,7 +15,7 @@ export { AUTHORITY_SOURCES, RISK_CLASSES, REQUESTER_KINDS, VERIFICATION_BASES } 
 
 export const AUTHORITY_LAYER_VERSION = "human-authority@1.0.0";
 
-export type Check = { ok: true } | { ok: false; reason: string };
+export type Check = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
 export const MATERIAL_CHANGE_FIELDS: readonly string[] = ["action", "target", "evidence", "revision"];
 

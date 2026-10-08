@@ -1,7 +1,7 @@
 // Purpose: vocabulary and record shapes for the failure model
 // Responsibilities: failure states, transition ids, failure records, assessments, effect certainty, recoverability, retry safety
 // Rationale: failure is ordinary runtime state — loss of acknowledgement never proves an external effect did not occur
-export type Check = { readonly ok: true } | { readonly ok: false; readonly reason: string };
+export type Check = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };
 
 export type FailureState =
   | "detected"

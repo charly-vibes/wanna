@@ -58,7 +58,7 @@ export interface TransitionInput {
   readonly reason?: CloseReason;
 }
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
 export interface TransitionRow {
   readonly id: TransitionId;

@@ -66,4 +66,4 @@ export interface RecordedTransition {
 
 export type RetireCommand = { readonly kind: "retire" | "cancel" | "supersede" | "expire" };
 
-export type TransitionResult = { readonly ok: true } | { readonly ok: false; readonly reason: string };
+export type TransitionResult = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };

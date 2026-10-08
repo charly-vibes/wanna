@@ -14,7 +14,7 @@ export type CapabilityTransitionId =
   | "register_capability"
   | "deprecate_capability";
 
-export type Check = { ok: true } | { ok: false; reason: string };
+export type Check = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
 export type TransitionResult = Check;
 

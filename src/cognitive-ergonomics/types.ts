@@ -19,12 +19,9 @@ export type TransitionId =
   | "defer_interruption"
   | "revert_adaptation";
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
-export interface Check {
-  readonly ok: boolean;
-  readonly reason?: string;
-}
+export type Check = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };
 
 export interface MeasurableTrigger {
   readonly metric: string;

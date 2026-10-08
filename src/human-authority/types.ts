@@ -120,4 +120,4 @@ export type FireArg =
   | { readonly kind: "now"; readonly now: number }
   | { readonly kind: "change"; readonly change: MaterialChange };
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };

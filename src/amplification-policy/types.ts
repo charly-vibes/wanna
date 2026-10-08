@@ -82,4 +82,4 @@ export type TransitionId =
   | "reject_stale_context"
   | "recompute_new_context";
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };

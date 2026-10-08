@@ -23,9 +23,9 @@ export type TransitionId =
   | "retry_after_empty_result"
   | "retry_after_failure";
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
-export type Check = { ok: true } | { ok: false; reason: string };
+export type Check = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
 export interface NormalizedNeedRecord {
   readonly kind: string;

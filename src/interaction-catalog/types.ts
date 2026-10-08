@@ -61,9 +61,9 @@ export type CatalogTransitionId =
   | "publish_pinned_catalog"
   | "retire_catalog_version";
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
-export type Check = { ok: true } | { ok: false; reason: string };
+export type Check = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
 export interface CompatibilityReview {
   readonly reviewer: string;

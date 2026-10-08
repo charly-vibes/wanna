@@ -12,10 +12,7 @@ export const PRESENTATION_VOCABULARY: readonly string[] = [
   "dialog", "tooltip", "animation",
 ];
 
-export interface Check {
-  readonly ok: boolean;
-  readonly reason?: string;
-}
+export type Check = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };
 
 function scanPresentation(fields: readonly unknown[]): string[] {
   const hits: string[] = [];

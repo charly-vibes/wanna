@@ -119,9 +119,6 @@ export interface FailureRecord {
 
 export const PATTERN_FAILURE_EFFECT = "interaction.patterns.pattern_failure";
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
-export interface Check {
-  readonly ok: boolean;
-  readonly reason?: string;
-}
+export type Check = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };

@@ -85,9 +85,9 @@ export type TransitionId =
   | "retry_after_state_refresh"
   | "retire_interaction";
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };
 
-export type Check = { readonly ok: true } | { readonly ok: false; readonly reason: string };
+export type Check = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };
 
 export type Reduction =
   | { readonly ok: true; readonly next: CommittedState; readonly transition: TransitionId }

@@ -98,4 +98,4 @@ export type PrimitiveTransitionId =
   | "activate_valid_model"
   | "retire_model_revision";
 
-export type TransitionResult = { ok: true } | { ok: false; reason: string };
+export type TransitionResult = { ok: true; reason?: undefined } | { ok: false; reason: string };

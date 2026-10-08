@@ -58,4 +58,4 @@ export interface RecordedTransition {
   readonly to: CatalogState;
 }
 
-export type TransitionResult = { readonly ok: true } | { readonly ok: false; readonly reason: string };
+export type TransitionResult = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };
