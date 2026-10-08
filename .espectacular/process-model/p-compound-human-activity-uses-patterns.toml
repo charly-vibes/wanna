@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/process-model/spec.md"
+command = "npx vitest run tests/process-model/properties*.test.ts -t 'planning, diagnosis, review, coordination, monitoring, and clarification may be represented as interaction patterns composed of contribution primitives rather than assumed atomic states'"
 timeout_seconds = 120
