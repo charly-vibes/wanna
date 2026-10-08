@@ -10,10 +10,7 @@ import type {
 } from "./types";
 import { CLOSE_REASONS, SCHEMA_VERSION } from "./types";
 
-export interface Check {
-  readonly ok: boolean;
-  readonly reason?: string;
-}
+export type Check = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };
 
 const HOST_TOKENS = [
   "ui", "dom", "widget", "node", "handle", "focus", "scroll", "cursor",
@@ -53,7 +50,9 @@ function walk(value: unknown, path: string, problems: string[]): void {
 export function durableIsSerializable(value: unknown): Check {
   const problems: string[] = [];
   walk(value, "root", problems);
-  return problems.length === 0 ? { ok: true } : { ok: false, reason: problems[0] };
+  if (problems.length === 0) return { ok: true };
+  // invariant: a non-empty problem list always has a first entry
+  return { ok: false, reason: problems[0]! };
 }
 
 function pendingEntryValid(id: string, entry: unknown, env: SessionEnvironment): Check {

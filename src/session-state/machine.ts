@@ -141,7 +141,8 @@ function applyEffect(
     internals.state = "suspended";
   } else if (id === "begin_recovery") {
     internals.staged = parseRecordedSession(input.serialized as string);
-    internals.stagedRaw = input.serialized;
+    // undefined serialized is equivalent to null for stagedRaw consumers (resumeRaw treats both as absent)
+    internals.stagedRaw = input.serialized ?? null;
     internals.state = "recovering";
   } else if (id === "resume_session") {
     if (input.serialized !== undefined) {
