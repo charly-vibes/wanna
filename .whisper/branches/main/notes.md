@@ -17,3 +17,9 @@
   - corpus-gates pipeline closed out (stale bvp/u08 evidence recorded, wanna-9nc README shipped & pushed). Issue review applied: 28 capability tickets AC-fixed (<SPEC> placeholder), anti-goals, file-headers, base_commit anchored; DEP-001 edge pruned (7xh←0i7).
   - Upstream feedback filed: specodelic#13 (orchestrate stem collision + CLAR-003 exploration_only gate), testaruda#64 (phantom test items in generated dirs).
   - **Next:** /renew then bd ready — claim wave-1 (wanna-jmu contribution-primitives / wanna-4mf event-envelope / wanna-dhj session-state / wanna-15r interaction-catalog), same red→green→refactor flow as 8zj; contracts per .espectacular/<name>/, gates ah check --run-tests + spk lint + pretender.
+- 2026-10-08T17:34:36Z [id:4dd20ff5fe13ea32d9e758a8e1033c37601274461ba76e7992e2db9dc27a0b17] (#snap) ### 2026-10-08 — EPIC COMPLETE
+  - Waves 1-6 (28 tickets) landed via pi-subagent orchestration: jmu/4mf/dhj/15r wave-1; jwy/1yk/yfj/0i7/7xh/c2p wave-2 (fast-check PBT, 23 properties, generator column populated); 9hc/hif/yx8/2cl/znw/130/hvq/53d wave-3; agv/uvw/cr9/3iw/mwy/pps wave-4 (tsc zeroed + tsc-gate added); zlj/rvu wave-5; dus/7fe/504 wave-6.
+  - Spawn contract canon: pi -p -n 'subagent:<ticket>:<steps>' — NEVER --no-session. Bounded briefs matter: 2 orientation-loop timeouts (3iw) + 1 (53d) recovered via tight recovery briefs; bash-timeout kills recovered via session jsonl inspection.
+  - Real PBT win: fast-check exposed event-envelope test-oracle bug (duplicate_idempotent gates before stale_events_rejected per spec guard order) — oracle fixed, impl correct.
+  - Gates: ah check --run-tests 0 findings; spk lint 0; pretender/eslint/tsc/testaruda clean; corpus vitest 711 passing.
+  - Next: session close (wai close); remaining work is integration-level (cross-layer engine wiring, rust: predicate fragments for spk verify — specodelic side).
