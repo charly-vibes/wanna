@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/failure-model/spec.md"
+command = "npx vitest run tests/failure-model/properties*.test.ts -t 'failure records retain relevant event IDs, effect IDs, tool/adapter identity, versions, timestamps supplied by trusted ports, and evidence references'"
 timeout_seconds = 120

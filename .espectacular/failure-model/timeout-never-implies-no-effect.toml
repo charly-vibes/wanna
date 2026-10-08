@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/failure-model/spec.md"
+command = "npx vitest run tests/failure-model/properties*.test.ts -t 'Fault-injection test: lost acknowledgement after a mutating request yields effect_unknown until reconciliation supplies evidence'"
 timeout_seconds = 120
