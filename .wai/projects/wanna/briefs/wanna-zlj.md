@@ -1,48 +1,48 @@
-# Subagent brief: wanna-53d — Implement evidence-provenance
+# Subagent brief: wanna-zlj — Implement host-adapters
 
 You are a pi subagent in repo `/var/home/sasha/para/areas/dev/gh/charly/wanna`
 (TS/vitest monorepo of the `wanna` specodelic corpus). An orchestrator has
-claimed ticket `wanna-53d` and is hands-off: you own the implementation
+claimed ticket `wanna-zlj` and is hands-off: you own the implementation
 end-to-end, including commits. The orchestrator verifies with real gates —
 never claim work the diff doesn't contain.
 
 ## Orientation (do this first)
 
 - Read, in order:
-  1. `openspec/specs/evidence-provenance/spec.md` — the full spec (intent,
+  1. `openspec/specs/host-adapters/spec.md` — the full spec (intent,
      ## Model states + transitions, ## Requirements, p-* properties, constraints).
   2. `src/interaction-need/` + `tests/interaction-need/` +
      `.espectacular/interaction-need/` — the pilot exemplar; wanna-8zj ran the
      exact flow you must follow.
   3. Repo-root `AGENTS.md` (shell-safety rules).
-- `wai search "evidence-provenance"` — check accumulated patterns.
+- `wai search "host-adapters"` — check accumulated patterns.
 
 ## What to build (TDD, strict red→green→refactor)
 
-1. RED: failing tests first in `tests/evidence-provenance/`:
+1. RED: failing tests first in `tests/host-adapters/`:
    - `transitions.test.ts` — one test per ## Model transition, asserting PRECISE
      failure reasons (masked-violation lesson from roles_allowlisted: loose
      reason regexes let real bypasses through; assert exact reason strings).
    - `properties-*.test.ts` — one test per p-* property, named with the EXACT
      property description text from the spec (contracts bind via
      `vitest -t '<description>'`).
-2. GREEN: implement `src/evidence-provenance/` (`machine.ts`, `types.ts`,
+2. GREEN: implement `src/host-adapters/` (`machine.ts`, `types.ts`,
    `index.ts`, split further if needed) until green.
 3. REFACTOR: pretender enforces function_lines ≤40, cyclomatic ≤10 — split
    proactively (the pilot needed 2 splits; don't wait for the gate).
-4. Contracts: upgrade every TOML in `.espectacular/evidence-provenance/`
+4. Contracts: upgrade every TOML in `.espectacular/host-adapters/`
    from spk lint shells to real vitest bindings, modeled exactly on
    `.espectacular/interaction-need/p-need-schema-valid.toml`: keep
    `archetype/authored_with/derived_from/description/falsifiability_class/id/
    status/superseded_by` UNCHANGED; replace only the `[[tests.shell]]` command
-   with `npx vitest run tests/evidence-provenance/properties*.test.ts -t
+   with `npx vitest run tests/host-adapters/properties*.test.ts -t
    '<exact property description>'` (timeout_seconds 120). One TOML per p-*.
    Do NOT weaken descriptions, delete TOMLs, or touch any other spec's contracts.
 
 ## Hard scope guard
 
-- Allowed: `src/evidence-provenance/`, `tests/evidence-provenance/`,
-  `openspec/specs/evidence-provenance/`, `.espectacular/evidence-provenance/`
+- Allowed: `src/host-adapters/`, `tests/host-adapters/`,
+  `openspec/specs/host-adapters/`, `.espectacular/host-adapters/`
 - Never edit: any other spec/contract, `tests/engine/`, `src/engine/`,
   `src/catalog/`, `.wai/**`, `pretender.toml`, lefthook config.
 
@@ -51,7 +51,7 @@ never claim work the diff doesn't contain.
 - **Commit hygiene**: before ANY `git commit`, run `git status --short`; stage
   ONLY files you authored (`git add <paths>`, never bare `git add`); commit
   message attributes only what the diff contains (conventional style, mention
-  the bead: `(wanna-53d)`). Do NOT commit `.whisper/` or `.wai/` churn.
+  the bead: `(wanna-zlj)`). Do NOT commit `.whisper/` or `.wai/` churn.
 - **Do NOT push** — the orchestrator verifies and pushes.
 - **Do NOT run any `bd` commands** — the ticket is already claimed; the
   orchestrator owns close.
@@ -63,11 +63,11 @@ never claim work the diff doesn't contain.
 
 ## Gates you MUST run and pass before reporting done
 
-- `npx vitest run tests/evidence-provenance/` — green
+- `npx vitest run tests/host-adapters/` — green
 - `ah check --run-tests` — exit 0, 0 findings (corpus-wide, ~370 tests)
 - `spk lint openspec` — clean
-- `pretender check src/evidence-provenance tests/evidence-provenance` — clean
-- `npx eslint src/evidence-provenance tests/evidence-provenance` — clean
+- `pretender check src/host-adapters tests/host-adapters` — clean
+- `npx eslint src/host-adapters tests/host-adapters` — clean
 
 Known noise to IGNORE (not yours): eslint `CANDIDATE_ORDER` unused-var in
 `tests/engine/properties-core.test.ts`; `.whisper/` + `.wai/` dirty files.
