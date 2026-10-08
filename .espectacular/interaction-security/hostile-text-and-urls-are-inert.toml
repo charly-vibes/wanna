@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-security/spec.md"
+command = "npx vitest run tests/interaction-security/properties*.test.ts -t 'Security test: HTML/script text is escaped and disallowed URL schemes/hosts are rejected'"
 timeout_seconds = 120

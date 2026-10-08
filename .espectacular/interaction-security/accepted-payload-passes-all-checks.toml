@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-security/spec.md"
+command = "npx vitest run tests/interaction-security/properties*.test.ts -t 'Security test: payload cannot reach validated state while any schema/catalog/size/rendering/ownership check fails'"
 timeout_seconds = 120
