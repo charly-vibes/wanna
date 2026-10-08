@@ -63,8 +63,9 @@ describe("interaction-contract transitions", () => {
       "transition retire_contract cannot fire from state proposed",
     );
     // validate_contract starts at proposed, not invalid
-    m.fire("reject_contract");
-    expect(m.fire("validate_contract").reason).toBe(
+    const bad = createContractMachine(validContract({ kind: "confetti_cannon" }));
+    bad.fire("reject_contract");
+    expect(bad.fire("validate_contract").reason).toBe(
       "transition validate_contract cannot fire from state invalid",
     );
   });

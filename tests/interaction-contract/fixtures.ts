@@ -8,7 +8,9 @@ import type { ContractResponse, InteractionContract } from "../../src/interactio
 export const CHOOSE = "choose";
 
 export function kindSchema(kind: string) {
-  return KIND_CONTRACT_SCHEMAS[kind as keyof typeof KIND_CONTRACT_SCHEMAS];
+  // unknown kinds fall back to the canonical kind's payload shape — the fixture
+  // still builds a coherent record; allowlist validation rejects the kind itself
+  return KIND_CONTRACT_SCHEMAS[kind as keyof typeof KIND_CONTRACT_SCHEMAS] ?? KIND_CONTRACT_SCHEMAS[CHOOSE];
 }
 
 export function payloadForKind(kind: string): Record<string, unknown> {

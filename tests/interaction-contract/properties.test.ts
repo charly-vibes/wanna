@@ -18,8 +18,8 @@ import {
   rejectionCodeFor,
 } from "../../src/interaction-contract/invariants";
 import { migrateInteractionContract } from "../../src/interaction-contract/registries";
-import { KIND_CONTRACT_SCHEMAS } from "../../src/interaction-contract/registries";
-import { CONTRACT_CONTENT_LIMITS, CONTRACT_SCHEMA_VERSION } from "../../src/interaction-contract/types";
+import { KIND_CONTRACT_SCHEMAS, CONTRACT_CONTENT_LIMITS } from "../../src/interaction-contract/registries";
+import { CONTRACT_SCHEMA_VERSION } from "../../src/interaction-contract/types";
 import { responseFor, validContract, payloadForKind, fullAccessibility } from "./fixtures";
 import type { InteractionContract } from "../../src/interaction-contract/types";
 
