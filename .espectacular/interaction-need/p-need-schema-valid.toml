@@ -1,6 +1,6 @@
 archetype = "SA"
 authored_with = "0.9.2"
-derived_from = "p_need_schema_valid@016dcd094fce"
+derived_from = "p_need_schema_valid@16723f7f7f54"
 description = "`a need validates against the versioned canonical schema before policy evaluation`"
 falsifiability_class = "safety"
 id = "p-need-schema-valid"
@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "npx vitest run tests/interaction-need/properties.test.ts -t 'a need validates against the versioned canonical schema before policy evaluation'"
+command = "npx vitest run tests/interaction-need/properties-pbt.test.ts -t 'a need validates against the versioned canonical schema before policy evaluation'"
 timeout_seconds = 120
