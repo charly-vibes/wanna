@@ -1,0 +1,5 @@
+---
+tags: [pipeline-run:wave-2-2026-10-08-wave-2-implementation-wanna-jwy-1yk-yfj-0i7-7xh-c2p-via-pi-subagents, pipeline-step:c2p-fast-check-pbt]
+---
+
+C2P-IMPL: session=subagent:wanna-c2p:impl fast-check properties (100+ cases) + generator column populated + recursive walk fix, gates green
