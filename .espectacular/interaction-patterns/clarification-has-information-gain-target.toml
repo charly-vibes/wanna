@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "clarification_has_information_gain_target@79ef4c6f1aba"
+derived_from = "clarification_has_information_gain_target@333bbfbd93c7"
 description = "`Policy test: clarification without a named unresolved target is ineligible`"
 falsifiability_class = "safety"
 id = "clarification-has-information-gain-target"
@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "npx vitest run tests/interaction-patterns/properties*.test.ts -t 'Policy test: clarification without a named unresolved target is ineligible'"
+command = "npx vitest run tests/interaction-patterns/properties-pbt.test.ts -t 'Policy test: clarification without a named unresolved target is ineligible'"
 timeout_seconds = 120
