@@ -14,17 +14,26 @@ export function kindSchema(kind: string) {
 }
 
 export function payloadForKind(kind: string): Record<string, unknown> {
+  const payload = basePayload(kind);
+  if (OPTION_KINDS.has(kind)) payload["options"] = canonicalOptions();
+  payload["label"] = "A canonical contract label";
+  return payload;
+}
+
+const OPTION_KINDS = new Set(["choose", "rank"]);
+
+function canonicalOptions(): Record<string, string>[] {
+  return [
+    { id: "opt-1", value: "Option A" },
+    { id: "opt-2", value: "Option B" },
+  ];
+}
+
+function basePayload(kind: string): Record<string, unknown> {
   const payload: Record<string, unknown> = {};
   for (const field of kindSchema(kind).requiredPayloadFields) {
     payload[field] = `the ${field} for this interaction`;
   }
-  if (kind === "choose" || kind === "rank") {
-    payload["options"] = [
-      { id: "opt-1", value: "Option A" },
-      { id: "opt-2", value: "Option B" },
-    ];
-  }
-  payload["label"] = "A canonical contract label";
   return payload;
 }
 

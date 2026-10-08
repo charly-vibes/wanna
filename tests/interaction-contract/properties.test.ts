@@ -10,7 +10,6 @@ import {
   contractHasBoundedContent,
   contractIdentityComplete,
   contractIsDataOnly,
-  contractKindAllowlisted,
   contractPayloadValid,
   contractVersionSupported,
   escapePathsDeclared,
@@ -31,9 +30,13 @@ function machineFor(contract: InteractionContract) {
 }
 
 function withoutPayloadField(kind: string, field: string): InteractionContract {
-  const payload = payloadForKind(kind);
-  const { [field]: _removed, ...rest } = payload;
-  return validContract({ kind, payload: rest });
+  return validContract({ kind, payload: omit(payloadForKind(kind), field) });
+}
+
+function omit(obj: Record<string, unknown>, key: string): Record<string, unknown> {
+  const copy: Record<string, unknown> = { ...obj };
+  delete copy[key];
+  return copy;
 }
 
 function withFillerPayload(targetBytes: number): Record<string, unknown> {
@@ -308,8 +311,7 @@ describe("interaction-contract properties", () => {
   it("Schema test: renderable contracts expose required accessibility obligations", () => {
     const required = ["naming", "operation", "focusNavigation", "statusErrors", "timing"] as const;
     for (const key of required) {
-      const partial = fullAccessibility();
-      const { [key]: _dropped, ...incomplete } = partial;
+      const incomplete = omit({ ...fullAccessibility() }, key);
       const contract = validContract({ accessibility: incomplete as never });
       const result = accessibilityObligationsCarried(contract);
       expect(result.ok).toBe(false);
@@ -326,8 +328,7 @@ describe("interaction-contract properties", () => {
   it("every contract declares supported reject, defer, cancel, dismiss, and timeout semantics instead of treating absence as an answer", () => {
     const required = ["reject", "defer", "cancel", "dismiss", "timeout"] as const;
     for (const key of required) {
-      const partial = validContract().escapePaths;
-      const { [key]: _dropped, ...incomplete } = partial;
+      const incomplete = omit({ ...validContract().escapePaths }, key);
       const contract = validContract({ escapePaths: incomplete as never });
       const result = escapePathsDeclared(contract);
       expect(result.ok).toBe(false);

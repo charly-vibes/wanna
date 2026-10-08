@@ -276,18 +276,21 @@ export function correctedContractReceived(rejected: InteractionContract, next?: 
   return { ok: true };
 }
 
+function explicitFormRequires(command: Exclude<RetirementCommand, { retire: true }>): Check | null {
+  if ("supersededBy" in command && command.supersededBy.length > 0) return { ok: true };
+  if ("expiresAt" in command && command.expiresAt.length > 0) return { ok: true };
+  const field = "supersededBy" in command ? "supersession" : "expiry";
+  const diagnostic = field === "supersession" ? "requires a superseding contract" : "requires a time";
+  return { ok: false, reason: `retirement_requested does not hold: an explicit ${field} ${diagnostic}` };
+}
+
 export function retirementRequested(command?: RetirementCommand): Check {
   if (!command) {
     return { ok: false, reason: "retirement_requested does not hold: retirement requires an explicit retire, supersede, or expiry command" };
   }
-  if ("retire" in command) {
-    if (typeof command.reason !== "string" || command.reason.length === 0) {
-      return { ok: false, reason: "retirement_requested does not hold: an explicit retirement command requires a reason" };
-    }
-    return { ok: true };
+  if (!("retire" in command)) return explicitFormRequires(command);
+  if (typeof command.reason !== "string" || command.reason.length === 0) {
+    return { ok: false, reason: "retirement_requested does not hold: an explicit retirement command requires a reason" };
   }
-  if ("supersededBy" in command && command.supersededBy.length > 0) return { ok: true };
-  if ("expiresAt" in command && command.expiresAt.length > 0) return { ok: true };
-  const field = "supersededBy" in command ? "supersession" : "expiry";
-  return { ok: false, reason: `retirement_requested does not hold: an explicit ${field} requires a ${field === "supersession" ? "superseding contract" : "time"}` };
+  return { ok: true };
 }
