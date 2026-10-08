@@ -21,6 +21,8 @@ import type {
   ValidatedInteraction,
 } from "./types";
 
+export type { TransitionRow } from "./types";
+
 export const SECURITY_GATE_VERSION = "interaction-security-gate@1.0.0";
 
 export const SECURITY_TRANSITIONS: readonly TransitionRow[] = [
