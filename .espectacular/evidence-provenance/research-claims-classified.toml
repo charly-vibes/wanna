@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/evidence-provenance/spec.md"
+command = "npx vitest run tests/evidence-provenance/properties*.test.ts -t 'Traceability test: each research-derived normative constraint has an evidence classification'"
 timeout_seconds = 120
