@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "compound_activity_not_mislabeled_atomic@8b5dda5f2288"
+derived_from = "compound_activity_not_mislabeled_atomic@2847aaa16ceb"
 description = "`TypeScript test: known compound activities resolve to patterns/compositions rather than a single primitive unless an explicit taxonomy revision says otherwise`"
 falsifiability_class = "safety"
 id = "compound-activity-not-mislabeled-atomic"

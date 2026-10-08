@@ -1,5 +1,5 @@
 ---
-id: spec
+id: accessibility.adaptation
 kind: intent
 statement: THE Accessibility Adaptation Layer SHALL preserve interaction semantics while adapting presentation to declared accessibility needs and host capabilities
 ---
@@ -11,16 +11,16 @@ Accessibility is a correctness constraint, not a decorative preference. The host
 ## Constraints
 | id | kind | expr | traces_to |
 |---|---|---|---|
-| controls_have_names | invariant | Every interactive control has a programmatic name and, when needed, a description and associated error message. | [[spec]] |
-| keyboard_equivalent | invariant | Every operation available through pointer input has a keyboard-equivalent operation in hosts that support keyboard input. | [[spec]] |
-| focus_order_logical | invariant | Focus order follows the task's semantic reading and action order rather than incidental render order. | [[spec]] |
-| status_changes_announced | invariant | Asynchronous completion, validation errors, and important state changes are exposed through the host's appropriate status-announcement mechanism. | [[spec]] |
-| meaning_survives_adaptation | invariant | Accessibility adaptation cannot remove required information, change response meaning, or bypass required confirmation. | [[spec]] |
-| motion_and_density_respect_preferences | invariant | Presentation respects declared reduced-motion, text-size, and density preferences where the host can support them. | [[spec]] |
-| inaccessible_interaction_not_silently_rendered | invariant | If no accessible equivalent exists for a required interaction, the host returns an explicit unsupported result rather than silently rendering an unusable control. | [[spec]] |
+| controls_have_names | invariant | Every interactive control has a programmatic name and, when needed, a description and associated error message. | [[accessibility.adaptation]] |
+| keyboard_equivalent | invariant | Every operation available through pointer input has a keyboard-equivalent operation in hosts that support keyboard input. | [[accessibility.adaptation]] |
+| focus_order_logical | invariant | Focus order follows the task's semantic reading and action order rather than incidental render order. | [[accessibility.adaptation]] |
+| status_changes_announced | invariant | Asynchronous completion, validation errors, and important state changes are exposed through the host's appropriate status-announcement mechanism. | [[accessibility.adaptation]] |
+| meaning_survives_adaptation | invariant | Accessibility adaptation cannot remove required information, change response meaning, or bypass required confirmation. | [[accessibility.adaptation]] |
+| motion_and_density_respect_preferences | invariant | Presentation respects declared reduced-motion, text-size, and density preferences where the host can support them. | [[accessibility.adaptation]] |
+| inaccessible_interaction_not_silently_rendered | invariant | If no accessible equivalent exists for a required interaction, the host returns an explicit unsupported result rather than silently rendering an unusable control. | [[accessibility.adaptation]] |
 
-| accessibility_obligations_semantic | invariant | Accessibility requirements attach to semantic interaction/contribution obligations before host rendering, not only as post-render checks. | [[spec]] |
-| modality_equivalence_explicit | invariant | When exact visual behavior cannot transfer across hosts, the adapter documents a semantically equivalent accessible operation or reports unsupported. | [[spec]] |
+| accessibility_obligations_semantic | invariant | Accessibility requirements attach to semantic interaction/contribution obligations before host rendering, not only as post-render checks. | [[accessibility.adaptation]] |
+| modality_equivalence_explicit | invariant | When exact visual behavior cannot transfer across hosts, the adapter documents a semantically equivalent accessible operation or reports unsupported. | [[accessibility.adaptation]] |
 
 ## Model
 ### States
@@ -33,23 +33,23 @@ Accessibility is a correctness constraint, not a decorative preference. The host
 ### Transitions
 | id | from | to | guard |
 |---|---|---|---|
-| check_accessibility | proposed | checked | [[spec.controls_have_names]] |
-| accept_accessible_render | checked | accessible | [[spec.meaning_survives_adaptation]] |
-| use_accessible_fallback | checked | fallback | [[spec.keyboard_equivalent]] |
-| reject_inaccessible_render | checked | unsupported | ¬([[spec.inaccessible_interaction_not_silently_rendered]]) |
+| check_accessibility | proposed | checked | [[accessibility.adaptation.controls_have_names]] |
+| accept_accessible_render | checked | accessible | [[accessibility.adaptation.meaning_survives_adaptation]] |
+| use_accessible_fallback | checked | fallback | [[accessibility.adaptation.keyboard_equivalent]] |
+| reject_inaccessible_render | checked | unsupported | ¬([[accessibility.adaptation.inaccessible_interaction_not_silently_rendered]]) |
 
 ## Properties
 | id | kind | derives_from | generator | predicate |
 |---|---|---|---|---|
-| controls_have_names_holds | unit | [[spec.controls_have_names]] | `any::<String>()` | `TypeScript conformance test: assert invariant controls_have_names at its trust boundary and under its stated edge cases.` |
-| keyboard_equivalent_holds | unit | [[spec.keyboard_equivalent]] | `any::<String>()` | `TypeScript conformance test: assert invariant keyboard_equivalent at its trust boundary and under its stated edge cases.` |
-| focus_order_logical_holds | unit | [[spec.focus_order_logical]] | `any::<String>()` | `TypeScript conformance test: assert invariant focus_order_logical at its trust boundary and under its stated edge cases.` |
-| status_changes_announced_holds | unit | [[spec.status_changes_announced]] | `any::<String>()` | `TypeScript conformance test: assert invariant status_changes_announced at its trust boundary and under its stated edge cases.` |
-| meaning_survives_adaptation_holds | unit | [[spec.meaning_survives_adaptation]] | `any::<String>()` | `TypeScript conformance test: assert invariant meaning_survives_adaptation at its trust boundary and under its stated edge cases.` |
-| motion_and_density_respect_preferences_holds | unit | [[spec.motion_and_density_respect_preferences]] | `any::<String>()` | `TypeScript conformance test: assert invariant motion_and_density_respect_preferences at its trust boundary and under its stated edge cases.` |
-| inaccessible_interaction_not_silently_rendered_holds | unit | [[spec.inaccessible_interaction_not_silently_rendered]] | `any::<String>()` | `TypeScript conformance test: assert invariant inaccessible_interaction_not_silently_rendered at its trust boundary and under its stated edge cases.` |
-| accessibility_exists_before_render | unit | [[spec.accessibility_obligations_semantic]] | `any::<String>()` | `Schema test: interaction contract declares obligations consumed by adapters` |
-| p_modality_equivalence_explicit | unit | [[spec.modality_equivalence_explicit]] | `arbitrary_state()` | `when exact visual behavior cannot transfer across hosts, the adapter documents a semantically equivalent accessible operation or reports unsupported` |
+| controls_have_names_holds | unit | [[accessibility.adaptation.controls_have_names]] | `any::<String>()` | `TypeScript conformance test: assert invariant controls_have_names at its trust boundary and under its stated edge cases.` |
+| keyboard_equivalent_holds | unit | [[accessibility.adaptation.keyboard_equivalent]] | `any::<String>()` | `TypeScript conformance test: assert invariant keyboard_equivalent at its trust boundary and under its stated edge cases.` |
+| focus_order_logical_holds | unit | [[accessibility.adaptation.focus_order_logical]] | `any::<String>()` | `TypeScript conformance test: assert invariant focus_order_logical at its trust boundary and under its stated edge cases.` |
+| status_changes_announced_holds | unit | [[accessibility.adaptation.status_changes_announced]] | `any::<String>()` | `TypeScript conformance test: assert invariant status_changes_announced at its trust boundary and under its stated edge cases.` |
+| meaning_survives_adaptation_holds | unit | [[accessibility.adaptation.meaning_survives_adaptation]] | `any::<String>()` | `TypeScript conformance test: assert invariant meaning_survives_adaptation at its trust boundary and under its stated edge cases.` |
+| motion_and_density_respect_preferences_holds | unit | [[accessibility.adaptation.motion_and_density_respect_preferences]] | `any::<String>()` | `TypeScript conformance test: assert invariant motion_and_density_respect_preferences at its trust boundary and under its stated edge cases.` |
+| inaccessible_interaction_not_silently_rendered_holds | unit | [[accessibility.adaptation.inaccessible_interaction_not_silently_rendered]] | `any::<String>()` | `TypeScript conformance test: assert invariant inaccessible_interaction_not_silently_rendered at its trust boundary and under its stated edge cases.` |
+| accessibility_exists_before_render | unit | [[accessibility.adaptation.accessibility_obligations_semantic]] | `any::<String>()` | `Schema test: interaction contract declares obligations consumed by adapters` |
+| p_modality_equivalence_explicit | unit | [[accessibility.adaptation.modality_equivalence_explicit]] | `arbitrary_state()` | `when exact visual behavior cannot transfer across hosts, the adapter documents a semantically equivalent accessible operation or reports unsupported` |
 
 ## Requirements
 
@@ -58,49 +58,49 @@ Accessibility is a correctness constraint, not a decorative preference. The host
 Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: check-accessibility moves `proposed` to `checked`
-- **WHEN** the model is in the `proposed` state and the `check_accessibility` transition guard holds ([[spec.controls_have_names]])
+- **WHEN** the model is in the `proposed` state and the `check_accessibility` transition guard holds ([[accessibility.adaptation.controls_have_names]])
 - **THEN** the model enters the `checked` state and records the transition
-- **VERIFIES** [[spec.controls_have_names_holds]]
+- **VERIFIES** [[accessibility.adaptation.controls_have_names_holds]]
 
 #### Scenario: accept-accessible-render moves `checked` to `accessible`
-- **WHEN** the model is in the `checked` state and the `accept_accessible_render` transition guard holds ([[spec.meaning_survives_adaptation]])
+- **WHEN** the model is in the `checked` state and the `accept_accessible_render` transition guard holds ([[accessibility.adaptation.meaning_survives_adaptation]])
 - **THEN** the model enters the `accessible` state and records the transition
-- **VERIFIES** [[spec.meaning_survives_adaptation_holds]]
+- **VERIFIES** [[accessibility.adaptation.meaning_survives_adaptation_holds]]
 
 #### Scenario: use-accessible-fallback moves `checked` to `fallback`
-- **WHEN** the model is in the `checked` state and the `use_accessible_fallback` transition guard holds ([[spec.keyboard_equivalent]])
+- **WHEN** the model is in the `checked` state and the `use_accessible_fallback` transition guard holds ([[accessibility.adaptation.keyboard_equivalent]])
 - **THEN** the model enters the `fallback` state and records the transition
-- **VERIFIES** [[spec.keyboard_equivalent_holds]]
+- **VERIFIES** [[accessibility.adaptation.keyboard_equivalent_holds]]
 
 #### Scenario: reject-inaccessible-render moves `checked` to `unsupported`
-- **WHEN** the model is in the `checked` state and the `reject_inaccessible_render` transition guard evaluates false (¬([[spec.inaccessible_interaction_not_silently_rendered]]))
+- **WHEN** the model is in the `checked` state and the `reject_inaccessible_render` transition guard evaluates false (¬([[accessibility.adaptation.inaccessible_interaction_not_silently_rendered]]))
 - **THEN** the model enters the `unsupported` state and records the transition
-- **VERIFIES** [[spec.inaccessible_interaction_not_silently_rendered_holds]]
+- **VERIFIES** [[accessibility.adaptation.inaccessible_interaction_not_silently_rendered_holds]]
 
 #### Scenario: focus-order-logical invariant holds under canonical operation
 - **WHEN** the system performs any operation governed by this specification
 - **THEN** the invariant holds: "Focus order follows the task's semantic reading and action order rather than incidental render order."
-- **VERIFIES** [[spec.focus_order_logical_holds]]
+- **VERIFIES** [[accessibility.adaptation.focus_order_logical_holds]]
 
 #### Scenario: status-changes-announced invariant holds under canonical operation
 - **WHEN** the system performs any operation governed by this specification
 - **THEN** the invariant holds: "Asynchronous completion, validation errors, and important state changes are exposed through the host's appropriate status-announcement mechanism."
-- **VERIFIES** [[spec.status_changes_announced_holds]]
+- **VERIFIES** [[accessibility.adaptation.status_changes_announced_holds]]
 
 #### Scenario: motion-and-density-respect-preferences invariant holds under canonical operation
 - **WHEN** the system performs any operation governed by this specification
 - **THEN** the invariant holds: "Presentation respects declared reduced-motion, text-size, and density preferences where the host can support them."
-- **VERIFIES** [[spec.motion_and_density_respect_preferences_holds]]
+- **VERIFIES** [[accessibility.adaptation.motion_and_density_respect_preferences_holds]]
 
 #### Scenario: accessibility-obligations-semantic invariant holds under canonical operation
 - **WHEN** the system performs any operation governed by this specification
 - **THEN** the invariant holds: "Accessibility requirements attach to semantic interaction/contribution obligations before host rendering, not only as post-render checks."
-- **VERIFIES** [[spec.accessibility_exists_before_render]]
+- **VERIFIES** [[accessibility.adaptation.accessibility_exists_before_render]]
 
 #### Scenario: modality-equivalence-explicit invariant holds under canonical operation
 - **WHEN** the system performs any operation governed by this specification
 - **THEN** the invariant holds: "When exact visual behavior cannot transfer across hosts, the adapter documents a semantically equivalent accessible operation or reports unsupported."
-- **VERIFIES** [[spec.p_modality_equivalence_explicit]]
+- **VERIFIES** [[accessibility.adaptation.p_modality_equivalence_explicit]]
 
 #### Scenario: Violating Accessibility and Adaptive Presentation invariant is rejected
 

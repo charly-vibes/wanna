@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_primitive_not_authority@cd982e02a3ea"
+derived_from = "p_primitive_not_authority@12bbb915093e"
 description = "`emitting a primitive event does not by itself create authority; authorization is valid only when the event satisfies an applicable authority policy or grant`"
 falsifiability_class = "safety"
 id = "p-primitive-not-authority"

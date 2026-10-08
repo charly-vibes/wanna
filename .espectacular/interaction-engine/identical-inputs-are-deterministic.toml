@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "identical_inputs_are_deterministic@d94866437b6c"
+derived_from = "identical_inputs_are_deterministic@6d988a617e29"
 description = "`TypeScript test: repeated evaluation returns deeply equal ordered results`"
 falsifiability_class = "safety"
 id = "identical-inputs-are-deterministic"

@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "host_specific_types_absent@ef2826d6706b"
+derived_from = "host_specific_types_absent@b4eedd92ca4e"
 description = "`Dependency test: core package imports no host UI SDK`"
 falsifiability_class = "safety"
 id = "host-specific-types-absent"

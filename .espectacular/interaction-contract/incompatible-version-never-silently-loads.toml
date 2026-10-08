@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "incompatible_version_never_silently_loads@bfbbc4e7edea"
+derived_from = "incompatible_version_never_silently_loads@591bee47a789"
 description = "`TypeScript test: unsupported schema version returns a typed error unless a registered migration succeeds`"
 falsifiability_class = "safety"
 id = "incompatible-version-never-silently-loads"

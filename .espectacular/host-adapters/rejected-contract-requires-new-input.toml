@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "rejected_contract_requires_new_input@1452637cc4ef"
+derived_from = "rejected_contract_requires_new_input@4e6b619b80bb"
 description = "`Adapter contract test: invalid contract is not processed as renderable until a valid new contract arrives`"
 falsifiability_class = "safety"
 id = "rejected-contract-requires-new-input"

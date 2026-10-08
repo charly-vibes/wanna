@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_need_provenance_retained@0c309858c6c3"
+derived_from = "p_need_provenance_retained@083d6b2f208d"
 description = "`need records retain task revision, proposal identity, evidence references, taxonomy version, and model/normalizer provenance where applicable`"
 falsifiability_class = "safety"
 id = "p-need-provenance-retained"

@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "need_does_not_force_primitive@aa2eadf44a9f"
+derived_from = "need_does_not_force_primitive@88dc4b789c45"
 description = "`Policy test: a review need may map to an inspect/evaluate/verify pattern rather than a primitive named review`"
 falsifiability_class = "safety"
 id = "need-does-not-force-primitive"

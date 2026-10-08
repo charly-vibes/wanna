@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "exclusions_are_explainable@26cf3163c528"
+derived_from = "exclusions_are_explainable@2175f92abde6"
 description = "`TypeScript test: every excluded candidate has a known non-empty reason code`"
 falsifiability_class = "safety"
 id = "exclusions-are-explainable"

@@ -1,6 +1,6 @@
-archetype = "CE"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_pattern_failure_recorded@004ba8c2cb63"
+derived_from = "p_pattern_failure_recorded@d4509dc4c2a3"
 description = "`failure is a declared completion condition ∧ instance recorded for replay and audit`"
 falsifiability_class = "safety"
 id = "p-pattern-failure-recorded"

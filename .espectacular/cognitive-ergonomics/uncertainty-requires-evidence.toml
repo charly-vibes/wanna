@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "uncertainty_requires_evidence@eefff5e8c1a5"
+derived_from = "uncertainty_requires_evidence@cc91239894fd"
 description = "`TypeScript test: UI cannot render a numeric confidence absent a source declaring that metric and semantics`"
 falsifiability_class = "safety"
 id = "uncertainty-requires-evidence"

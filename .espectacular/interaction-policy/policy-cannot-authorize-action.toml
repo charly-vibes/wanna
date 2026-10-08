@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "policy_cannot_authorize_action@bb2184e7025b"
+derived_from = "policy_cannot_authorize_action@a4fdab61e966"
 description = "`TypeScript test: a recommendation alone cannot satisfy an authorization/approval precondition`"
 falsifiability_class = "safety"
 id = "policy-cannot-authorize-action"

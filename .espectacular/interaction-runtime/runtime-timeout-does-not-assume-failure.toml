@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "runtime_timeout_does_not_assume_failure@ca4a191b7fdc"
+derived_from = "runtime_timeout_does_not_assume_failure@558450838bf1"
 description = "`Fault-injection test: lost acknowledgement can yield unknown effect`"
 falsifiability_class = "safety"
 id = "runtime-timeout-does-not-assume-failure"

@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "event_identity_unique_holds@dccd40813a5b"
+derived_from = "event_identity_unique_holds@5b3da4dc4180"
 description = "`TypeScript conformance test: assert invariant event_identity_unique at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "event-identity-unique-holds"

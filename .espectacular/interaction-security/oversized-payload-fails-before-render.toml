@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "oversized_payload_fails_before_render@2e9ab48d8ff4"
+derived_from = "oversized_payload_fails_before_render@e1bc66969416"
 description = "`Security test: every configured size/depth/count limit is enforced before rendering; failure is bounded and typed`"
 falsifiability_class = "safety"
 id = "oversized-payload-fails-before-render"

@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_continuity_not_persistence_only@7b60c63afdf6"
+derived_from = "p_continuity_not_persistence_only@c0c8af195a15"
 description = "`resumption includes reorientation and reconciliation semantics, not merely reloading serialized state`"
 falsifiability_class = "safety"
 id = "p-continuity-not-persistence-only"

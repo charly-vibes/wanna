@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "process_state_not_ui_state_holds@c5b0a7f6c54a"
+derived_from = "process_state_not_ui_state_holds@899254a6e0ef"
 description = "`TypeScript conformance test: assert invariant process_state_not_ui_state at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "process-state-not-ui-state-holds"

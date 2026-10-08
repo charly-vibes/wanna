@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "executable_content_is_rejected@42546f506d3f"
+derived_from = "executable_content_is_rejected@1a689f9c3e0f"
 description = "`TypeScript test: script/handler/HTML payloads are rejected or rendered as inert escaped text; never executed`"
 falsifiability_class = "safety"
 id = "executable-content-is-rejected"

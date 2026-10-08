@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "clarification_has_information_gain_target@333bbfbd93c7"
+derived_from = "clarification_has_information_gain_target@a40c308152cd"
 description = "`Policy test: clarification without a named unresolved target is ineligible`"
 falsifiability_class = "safety"
 id = "clarification-has-information-gain-target"

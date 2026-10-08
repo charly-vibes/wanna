@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "failure_is_reproducible@944f0e17381a"
+derived_from = "failure_is_reproducible@732ca001e8fa"
 description = "`TypeScript CI test: failure report records stable scenario/test identity and the pinned versions needed for reproduction`"
 falsifiability_class = "safety"
 id = "failure-is-reproducible"

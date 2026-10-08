@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "contract_identity_is_complete@4e0012e8c73c"
+derived_from = "contract_identity_is_complete@f6edeb8d3bb2"
 description = "`TypeScript test: any missing required identity/version field makes validation fail`"
 falsifiability_class = "safety"
 id = "contract-identity-is-complete"

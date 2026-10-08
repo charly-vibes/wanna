@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "compatibility_explicit_holds@70b5c9ab67f9"
+derived_from = "compatibility_explicit_holds@6149ceff17e7"
 description = "`TypeScript conformance test: assert invariant compatibility_explicit at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "compatibility-explicit-holds"

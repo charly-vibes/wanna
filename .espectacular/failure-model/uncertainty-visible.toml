@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "uncertainty_visible@c33e5b4bc71b"
+derived_from = "uncertainty_visible@9aceca13f504"
 description = "`UX contract test: unknown effect state cannot render as definitely failed or definitely succeeded`"
 falsifiability_class = "safety"
 id = "uncertainty-visible"

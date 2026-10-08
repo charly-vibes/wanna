@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "cancellation_semantics_defined_holds@fbd4111675f6"
+derived_from = "cancellation_semantics_defined_holds@0dbcc79fd40e"
 description = "`TypeScript conformance test: assert invariant cancellation_semantics_defined at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "cancellation-semantics-defined-holds"

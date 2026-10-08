@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "compensation_can_fail_independently@91b013d6b4a8"
+derived_from = "compensation_can_fail_independently@14d32b47294f"
 description = "`Fault-injection test: failed compensation remains visible`"
 falsifiability_class = "safety"
 id = "compensation-can-fail-independently"

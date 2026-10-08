@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "unsafe_retry_blocked@005c2695e86f"
+derived_from = "unsafe_retry_blocked@78023bed009c"
 description = "`TypeScript test: non-idempotent unknown-effect failure cannot enter retry path`"
 falsifiability_class = "safety"
 id = "unsafe-retry-blocked"

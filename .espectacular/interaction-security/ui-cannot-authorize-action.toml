@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "ui_cannot_authorize_action@a8f0acc64049"
+derived_from = "ui_cannot_authorize_action@6305739ba3cd"
 description = "`Security test: forged interaction/approval UI events cannot satisfy host/domain authorization`"
 falsifiability_class = "safety"
 id = "ui-cannot-authorize-action"

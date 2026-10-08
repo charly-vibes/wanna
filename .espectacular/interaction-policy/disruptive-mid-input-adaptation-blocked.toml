@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "disruptive_mid_input_adaptation_blocked@5e46efcdad75"
+derived_from = "disruptive_mid_input_adaptation_blocked@2ddbd9d3e5ca"
 description = "`Interaction test: active response surface remains semantically stable`"
 falsifiability_class = "safety"
 id = "disruptive-mid-input-adaptation-blocked"

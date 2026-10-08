@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "rejection_has_stable_reason@551d5d415874"
+derived_from = "rejection_has_stable_reason@9a1285fe3298"
 description = "`TypeScript test: same invalid condition yields the same documented reason code without leaking secret data`"
 falsifiability_class = "safety"
 id = "rejection-has-stable-reason"

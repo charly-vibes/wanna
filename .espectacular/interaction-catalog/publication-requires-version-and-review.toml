@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "publication_requires_version_and_review@1d1d9520232e"
+derived_from = "publication_requires_version_and_review@5d2ba0350dc1"
 description = "`TypeScript test: catalog cannot publish without validation, compatibility review, and immutable version ID`"
 falsifiability_class = "safety"
 id = "publication-requires-version-and-review"

@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_escape_paths_declared@35830d69e946"
+derived_from = "p_escape_paths_declared@a858bd5ace44"
 description = "`every contract declares supported reject, defer, cancel, dismiss, and timeout semantics instead of treating absence as an answer`"
 falsifiability_class = "safety"
 id = "p-escape-paths-declared"

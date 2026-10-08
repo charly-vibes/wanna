@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "bounds_are_declared_and_enforced@4849d48c408c"
+derived_from = "bounds_are_declared_and_enforced@730154937404"
 description = "`TypeScript test: missing or violated kind bounds fail catalog validation or runtime input validation`"
 falsifiability_class = "safety"
 id = "bounds-are-declared-and-enforced"

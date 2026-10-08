@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "rendering_does_not_change_primitive@bc20db3be2c5"
+derived_from = "rendering_does_not_change_primitive@8f9055974a75"
 description = "`Cross-host test: web and TUI realizations preserve the same primitive kind and response semantics`"
 falsifiability_class = "safety"
 id = "rendering-does-not-change-primitive"

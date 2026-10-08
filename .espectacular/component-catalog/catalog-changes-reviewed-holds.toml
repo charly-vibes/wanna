@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "catalog_changes_reviewed_holds@924578f3acad"
+derived_from = "catalog_changes_reviewed_holds@1968554558e0"
 description = "`TypeScript conformance test: assert invariant catalog_changes_reviewed at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "catalog-changes-reviewed-holds"

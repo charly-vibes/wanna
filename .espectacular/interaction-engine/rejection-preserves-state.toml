@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "rejection_preserves_state@42fc13218098"
+derived_from = "rejection_preserves_state@08ca8488f494"
 description = "`TypeScript test: invalid and stale contexts do not mutate committed task state`"
 falsifiability_class = "safety"
 id = "rejection-preserves-state"

@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "partial_failure_reported_holds@e1a176f4bbb3"
+derived_from = "partial_failure_reported_holds@7cf92c547174"
 description = "`TypeScript conformance test: assert invariant partial_failure_reported at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "partial-failure-reported-holds"

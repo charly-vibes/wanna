@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "authorization_is_action_bound@6de025d70f9f"
+derived_from = "authorization_is_action_bound@8be9147fe655"
 description = "`Security test: approval for one action/revision/actor/expiry cannot authorize a different action`"
 falsifiability_class = "safety"
 id = "authorization-is-action-bound"

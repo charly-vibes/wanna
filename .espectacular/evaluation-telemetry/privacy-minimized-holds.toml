@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "privacy_minimized_holds@ef1dd7467efc"
+derived_from = "privacy_minimized_holds@9db95687e2c9"
 description = "`TypeScript conformance test: assert invariant privacy_minimized at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "privacy-minimized-holds"

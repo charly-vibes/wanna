@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "timeout_never_implies_no_effect@5aca2bd04bd2"
+derived_from = "timeout_never_implies_no_effect@a74d31502722"
 description = "`Fault-injection test: lost acknowledgement after a mutating request yields effect_unknown until reconciliation supplies evidence`"
 falsifiability_class = "safety"
 id = "timeout-never-implies-no-effect"

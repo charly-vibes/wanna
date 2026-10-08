@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_pattern_completion_explicit@a200da940ff8"
+derived_from = "p_pattern_completion_explicit@a7b645844b64"
 description = "`a pattern declares success, rejection, cancellation, deferral, failure, and unresolved completion conditions where applicable`"
 falsifiability_class = "safety"
 id = "p-pattern-completion-explicit"

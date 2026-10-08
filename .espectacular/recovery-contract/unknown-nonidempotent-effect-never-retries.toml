@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "unknown_nonidempotent_effect_never_retries@858a63f14644"
+derived_from = "unknown_nonidempotent_effect_never_retries@bf5e0d5c5f87"
 description = "`Property test: all paths from effect_unknown + non-idempotent mutation to retry pass through successful reconciliation`"
 falsifiability_class = "safety"
 id = "unknown-nonidempotent-effect-never-retries"

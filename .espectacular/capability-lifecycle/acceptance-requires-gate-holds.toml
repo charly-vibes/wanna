@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "acceptance_requires_gate_holds@d11bb948e93d"
+derived_from = "acceptance_requires_gate_holds@bc4358f72763"
 description = "`TypeScript conformance test: assert invariant acceptance_requires_gate at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "acceptance-requires-gate-holds"

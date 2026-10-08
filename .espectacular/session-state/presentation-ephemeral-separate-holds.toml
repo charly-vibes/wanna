@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "presentation_ephemeral_separate_holds@d9e549c06455"
+derived_from = "presentation_ephemeral_separate_holds@5a52b9b6f0fe"
 description = "`TypeScript conformance test: assert invariant presentation_ephemeral_separate at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "presentation-ephemeral-separate-holds"

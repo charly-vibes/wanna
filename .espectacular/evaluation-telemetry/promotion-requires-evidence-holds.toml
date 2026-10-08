@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "promotion_requires_evidence_holds@5ef5cc54d739"
+derived_from = "promotion_requires_evidence_holds@fa9fdb7a7322"
 description = "`TypeScript conformance test: assert invariant promotion_requires_evidence at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "promotion-requires-evidence-holds"

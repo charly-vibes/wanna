@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "pending_interactions_indexed_holds@702fa821276c"
+derived_from = "pending_interactions_indexed_holds@9d04c0d8963d"
 description = "`TypeScript conformance test: assert invariant pending_interactions_indexed at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "pending-interactions-indexed-holds"

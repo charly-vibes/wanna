@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "confidence_never_bypasses_policy@e7e286c73abb"
+derived_from = "confidence_never_bypasses_policy@6ffefcd7470b"
 description = "`Security test: changing model confidence alone cannot change a hard gate`"
 falsifiability_class = "safety"
 id = "confidence-never-bypasses-policy"

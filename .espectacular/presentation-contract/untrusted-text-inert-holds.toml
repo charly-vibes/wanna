@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "untrusted_text_inert_holds@44e05a8a614d"
+derived_from = "untrusted_text_inert_holds@51342eac460e"
 description = "`TypeScript conformance test: assert invariant untrusted_text_inert at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "untrusted-text-inert-holds"

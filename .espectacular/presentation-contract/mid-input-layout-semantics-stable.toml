@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "mid_input_layout_semantics_stable@09ef0d65e584"
+derived_from = "mid_input_layout_semantics_stable@3b3da0e398d6"
 description = "`Cross-host interaction test: active semantic actions remain stable during entry`"
 falsifiability_class = "safety"
 id = "mid-input-layout-semantics-stable"

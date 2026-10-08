@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "preview_is_non_committing_holds@35540173c4b6"
+derived_from = "preview_is_non_committing_holds@cd9e7a7b1c1a"
 description = "`TypeScript conformance test: assert invariant preview_is_non_committing at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "preview-is-non-committing-holds"

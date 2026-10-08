@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_adaptation_reason_available@4ca3cd88fa3f"
+derived_from = "p_adaptation_reason_available@a6f7eaeef86b"
 description = "`material adaptive presentation changes carry a user-comprehensible reason and, where safety permits, a stable/revert option`"
 falsifiability_class = "safety"
 id = "p-adaptation-reason-available"

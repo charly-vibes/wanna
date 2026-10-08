@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_source_quality_not_normativity@29aad68fe5b6"
+derived_from = "p_source_quality_not_normativity@ca59a2379139"
 description = "`a claim does not become normative merely because it appears in a research report; normative strength is explicitly assigned and traceable`"
 falsifiability_class = "safety"
 id = "p-source-quality-not-normativity"

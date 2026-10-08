@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "effect_authorization_checked_holds@de79740415c9"
+derived_from = "effect_authorization_checked_holds@666a9147be74"
 description = "`TypeScript conformance test: assert invariant effect_authorization_checked at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "effect-authorization-checked-holds"

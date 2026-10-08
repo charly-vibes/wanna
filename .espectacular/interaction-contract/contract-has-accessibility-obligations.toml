@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "contract_has_accessibility_obligations@42e0f06c0eab"
+derived_from = "contract_has_accessibility_obligations@31462416e79b"
 description = "`Schema test: renderable contracts expose required accessibility obligations`"
 falsifiability_class = "safety"
 id = "contract-has-accessibility-obligations"

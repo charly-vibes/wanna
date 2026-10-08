@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "recommendation_retries_only_on_request@030b9ab9b47a"
+derived_from = "recommendation_retries_only_on_request@49a65892f3b2"
 description = "`TypeScript test: recommendation is not reevaluated without an explicit request`"
 falsifiability_class = "safety"
 id = "recommendation-retries-only-on-request"

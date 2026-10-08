@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "review_does_not_conflate_authority@2ab544e6dd69"
+derived_from = "review_does_not_conflate_authority@de600977d78f"
 description = "`TypeScript test: review can verify without authorizing and authorize only through a distinct event`"
 falsifiability_class = "safety"
 id = "review-does-not-conflate-authority"

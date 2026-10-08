@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "deterministic_after_normalization_holds@ce1df10361d8"
+derived_from = "deterministic_after_normalization_holds@4c954932fb82"
 description = "`TypeScript conformance test: assert invariant deterministic_after_normalization at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "deterministic-after-normalization-holds"

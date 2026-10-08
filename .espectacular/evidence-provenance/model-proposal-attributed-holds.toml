@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "model_proposal_attributed_holds@c7885b29c05a"
+derived_from = "model_proposal_attributed_holds@9ab828ca613e"
 description = "`TypeScript conformance test: assert invariant model_proposal_attributed at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "model-proposal-attributed-holds"

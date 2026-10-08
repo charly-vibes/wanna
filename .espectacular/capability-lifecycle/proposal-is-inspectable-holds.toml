@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "proposal_is_inspectable_holds@283598934ec5"
+derived_from = "proposal_is_inspectable_holds@42dfc87656a4"
 description = "`TypeScript conformance test: assert invariant proposal_is_inspectable at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "proposal-is-inspectable-holds"

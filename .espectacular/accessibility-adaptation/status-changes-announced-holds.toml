@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "status_changes_announced_holds@431bcdcceb09"
+derived_from = "status_changes_announced_holds@bf3221bbafa9"
 description = "`TypeScript conformance test: assert invariant status_changes_announced at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "status-changes-announced-holds"

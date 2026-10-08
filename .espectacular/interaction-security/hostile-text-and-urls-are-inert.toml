@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "hostile_text_and_urls_are_inert@73f737922a31"
+derived_from = "hostile_text_and_urls_are_inert@588320519e66"
 description = "`Security test: HTML/script text is escaped and disallowed URL schemes/hosts are rejected`"
 falsifiability_class = "safety"
 id = "hostile-text-and-urls-are-inert"

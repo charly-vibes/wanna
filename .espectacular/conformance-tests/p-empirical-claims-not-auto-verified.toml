@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_empirical_claims_not_auto_verified@0cecc5877699"
+derived_from = "p_empirical_claims_not_auto_verified@368059717223"
 description = "`learnability, comprehension, perceived control, trust calibration, and similar human outcomes remain empirical properties requiring representative user evidence unless a narrower machine-verifiable proxy is explicitly named`"
 falsifiability_class = "safety"
 id = "p-empirical-claims-not-auto-verified"

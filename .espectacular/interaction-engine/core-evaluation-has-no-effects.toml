@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "core_evaluation_has_no_effects@c9e45308ca70"
+derived_from = "core_evaluation_has_no_effects@89a72091a0d5"
 description = "`Static TypeScript test: core calls no I/O, rendering, model inference or domain-action ports`"
 falsifiability_class = "safety"
 id = "core-evaluation-has-no-effects"

@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "semantic_role_required_holds@845c3878cf0c"
+derived_from = "semantic_role_required_holds@ef143dcda92e"
 description = "`TypeScript conformance test: assert invariant semantic_role_required at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "semantic-role-required-holds"

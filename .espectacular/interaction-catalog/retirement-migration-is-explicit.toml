@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "retirement_migration_is_explicit@f6da54bc1360"
+derived_from = "retirement_migration_is_explicit@57310042b60d"
 description = "`TypeScript test: active contracts are migrated only by a registered migration, otherwise retired and reissued`"
 falsifiability_class = "safety"
 id = "retirement-migration-is-explicit"

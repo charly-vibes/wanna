@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_retry_requires_safety@835f68394251"
+derived_from = "p_retry_requires_safety@83f73591117a"
 description = "`retry of a mutating operation is permitted only when idempotency is proven for the same operation key or reconciliation proves the prior effect did not occur`"
 falsifiability_class = "safety"
 id = "p-retry-requires-safety"

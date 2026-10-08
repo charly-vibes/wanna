@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "reauthentication_not_approval@baba2133ee00"
+derived_from = "reauthentication_not_approval@a36f352cf96e"
 description = "`Security test: authentication success alone cannot approve pending protected effect`"
 falsifiability_class = "safety"
 id = "reauthentication-not-approval"

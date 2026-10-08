@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_failure_provenance_retained@b8fc5fe30036"
+derived_from = "p_failure_provenance_retained@900c41b03d0d"
 description = "`failure records retain relevant event IDs, effect IDs, tool/adapter identity, versions, timestamps supplied by trusted ports, and evidence references`"
 falsifiability_class = "safety"
 id = "p-failure-provenance-retained"

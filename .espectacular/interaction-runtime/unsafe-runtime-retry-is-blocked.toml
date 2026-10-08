@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "unsafe_runtime_retry_is_blocked@44df73556400"
+derived_from = "unsafe_runtime_retry_is_blocked@c455416806c6"
 description = "`Property test: no unsafe retry path exists from unknown effect`"
 falsifiability_class = "safety"
 id = "unsafe-runtime-retry-is-blocked"

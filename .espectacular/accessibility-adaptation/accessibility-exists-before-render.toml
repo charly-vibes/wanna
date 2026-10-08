@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "accessibility_exists_before_render@849a73b07416"
+derived_from = "accessibility_exists_before_render@c4477b808128"
 description = "`Schema test: interaction contract declares obligations consumed by adapters`"
 falsifiability_class = "safety"
 id = "accessibility-exists-before-render"

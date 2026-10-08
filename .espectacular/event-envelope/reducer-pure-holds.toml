@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "reducer_pure_holds@ca06e2c3bf9c"
+derived_from = "reducer_pure_holds@815f3594edfd"
 description = "`TypeScript conformance test: assert invariant reducer_pure at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "reducer-pure-holds"

@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "rejection_typed_holds@c655cbe000af"
+derived_from = "rejection_typed_holds@6dd4ea49c7d0"
 description = "`TypeScript conformance test: assert invariant rejection_typed at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "rejection-typed-holds"

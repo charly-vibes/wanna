@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "inaccessible_interaction_not_silently_rendered_holds@79b861cfd0d5"
+derived_from = "inaccessible_interaction_not_silently_rendered_holds@875b86499283"
 description = "`TypeScript conformance test: assert invariant inaccessible_interaction_not_silently_rendered at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "inaccessible-interaction-not-silently-rendered-holds"

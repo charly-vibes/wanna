@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "persistence_failure_semantics_are_declared@c453493e0881"
+derived_from = "persistence_failure_semantics_are_declared@03aa02087404"
 description = "`TypeScript test: injected failure at every commit boundary obeys the declared atomic or weaker recovery contract without silent double application`"
 falsifiability_class = "safety"
 id = "persistence-failure-semantics-are-declared"

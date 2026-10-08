@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "unsupported_kind_is_visible@aacb79949224"
+derived_from = "unsupported_kind_is_visible@8e781fc4955b"
 description = "`Adapter contract test: unsupported kind returns a visible typed result or a registered semantic fallback`"
 falsifiability_class = "safety"
 id = "unsupported-kind-is-visible"

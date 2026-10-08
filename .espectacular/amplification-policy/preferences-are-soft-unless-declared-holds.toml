@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "preferences_are_soft_unless_declared_holds@3e38de5ea174"
+derived_from = "preferences_are_soft_unless_declared_holds@065d1f25fc8f"
 description = "`TypeScript conformance test: assert invariant preferences_are_soft_unless_declared at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "preferences-are-soft-unless-declared-holds"

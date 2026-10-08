@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "ineligible_candidates_never_return@24c94e60489a"
+derived_from = "ineligible_candidates_never_return@b143b5f95944"
 description = "`TypeScript test: no candidate failing any hard eligibility gate appears in recommendations`"
 falsifiability_class = "safety"
 id = "ineligible-candidates-never-return"

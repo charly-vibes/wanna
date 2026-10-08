@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "content_hierarchy_explicit_holds@83ae5cf3af8d"
+derived_from = "content_hierarchy_explicit_holds@5455a5e09161"
 description = "`TypeScript conformance test: assert invariant content_hierarchy_explicit at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "content-hierarchy-explicit-holds"

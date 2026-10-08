@@ -1,6 +1,6 @@
-archetype = "CE"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_process_failure_recorded@80a07fd56564"
+derived_from = "p_process_failure_recorded@b949b7468110"
 description = "`failure provenance retained ∧ recovery/reconciliation edges surfaced`"
 falsifiability_class = "safety"
 id = "p-process-failure-recorded"

@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "session_serializable_holds@4e7fc40aac67"
+derived_from = "session_serializable_holds@4ff7efbc665f"
 description = "`TypeScript conformance test: assert invariant session_serializable at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "session-serializable-holds"

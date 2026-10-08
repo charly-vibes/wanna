@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_presentation_ephemera_not_authoritative@efe9e50c9234"
+derived_from = "p_presentation_ephemera_not_authoritative@6a991777f7f3"
 description = "`scroll position, cursor location, open panel, and host focus may aid restoration but cannot determine authoritative task progress`"
 falsifiability_class = "safety"
 id = "p-presentation-ephemera-not-authoritative"

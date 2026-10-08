@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "preserved_draft_survives_failure@2761ca3e1931"
+derived_from = "preserved_draft_survives_failure@fe916963a7e4"
 description = "`Recovery test: recoverable infrastructure failure retains validated draft data`"
 falsifiability_class = "safety"
 id = "preserved-draft-survives-failure"

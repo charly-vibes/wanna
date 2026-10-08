@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "optimistic_conflict_checked_holds@22f69eeff1c4"
+derived_from = "optimistic_conflict_checked_holds@bc257ac31c53"
 description = "`TypeScript conformance test: assert invariant optimistic_conflict_checked at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "optimistic-conflict-checked-holds"

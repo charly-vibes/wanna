@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_primitive_taxonomy_versioned@80258465c211"
+derived_from = "p_primitive_taxonomy_versioned@293934afa0e5"
 description = "`primitive identifiers are interpreted under an explicit taxonomy version and cannot be added or redefined silently`"
 falsifiability_class = "safety"
 id = "p-primitive-taxonomy-versioned"

@@ -1,5 +1,5 @@
 ---
-id: spec
+id: continuity.contract
 kind: intent
 statement: WHEN a human task is interrupted or transferred, THE Continuity Layer SHALL preserve enough state and evidence for safe resumption, reorientation, reconciliation, or handoff
 ---
@@ -11,13 +11,13 @@ Persistence is not sufficient for continuity. After interruption, the human must
 ## Constraints
 | id | kind | expr | traces_to |
 |---|---|---|---|
-| checkpoint_scope_explicit | invariant | A continuity checkpoint identifies persisted domain/workflow data, uncommitted drafts, active interactions, pending effects, evidence, and deliberately excluded ephemeral presentation state. | [[spec]] |
-| resume_reorients_user | invariant | Resumption exposes prior goal/context, last confirmed state, work completed, pending work, changes since suspension, unresolved failures, and required next action before consequential continuation. | [[spec]] |
-| interrupted_input_preserved | invariant | Validated but uncommitted user input is preserved across recoverable interruption unless security/privacy policy requires disposal, in which case the loss is explicit. | [[spec]] |
-| stale_context_reconciled | invariant | Resume after external or concurrent changes performs version comparison/reconciliation before accepting stale pending actions. | [[spec]] |
-| handoff_preserves_ownership | invariant | Human-to-human or human-to-agent handoff records current owner, transferred authority scope, pending decisions, unresolved risks, and evidence references. | [[spec]] |
-| presentation_ephemera_not_authoritative | invariant | Scroll position, cursor location, open panel, and host focus may aid restoration but cannot determine authoritative task progress. | [[spec]] |
-| reauthentication_preserves_task | invariant | Where policy permits, reauthentication restores the same task context and validated draft without treating authentication success as approval of pending actions. | [[spec]] |
+| checkpoint_scope_explicit | invariant | A continuity checkpoint identifies persisted domain/workflow data, uncommitted drafts, active interactions, pending effects, evidence, and deliberately excluded ephemeral presentation state. | [[continuity.contract]] |
+| resume_reorients_user | invariant | Resumption exposes prior goal/context, last confirmed state, work completed, pending work, changes since suspension, unresolved failures, and required next action before consequential continuation. | [[continuity.contract]] |
+| interrupted_input_preserved | invariant | Validated but uncommitted user input is preserved across recoverable interruption unless security/privacy policy requires disposal, in which case the loss is explicit. | [[continuity.contract]] |
+| stale_context_reconciled | invariant | Resume after external or concurrent changes performs version comparison/reconciliation before accepting stale pending actions. | [[continuity.contract]] |
+| handoff_preserves_ownership | invariant | Human-to-human or human-to-agent handoff records current owner, transferred authority scope, pending decisions, unresolved risks, and evidence references. | [[continuity.contract]] |
+| presentation_ephemera_not_authoritative | invariant | Scroll position, cursor location, open panel, and host focus may aid restoration but cannot determine authoritative task progress. | [[continuity.contract]] |
+| reauthentication_preserves_task | invariant | Where policy permits, reauthentication restores the same task context and validated draft without treating authentication success as approval of pending actions. | [[continuity.contract]] |
 
 ## Model
 ### States
@@ -33,25 +33,25 @@ Persistence is not sufficient for continuity. After interruption, the human must
 ### Transitions
 | id | from | to | guard |
 |---|---|---|---|
-| checkpoint_active_task | active | checkpointed | [[spec.checkpoint_scope_explicit]] |
-| suspend_checkpoint | checkpointed | suspended | [[spec.interrupted_input_preserved]] |
-| begin_reorientation | suspended | reorienting | [[spec.resume_reorients_user]] |
-| reconcile_changed_context | reorienting | reconciling | [[spec.stale_context_reconciled]] |
-| resume_unchanged_context | reorienting | resumed | [[spec.resume_reorients_user]] |
-| resume_reconciled_context | reconciling | resumed | [[spec.stale_context_reconciled]] |
-| handoff_task | active | handed_off | [[spec.handoff_preserves_ownership]] |
-| abandon_task | active | abandoned | [[spec.handoff_preserves_ownership]] |
+| checkpoint_active_task | active | checkpointed | [[continuity.contract.checkpoint_scope_explicit]] |
+| suspend_checkpoint | checkpointed | suspended | [[continuity.contract.interrupted_input_preserved]] |
+| begin_reorientation | suspended | reorienting | [[continuity.contract.resume_reorients_user]] |
+| reconcile_changed_context | reorienting | reconciling | [[continuity.contract.stale_context_reconciled]] |
+| resume_unchanged_context | reorienting | resumed | [[continuity.contract.resume_reorients_user]] |
+| resume_reconciled_context | reconciling | resumed | [[continuity.contract.stale_context_reconciled]] |
+| handoff_task | active | handed_off | [[continuity.contract.handoff_preserves_ownership]] |
+| abandon_task | active | abandoned | [[continuity.contract.handoff_preserves_ownership]] |
 
 ## Properties
 | id | kind | derives_from | generator | predicate |
 |---|---|---|---|---|
-| resume_explains_delta | unit | [[spec.resume_reorients_user]] | `any::<String>()` | `UX contract test: resumed task exposes completed/pending/changed/unresolved/next-action fields` |
-| stale_pending_action_not_silently_committed | unit | [[spec.stale_context_reconciled]] | `any::<String>()` | `Concurrency test: changed authoritative revision forces reconciliation before pending action can commit` |
-| reauth_does_not_authorize | unit | [[spec.reauthentication_preserves_task]] | `any::<String>()` | `Security test: successful reauthentication cannot satisfy a separate action authorization guard` |
-| p_checkpoint_scope_explicit | unit | [[spec.checkpoint_scope_explicit]] | `arbitrary_state()` | `a continuity checkpoint identifies persisted domain/workflow data, uncommitted drafts, active interactions, pending effects, evidence, and deliberately excluded ephemeral presentation state` |
-| p_interrupted_input_preserved | unit | [[spec.interrupted_input_preserved]] | `arbitrary_state()` | `validated but uncommitted user input is preserved across recoverable interruption unless security/privacy policy requires disposal, in which case the loss is explicit` |
-| p_handoff_preserves_ownership | unit | [[spec.handoff_preserves_ownership]] | `arbitrary_state()` | `human-to-human or human-to-agent handoff records current owner, transferred authority scope, pending decisions, unresolved risks, and evidence references` |
-| p_presentation_ephemera_not_authoritative | unit | [[spec.presentation_ephemera_not_authoritative]] | `arbitrary_state()` | `scroll position, cursor location, open panel, and host focus may aid restoration but cannot determine authoritative task progress` |
+| resume_explains_delta | unit | [[continuity.contract.resume_reorients_user]] | `any::<String>()` | `UX contract test: resumed task exposes completed/pending/changed/unresolved/next-action fields` |
+| stale_pending_action_not_silently_committed | unit | [[continuity.contract.stale_context_reconciled]] | `any::<String>()` | `Concurrency test: changed authoritative revision forces reconciliation before pending action can commit` |
+| reauth_does_not_authorize | unit | [[continuity.contract.reauthentication_preserves_task]] | `any::<String>()` | `Security test: successful reauthentication cannot satisfy a separate action authorization guard` |
+| p_checkpoint_scope_explicit | unit | [[continuity.contract.checkpoint_scope_explicit]] | `arbitrary_state()` | `a continuity checkpoint identifies persisted domain/workflow data, uncommitted drafts, active interactions, pending effects, evidence, and deliberately excluded ephemeral presentation state` |
+| p_interrupted_input_preserved | unit | [[continuity.contract.interrupted_input_preserved]] | `arbitrary_state()` | `validated but uncommitted user input is preserved across recoverable interruption unless security/privacy policy requires disposal, in which case the loss is explicit` |
+| p_handoff_preserves_ownership | unit | [[continuity.contract.handoff_preserves_ownership]] | `arbitrary_state()` | `human-to-human or human-to-agent handoff records current owner, transferred authority scope, pending decisions, unresolved risks, and evidence references` |
+| p_presentation_ephemera_not_authoritative | unit | [[continuity.contract.presentation_ephemera_not_authoritative]] | `arbitrary_state()` | `scroll position, cursor location, open panel, and host focus may aid restoration but cannot determine authoritative task progress` |
 
 ## Requirements
 
@@ -60,54 +60,54 @@ Persistence is not sufficient for continuity. After interruption, the human must
 Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: checkpoint-active-task moves `active` to `checkpointed`
-- **WHEN** the model is in the `active` state and the `checkpoint_active_task` transition guard holds ([[spec.checkpoint_scope_explicit]])
+- **WHEN** the model is in the `active` state and the `checkpoint_active_task` transition guard holds ([[continuity.contract.checkpoint_scope_explicit]])
 - **THEN** the model enters the `checkpointed` state and records the transition
-- **VERIFIES** [[spec.p_checkpoint_scope_explicit]]
+- **VERIFIES** [[continuity.contract.p_checkpoint_scope_explicit]]
 
 #### Scenario: suspend-checkpoint moves `checkpointed` to `suspended`
-- **WHEN** the model is in the `checkpointed` state and the `suspend_checkpoint` transition guard holds ([[spec.interrupted_input_preserved]])
+- **WHEN** the model is in the `checkpointed` state and the `suspend_checkpoint` transition guard holds ([[continuity.contract.interrupted_input_preserved]])
 - **THEN** the model enters the `suspended` state and records the transition
-- **VERIFIES** [[spec.p_interrupted_input_preserved]]
+- **VERIFIES** [[continuity.contract.p_interrupted_input_preserved]]
 
 #### Scenario: begin-reorientation moves `suspended` to `reorienting`
-- **WHEN** the model is in the `suspended` state and the `begin_reorientation` transition guard holds ([[spec.resume_reorients_user]])
+- **WHEN** the model is in the `suspended` state and the `begin_reorientation` transition guard holds ([[continuity.contract.resume_reorients_user]])
 - **THEN** the model enters the `reorienting` state and records the transition
-- **VERIFIES** [[spec.resume_explains_delta]]
+- **VERIFIES** [[continuity.contract.resume_explains_delta]]
 
 #### Scenario: reconcile-changed-context moves `reorienting` to `reconciling`
-- **WHEN** the model is in the `reorienting` state and the `reconcile_changed_context` transition guard holds ([[spec.stale_context_reconciled]])
+- **WHEN** the model is in the `reorienting` state and the `reconcile_changed_context` transition guard holds ([[continuity.contract.stale_context_reconciled]])
 - **THEN** the model enters the `reconciling` state and records the transition
-- **VERIFIES** [[spec.stale_pending_action_not_silently_committed]]
+- **VERIFIES** [[continuity.contract.stale_pending_action_not_silently_committed]]
 
 #### Scenario: resume-unchanged-context moves `reorienting` to `resumed`
-- **WHEN** the model is in the `reorienting` state and the `resume_unchanged_context` transition guard holds ([[spec.resume_reorients_user]])
+- **WHEN** the model is in the `reorienting` state and the `resume_unchanged_context` transition guard holds ([[continuity.contract.resume_reorients_user]])
 - **THEN** the model enters the `resumed` state and records the transition
-- **VERIFIES** [[spec.resume_explains_delta]]
+- **VERIFIES** [[continuity.contract.resume_explains_delta]]
 
 #### Scenario: resume-reconciled-context moves `reconciling` to `resumed`
-- **WHEN** the model is in the `reconciling` state and the `resume_reconciled_context` transition guard holds ([[spec.stale_context_reconciled]])
+- **WHEN** the model is in the `reconciling` state and the `resume_reconciled_context` transition guard holds ([[continuity.contract.stale_context_reconciled]])
 - **THEN** the model enters the `resumed` state and records the transition
-- **VERIFIES** [[spec.stale_pending_action_not_silently_committed]]
+- **VERIFIES** [[continuity.contract.stale_pending_action_not_silently_committed]]
 
 #### Scenario: handoff-task moves `active` to `handed_off`
-- **WHEN** the model is in the `active` state and the `handoff_task` transition guard holds ([[spec.handoff_preserves_ownership]])
+- **WHEN** the model is in the `active` state and the `handoff_task` transition guard holds ([[continuity.contract.handoff_preserves_ownership]])
 - **THEN** the model enters the `handed_off` state and records the transition
-- **VERIFIES** [[spec.p_handoff_preserves_ownership]]
+- **VERIFIES** [[continuity.contract.p_handoff_preserves_ownership]]
 
 #### Scenario: abandon-task moves `active` to `abandoned`
-- **WHEN** the model is in the `active` state and the `abandon_task` transition guard holds ([[spec.handoff_preserves_ownership]])
+- **WHEN** the model is in the `active` state and the `abandon_task` transition guard holds ([[continuity.contract.handoff_preserves_ownership]])
 - **THEN** the model enters the `abandoned` state and records the transition
-- **VERIFIES** [[spec.p_handoff_preserves_ownership]]
+- **VERIFIES** [[continuity.contract.p_handoff_preserves_ownership]]
 
 #### Scenario: presentation-ephemera-not-authoritative invariant holds under canonical operation
 - **WHEN** the system performs any operation governed by this specification
 - **THEN** the invariant holds: "Scroll position, cursor location, open panel, and host focus may aid restoration but cannot determine authoritative task progress."
-- **VERIFIES** [[spec.p_presentation_ephemera_not_authoritative]]
+- **VERIFIES** [[continuity.contract.p_presentation_ephemera_not_authoritative]]
 
 #### Scenario: reauthentication-preserves-task invariant holds under canonical operation
 - **WHEN** the system performs any operation governed by this specification
 - **THEN** the invariant holds: "Where policy permits, reauthentication restores the same task context and validated draft without treating authentication success as approval of pending actions."
-- **VERIFIES** [[spec.reauth_does_not_authorize]]
+- **VERIFIES** [[continuity.contract.reauth_does_not_authorize]]
 
 #### Scenario: Violating Task Continuity invariant is rejected
 

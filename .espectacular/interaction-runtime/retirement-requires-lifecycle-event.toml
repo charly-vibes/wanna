@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "retirement_requires_lifecycle_event@93d8a768a1c1"
+derived_from = "retirement_requires_lifecycle_event@c7460cc7b994"
 description = "`TypeScript test: active interaction retires only on a permitted explicit lifecycle event`"
 falsifiability_class = "safety"
 id = "retirement-requires-lifecycle-event"

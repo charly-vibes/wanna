@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_need_taxonomy_versioned@32847b0d5de5"
+derived_from = "p_need_taxonomy_versioned@57444000424c"
 description = "`every normalized need records one supported need kind and taxonomy version`"
 falsifiability_class = "safety"
 id = "p-need-taxonomy-versioned"

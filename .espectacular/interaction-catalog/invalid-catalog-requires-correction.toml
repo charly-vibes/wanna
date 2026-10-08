@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "invalid_catalog_requires_correction@26120280103e"
+derived_from = "invalid_catalog_requires_correction@687ccd004ba6"
 description = "`TypeScript test: invalid catalog returns to draft only after a corrected definition arrives`"
 falsifiability_class = "safety"
 id = "invalid-catalog-requires-correction"

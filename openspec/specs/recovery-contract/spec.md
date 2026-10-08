@@ -1,5 +1,5 @@
 ---
-id: spec
+id: recovery.contract
 kind: intent
 statement: THE Recovery Layer SHALL select only recovery operations whose preconditions are satisfied by the typed failure and current authoritative state
 ---
@@ -13,14 +13,14 @@ Rollback restores managed internal state. Compensation performs a new action int
 ## Constraints
 | id | kind | expr | traces_to |
 |---|---|---|---|
-| recovery_operation_typed | invariant | Every recovery attempt names one supported recovery operation and its preconditions. | [[spec]] |
-| retry_requires_safety | invariant | Retry of a mutating operation is permitted only when idempotency is proven for the same operation key or reconciliation proves the prior effect did not occur. | [[spec]] |
-| reconcile_precedes_unknown_retry | invariant | An `effect_unknown` failure cannot retry a non-idempotent mutation before reconciliation resolves effect state. | [[spec]] |
-| rollback_not_compensation | invariant | Internal rollback cannot be represented as undoing an external effect; external effects require a declared compensation or explicit residual-effect record. | [[spec]] |
-| compensation_is_new_effect | invariant | A compensating action is itself authorized, observable, failure-prone, and auditable as a new effect. | [[spec]] |
-| recovery_preserves_evidence | invariant | Recovery never deletes the original failure/effect evidence; new recovery events append lineage. | [[spec]] |
-| recovery_verification_required | invariant | A recovery reaches `recovered` only after declared post-recovery invariants are checked; otherwise it remains unresolved or escalated. | [[spec]] |
-| user_control_available | invariant | When recovery requires human judgment, the interaction exposes valid alternatives including safe abort/escalation rather than forcing a single repair path. | [[spec]] |
+| recovery_operation_typed | invariant | Every recovery attempt names one supported recovery operation and its preconditions. | [[recovery.contract]] |
+| retry_requires_safety | invariant | Retry of a mutating operation is permitted only when idempotency is proven for the same operation key or reconciliation proves the prior effect did not occur. | [[recovery.contract]] |
+| reconcile_precedes_unknown_retry | invariant | An `effect_unknown` failure cannot retry a non-idempotent mutation before reconciliation resolves effect state. | [[recovery.contract]] |
+| rollback_not_compensation | invariant | Internal rollback cannot be represented as undoing an external effect; external effects require a declared compensation or explicit residual-effect record. | [[recovery.contract]] |
+| compensation_is_new_effect | invariant | A compensating action is itself authorized, observable, failure-prone, and auditable as a new effect. | [[recovery.contract]] |
+| recovery_preserves_evidence | invariant | Recovery never deletes the original failure/effect evidence; new recovery events append lineage. | [[recovery.contract]] |
+| recovery_verification_required | invariant | A recovery reaches `recovered` only after declared post-recovery invariants are checked; otherwise it remains unresolved or escalated. | [[recovery.contract]] |
+| user_control_available | invariant | When recovery requires human judgment, the interaction exposes valid alternatives including safe abort/escalation rather than forcing a single repair path. | [[recovery.contract]] |
 
 ## Model
 ### States
@@ -36,25 +36,25 @@ Rollback restores managed internal state. Compensation performs a new action int
 ### Transitions
 | id | from | to | guard |
 |---|---|---|---|
-| validate_recovery | proposed | eligible | [[spec.recovery_operation_typed]] |
-| block_unsafe_recovery | proposed | blocked | ¬([[spec.recovery_operation_typed]]) |
-| execute_recovery | eligible | executing | [[spec.retry_requires_safety]] |
-| verify_recovery | executing | verifying | [[spec.recovery_verification_required]] |
-| accept_recovery | verifying | recovered | [[spec.recovery_verification_required]] |
-| preserve_failed_recovery | verifying | unresolved | ¬([[spec.recovery_verification_required]]) |
-| escalate_recovery | unresolved | escalated | [[spec.user_control_available]] |
+| validate_recovery | proposed | eligible | [[recovery.contract.recovery_operation_typed]] |
+| block_unsafe_recovery | proposed | blocked | ¬([[recovery.contract.recovery_operation_typed]]) |
+| execute_recovery | eligible | executing | [[recovery.contract.retry_requires_safety]] |
+| verify_recovery | executing | verifying | [[recovery.contract.recovery_verification_required]] |
+| accept_recovery | verifying | recovered | [[recovery.contract.recovery_verification_required]] |
+| preserve_failed_recovery | verifying | unresolved | ¬([[recovery.contract.recovery_verification_required]]) |
+| escalate_recovery | unresolved | escalated | [[recovery.contract.user_control_available]] |
 
 ## Properties
 | id | kind | derives_from | generator | predicate |
 |---|---|---|---|---|
-| unknown_nonidempotent_effect_never_retries | unit | [[spec.reconcile_precedes_unknown_retry]] | `any::<String>()` | `Property test: all paths from effect_unknown + non-idempotent mutation to retry pass through successful reconciliation` |
-| rollback_cannot_claim_external_undo | unit | [[spec.rollback_not_compensation]] | `any::<String>()` | `TypeScript test: rollback result with external effects records residual effects unless compensation succeeds` |
-| compensation_has_own_failure_path | unit | [[spec.compensation_is_new_effect]] | `any::<String>()` | `Fault-injection test: compensation failure remains visible and cannot mark original operation recovered` |
-| recovery_requires_postcheck | unit | [[spec.recovery_verification_required]] | `any::<String>()` | `Model test: no recovery path reaches recovered without post-condition evaluation` |
-| p_recovery_operation_typed | unit | [[spec.recovery_operation_typed]] | `arbitrary_state()` | `every recovery attempt names one supported recovery operation and its preconditions` |
-| p_retry_requires_safety | unit | [[spec.retry_requires_safety]] | `arbitrary_state()` | `retry of a mutating operation is permitted only when idempotency is proven for the same operation key or reconciliation proves the prior effect did not occur` |
-| p_recovery_preserves_evidence | unit | [[spec.recovery_preserves_evidence]] | `arbitrary_state()` | `recovery never deletes the original failure/effect evidence; new recovery events append lineage` |
-| p_user_control_available | unit | [[spec.user_control_available]] | `arbitrary_state()` | `when recovery requires human judgment, the interaction exposes valid alternatives including safe abort/escalation rather than forcing a single repair path` |
+| unknown_nonidempotent_effect_never_retries | unit | [[recovery.contract.reconcile_precedes_unknown_retry]] | `any::<String>()` | `Property test: all paths from effect_unknown + non-idempotent mutation to retry pass through successful reconciliation` |
+| rollback_cannot_claim_external_undo | unit | [[recovery.contract.rollback_not_compensation]] | `any::<String>()` | `TypeScript test: rollback result with external effects records residual effects unless compensation succeeds` |
+| compensation_has_own_failure_path | unit | [[recovery.contract.compensation_is_new_effect]] | `any::<String>()` | `Fault-injection test: compensation failure remains visible and cannot mark original operation recovered` |
+| recovery_requires_postcheck | unit | [[recovery.contract.recovery_verification_required]] | `any::<String>()` | `Model test: no recovery path reaches recovered without post-condition evaluation` |
+| p_recovery_operation_typed | unit | [[recovery.contract.recovery_operation_typed]] | `arbitrary_state()` | `every recovery attempt names one supported recovery operation and its preconditions` |
+| p_retry_requires_safety | unit | [[recovery.contract.retry_requires_safety]] | `arbitrary_state()` | `retry of a mutating operation is permitted only when idempotency is proven for the same operation key or reconciliation proves the prior effect did not occur` |
+| p_recovery_preserves_evidence | unit | [[recovery.contract.recovery_preserves_evidence]] | `arbitrary_state()` | `recovery never deletes the original failure/effect evidence; new recovery events append lineage` |
+| p_user_control_available | unit | [[recovery.contract.user_control_available]] | `arbitrary_state()` | `when recovery requires human judgment, the interaction exposes valid alternatives including safe abort/escalation rather than forcing a single repair path` |
 
 ## Requirements
 
@@ -63,59 +63,59 @@ Rollback restores managed internal state. Compensation performs a new action int
 Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: validate-recovery moves `proposed` to `eligible`
-- **WHEN** the model is in the `proposed` state and the `validate_recovery` transition guard holds ([[spec.recovery_operation_typed]])
+- **WHEN** the model is in the `proposed` state and the `validate_recovery` transition guard holds ([[recovery.contract.recovery_operation_typed]])
 - **THEN** the model enters the `eligible` state and records the transition
-- **VERIFIES** [[spec.p_recovery_operation_typed]]
+- **VERIFIES** [[recovery.contract.p_recovery_operation_typed]]
 
 #### Scenario: block-unsafe-recovery moves `proposed` to `blocked`
-- **WHEN** the model is in the `proposed` state and the `block_unsafe_recovery` transition guard evaluates false (¬([[spec.recovery_operation_typed]]))
+- **WHEN** the model is in the `proposed` state and the `block_unsafe_recovery` transition guard evaluates false (¬([[recovery.contract.recovery_operation_typed]]))
 - **THEN** the model enters the `blocked` state and records the transition
-- **VERIFIES** [[spec.p_recovery_operation_typed]]
+- **VERIFIES** [[recovery.contract.p_recovery_operation_typed]]
 
 #### Scenario: execute-recovery moves `eligible` to `executing`
-- **WHEN** the model is in the `eligible` state and the `execute_recovery` transition guard holds ([[spec.retry_requires_safety]])
+- **WHEN** the model is in the `eligible` state and the `execute_recovery` transition guard holds ([[recovery.contract.retry_requires_safety]])
 - **THEN** the model enters the `executing` state and records the transition
-- **VERIFIES** [[spec.p_retry_requires_safety]]
+- **VERIFIES** [[recovery.contract.p_retry_requires_safety]]
 
 #### Scenario: verify-recovery moves `executing` to `verifying`
-- **WHEN** the model is in the `executing` state and the `verify_recovery` transition guard holds ([[spec.recovery_verification_required]])
+- **WHEN** the model is in the `executing` state and the `verify_recovery` transition guard holds ([[recovery.contract.recovery_verification_required]])
 - **THEN** the model enters the `verifying` state and records the transition
-- **VERIFIES** [[spec.recovery_requires_postcheck]]
+- **VERIFIES** [[recovery.contract.recovery_requires_postcheck]]
 
 #### Scenario: accept-recovery moves `verifying` to `recovered`
-- **WHEN** the model is in the `verifying` state and the `accept_recovery` transition guard holds ([[spec.recovery_verification_required]])
+- **WHEN** the model is in the `verifying` state and the `accept_recovery` transition guard holds ([[recovery.contract.recovery_verification_required]])
 - **THEN** the model enters the `recovered` state and records the transition
-- **VERIFIES** [[spec.recovery_requires_postcheck]]
+- **VERIFIES** [[recovery.contract.recovery_requires_postcheck]]
 
 #### Scenario: preserve-failed-recovery moves `verifying` to `unresolved`
-- **WHEN** the model is in the `verifying` state and the `preserve_failed_recovery` transition guard evaluates false (¬([[spec.recovery_verification_required]]))
+- **WHEN** the model is in the `verifying` state and the `preserve_failed_recovery` transition guard evaluates false (¬([[recovery.contract.recovery_verification_required]]))
 - **THEN** the model enters the `unresolved` state and records the transition
-- **VERIFIES** [[spec.recovery_requires_postcheck]]
+- **VERIFIES** [[recovery.contract.recovery_requires_postcheck]]
 
 #### Scenario: escalate-recovery moves `unresolved` to `escalated`
-- **WHEN** the model is in the `unresolved` state and the `escalate_recovery` transition guard holds ([[spec.user_control_available]])
+- **WHEN** the model is in the `unresolved` state and the `escalate_recovery` transition guard holds ([[recovery.contract.user_control_available]])
 - **THEN** the model enters the `escalated` state and records the transition
-- **VERIFIES** [[spec.p_user_control_available]]
+- **VERIFIES** [[recovery.contract.p_user_control_available]]
 
 #### Scenario: reconcile-precedes-unknown-retry invariant holds under canonical operation
 - **WHEN** the system performs any operation governed by this specification
 - **THEN** the invariant holds: "An `effect_unknown` failure cannot retry a non-idempotent mutation before reconciliation resolves effect state."
-- **VERIFIES** [[spec.unknown_nonidempotent_effect_never_retries]]
+- **VERIFIES** [[recovery.contract.unknown_nonidempotent_effect_never_retries]]
 
 #### Scenario: rollback-not-compensation invariant holds under canonical operation
 - **WHEN** the system performs any operation governed by this specification
 - **THEN** the invariant holds: "Internal rollback cannot be represented as undoing an external effect; external effects require a declared compensation or explicit residual-effect record."
-- **VERIFIES** [[spec.rollback_cannot_claim_external_undo]]
+- **VERIFIES** [[recovery.contract.rollback_cannot_claim_external_undo]]
 
 #### Scenario: compensation-is-new-effect invariant holds under canonical operation
 - **WHEN** the system performs any operation governed by this specification
 - **THEN** the invariant holds: "A compensating action is itself authorized, observable, failure-prone, and auditable as a new effect."
-- **VERIFIES** [[spec.compensation_has_own_failure_path]]
+- **VERIFIES** [[recovery.contract.compensation_has_own_failure_path]]
 
 #### Scenario: recovery-preserves-evidence invariant holds under canonical operation
 - **WHEN** the system performs any operation governed by this specification
 - **THEN** the invariant holds: "Recovery never deletes the original failure/effect evidence; new recovery events append lineage."
-- **VERIFIES** [[spec.p_recovery_preserves_evidence]]
+- **VERIFIES** [[recovery.contract.p_recovery_preserves_evidence]]
 
 #### Scenario: Violating Recovery Contract invariant is rejected
 

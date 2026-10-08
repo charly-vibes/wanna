@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "escape_is_not_answer@886503c92bc6"
+derived_from = "escape_is_not_answer@2d323c6c44eb"
 description = "`TypeScript test: cancel/defer/dismiss outcomes are never coerced into a substantive response`"
 falsifiability_class = "safety"
 id = "escape-is-not-answer"

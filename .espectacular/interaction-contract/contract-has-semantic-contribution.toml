@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "contract_has_semantic_contribution@cc3741c2cd61"
+derived_from = "contract_has_semantic_contribution@29cdf9b6e7b6"
 description = "`Cross-host test: same contract preserves contribution primitive/pattern identity`"
 falsifiability_class = "safety"
 id = "contract-has-semantic-contribution"

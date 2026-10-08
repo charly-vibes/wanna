@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "shadow_effects_suppressed_holds@f234c77f6299"
+derived_from = "shadow_effects_suppressed_holds@d951a7ffe3cd"
 description = "`TypeScript conformance test: assert invariant shadow_effects_suppressed at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "shadow-effects-suppressed-holds"

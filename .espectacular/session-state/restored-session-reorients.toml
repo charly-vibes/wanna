@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "restored_session_reorients@c598b6019280"
+derived_from = "restored_session_reorients@b63065c84078"
 description = "`Resume test: continuity summary is derivable before consequential continuation`"
 falsifiability_class = "safety"
 id = "restored-session-reorients"

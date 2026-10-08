@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "resume_explains_delta@0ae8690ada04"
+derived_from = "resume_explains_delta@d291ebf0d6fa"
 description = "`UX contract test: resumed task exposes completed/pending/changed/unresolved/next-action fields`"
 falsifiability_class = "safety"
 id = "resume-explains-delta"

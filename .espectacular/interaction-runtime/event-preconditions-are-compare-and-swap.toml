@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "event_preconditions_are_compare_and_swap@f5e2061797e9"
+derived_from = "event_preconditions_are_compare_and_swap@289b40a20021"
 description = "`TypeScript test: only one response against a given interaction revision commits; a concurrent response becomes stale`"
 falsifiability_class = "safety"
 id = "event-preconditions-are-compare-and-swap"

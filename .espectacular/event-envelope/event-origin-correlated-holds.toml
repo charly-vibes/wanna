@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "event_origin_correlated_holds@22457cc404e1"
+derived_from = "event_origin_correlated_holds@ab35285999e9"
 description = "`TypeScript conformance test: assert invariant event_origin_correlated at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "event-origin-correlated-holds"

@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "goal_and_safety_checks_separate_holds@a710a15f42c1"
+derived_from = "goal_and_safety_checks_separate_holds@3acf3e77bde9"
 description = "`TypeScript conformance test: assert invariant goal_and_safety_checks_separate at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "goal-and-safety-checks-separate-holds"

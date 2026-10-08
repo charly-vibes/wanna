@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "corrected_context_reenters_draft@576dc344162c"
+derived_from = "corrected_context_reenters_draft@899fa3c4881a"
 description = "`TypeScript test: rejected context can re-enter draft only after an explicit new snapshot arrives`"
 falsifiability_class = "safety"
 id = "corrected-context-reenters-draft"

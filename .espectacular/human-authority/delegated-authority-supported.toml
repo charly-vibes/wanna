@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "delegated_authority_supported@8e523c863e02"
+derived_from = "delegated_authority_supported@234531d45ec3"
 description = "`Policy test: bounded unattended automation can proceed only inside an explicit grant`"
 falsifiability_class = "safety"
 id = "delegated-authority-supported"

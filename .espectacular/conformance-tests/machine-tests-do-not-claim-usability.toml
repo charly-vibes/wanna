@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "machine_tests_do_not_claim_usability@474953504da4"
+derived_from = "machine_tests_do_not_claim_usability@e1cd32272ed7"
 description = "`Documentation test: automated pass status cannot set empirical usability status to passed`"
 falsifiability_class = "safety"
 id = "machine-tests-do-not-claim-usability"

@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "review_action_attributed_holds@15d9316172b1"
+derived_from = "review_action_attributed_holds@32713a2dd8b2"
 description = "`TypeScript conformance test: assert invariant review_action_attributed at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "review-action-attributed-holds"

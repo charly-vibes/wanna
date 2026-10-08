@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "spoofed_event_is_rejected@a97d433c63b8"
+derived_from = "spoofed_event_is_rejected@ae9de1259206"
 description = "`Security test: wrong task/session, retired interaction, or stale revision cannot mutate state`"
 falsifiability_class = "safety"
 id = "spoofed-event-is-rejected"

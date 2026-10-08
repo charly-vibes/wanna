@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "dependencies_acyclic_or_declared_holds@e50f72471514"
+derived_from = "dependencies_acyclic_or_declared_holds@cf17ebbd16d1"
 description = "`TypeScript conformance test: assert invariant dependencies_acyclic_or_declared at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "dependencies-acyclic-or-declared-holds"

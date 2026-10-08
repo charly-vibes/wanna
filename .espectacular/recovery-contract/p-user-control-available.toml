@@ -1,6 +1,6 @@
-archetype = "SA"
+archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_user_control_available@54573b19cb7c"
+derived_from = "p_user_control_available@ca83b1d836a1"
 description = "`when recovery requires human judgment, the interaction exposes valid alternatives including safe abort/escalation rather than forcing a single repair path`"
 falsifiability_class = "safety"
 id = "p-user-control-available"

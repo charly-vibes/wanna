@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "roles_allowlisted_holds@dad560a9f8bd"
+derived_from = "roles_allowlisted_holds@c46fe2acfec6"
 description = "`TypeScript conformance test: assert invariant roles_allowlisted at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "roles-allowlisted-holds"

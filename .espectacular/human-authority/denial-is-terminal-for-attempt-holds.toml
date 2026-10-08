@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "denial_is_terminal_for_attempt_holds@742dc3ce978d"
+derived_from = "denial_is_terminal_for_attempt_holds@197bd5c68543"
 description = "`TypeScript conformance test: assert invariant denial_is_terminal_for_attempt at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "denial-is-terminal-for-attempt-holds"

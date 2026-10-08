@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "projection_cannot_mutate_authority@841b55713dbe"
+derived_from = "projection_cannot_mutate_authority@a43a89dba3cf"
 description = "`TypeScript test: mutations of a copied render projection cannot affect committed or authorized state`"
 falsifiability_class = "safety"
 id = "projection-cannot-mutate-authority"

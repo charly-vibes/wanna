@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "mandatory_edge_matrix_runs@995813192389"
+derived_from = "mandatory_edge_matrix_runs@b9568ccc06ed"
 description = "`TypeScript CI test: each required edge-case category has at least one passing and one applicable negative fixture`"
 falsifiability_class = "safety"
 id = "mandatory-edge-matrix-runs"

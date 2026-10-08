@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_choice_complexity_bounded@42cb357a4cbc"
+derived_from = "p_choice_complexity_bounded@ff132c8c34c2"
 description = "`large or heterogeneous option sets use search, filtering, grouping, staged comparison, or another documented strategy rather than an unstructured exhaustive choice surface`"
 falsifiability_class = "safety"
 id = "p-choice-complexity-bounded"
