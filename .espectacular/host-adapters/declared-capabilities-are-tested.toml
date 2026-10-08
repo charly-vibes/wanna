@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/host-adapters/spec.md"
+command = "npx vitest run tests/host-adapters/properties*.test.ts -t 'Adapter contract test: declared support matches actual capabilities for every catalog kind'"
 timeout_seconds = 120
