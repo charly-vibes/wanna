@@ -3,7 +3,7 @@
 // Rationale: table-driven machine must mirror [[spec]] row for row; guards must fail with precise reasons, never masked ones
 import { describe, it, expect } from "vitest";
 import { createPatternMachine } from "../../src/interaction-patterns/machine";
-import { clarificationPattern, degradedPattern, genericPattern, REGISTRY, reviewPattern } from "./fixtures";
+import { degradedOf, diagnosisPattern, genericPattern, REGISTRY, reviewPattern } from "./fixtures";
 
 function started(overrides = {}) {
   const m = createPatternMachine(genericPattern(overrides), REGISTRY);
@@ -45,12 +45,12 @@ describe("interaction-patterns transitions", () => {
   });
 
   it("start_pattern refuses with the exact missing-conditions reason when completion is not explicit", () => {
-    const m = createPatternMachine(genericPattern({ conditions: ["success"] }), REGISTRY);
+    const m = createPatternMachine(genericPattern({ conditions: [] }), REGISTRY);
     m.fire("validate_pattern");
     const r = m.fire("start_pattern");
     expect(r.ok).toBe(false);
     expect(r.reason).toBe(
-      "start_pattern guard pattern_completion_explicit does not hold: missing completion conditions: failure",
+      "start_pattern guard pattern_completion_explicit does not hold: missing completion conditions: success",
     );
     expect(m.state).toBe("validated");
   });
@@ -103,6 +103,7 @@ describe("interaction-patterns transitions", () => {
 
   it("complete_pattern refuses with the exact reason when a success step has not completed", () => {
     const m = started();
+    m.recordStep("n1");
     const r = m.fire("complete_pattern");
     expect(r.ok).toBe(false);
     expect(r.reason).toBe(
@@ -152,7 +153,7 @@ describe("interaction-patterns transitions", () => {
 
   it("fail_pattern moves running → failed when neither completion-explicit nor composition holds", () => {
     const m = started();
-    expect(m.revise(degradedPattern())).toEqual({ ok: true });
+    expect(m.revise(degradedOf(genericPattern()))).toEqual({ ok: true });
     const r = m.fire("fail_pattern", "upstream dependency vanished");
     expect(r).toEqual({ ok: true });
     expect(m.state).toBe("failed");
@@ -160,7 +161,7 @@ describe("interaction-patterns transitions", () => {
       effect: "interaction.patterns.pattern_failure",
       detail: "upstream dependency vanished",
       patternId: "pattern.generic-1",
-      patternVersion: "0.9.0-degraded",
+      patternVersion: "1.0.0-degraded",
     });
   });
 
@@ -192,7 +193,7 @@ describe("interaction-patterns transitions", () => {
 
   it("fail_pattern refuses without failure detail and records nothing", () => {
     const m = started();
-    m.revise(degradedPattern());
+    m.revise(degradedOf(genericPattern()));
     const r = m.fire("fail_pattern");
     expect(r.ok).toBe(false);
     expect(r.reason).toBe("fail_pattern requires failure detail");

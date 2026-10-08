@@ -4,7 +4,7 @@
 import { describe, it, expect } from "vitest";
 import { createPatternMachine } from "../../src/interaction-patterns/machine";
 import { patternStateHostNeutral, PATTERNS_PRESENTATION_VOCABULARY } from "../../src/interaction-patterns/invariants";
-import { degradedPattern, genericPattern, REGISTRY } from "./fixtures";
+import { degradedOf, genericPattern, REGISTRY } from "./fixtures";
 
 describe("interaction-patterns properties: host neutrality", () => {
   it("pattern progression is independent of DOM, Pi, TUI, component-library, and layout state", () => {
@@ -16,7 +16,7 @@ describe("interaction-patterns properties: host neutrality", () => {
     );
     expect(leak.ok).toBe(false);
     expect(leak.reason).toBe(
-      "pattern definition carries host or presentation state: modal, component, flexbox, layout",
+      "pattern definition carries host or presentation state: modal, layout, flexbox, component, dialog",
     );
     // a full run's instance records — history, step events, and outcome records — stay host-free
     const m = createPatternMachine(genericPattern(), REGISTRY);
@@ -24,7 +24,7 @@ describe("interaction-patterns properties: host neutrality", () => {
     m.fire("start_pattern");
     m.recordStep("n1");
     m.fire("wait_for_contribution", "n2");
-    m.revise(degradedPattern());
+    m.revise(degradedOf(genericPattern()));
     m.fire("fail_pattern", "upstream dependency vanished");
     const serialized = JSON.stringify({
       state: m.state,

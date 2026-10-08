@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-patterns/spec.md"
+command = "npx vitest run tests/interaction-patterns/properties*.test.ts -t 'diagnosis patterns explicitly model inspect, hypothesis/evaluation, evidence acquisition, correction proposal, and exit conditions; loops have bounded or externally interruptible termination'"
 timeout_seconds = 120

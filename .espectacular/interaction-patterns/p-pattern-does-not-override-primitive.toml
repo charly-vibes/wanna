@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-patterns/spec.md"
+command = "npx vitest run tests/interaction-patterns/properties*.test.ts -t 'a pattern cannot change the response semantics, validation, authority meaning, or escape semantics of a referenced primitive'"
 timeout_seconds = 120

@@ -110,18 +110,17 @@ export function clarificationPattern(overrides: Partial<PatternDefinition> = {})
   };
 }
 
-export function degradedPattern(overrides: Partial<PatternDefinition> = {}): PatternDefinition {
+export function degradedOf(def: PatternDefinition): PatternDefinition {
   // a mid-run revision that no longer composes primitives and drops the
-  // declared completion conditions — the only shape from which fail_pattern's
-  // ¬(pattern_completion_explicit ∨ patterns_compose_primitives) guard holds
+  // success condition while keeping failure declared — the only shape from
+  // which fail_pattern's ¬(pattern_completion_explicit ∨ patterns_compose_primitives)
+  // guard holds, and the effect's "failure is a declared completion condition" stays true
   return {
-    patternId: "pattern.generic-1",
-    kind: "generic",
-    version: "0.9.0-degraded",
+    ...def,
+    version: `${def.version}-degraded`,
     nodes: [],
     edges: [],
-    conditions: [],
+    conditions: ["failure"],
     successWhen: [],
-    ...overrides,
   };
 }

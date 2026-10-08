@@ -3,7 +3,7 @@
 // Rationale: contract .espectacular/interaction-patterns/p-pattern-failure-recorded.toml binds via `vitest -t`
 import { describe, it, expect } from "vitest";
 import { createPatternMachine } from "../../src/interaction-patterns/machine";
-import { genericPattern, REGISTRY, reviewPattern } from "./fixtures";
+import { degradedOf, genericPattern, REGISTRY, reviewPattern } from "./fixtures";
 import type { PatternDefinition } from "../../src/interaction-patterns/types";
 
 describe("interaction-patterns properties: failure recording", () => {
@@ -18,26 +18,30 @@ describe("interaction-patterns properties: failure recording", () => {
       const m = createPatternMachine(def, REGISTRY);
       m.fire("validate_pattern");
       m.fire("start_pattern");
+      // the run is degraded mid-flight: composition and the success condition
+      // drop, while failure stays a declared completion condition
+      m.revise(degradedOf(def));
       m.fire("fail_pattern", detail);
       // failure is one of the pattern's declared completion conditions
       expect(def.conditions).toContain("failure");
-      // the failure instance is recorded with the pattern instance for replay and audit
+      // the failure instance is recorded with the pattern instance for replay and audit,
+      // stamped with the definition version active when the failure occurred
       expect(m.failureRecord).toEqual({
         effect: "interaction.patterns.pattern_failure",
         detail,
         patternId: def.patternId,
-        patternVersion: def.version,
+        patternVersion: `${def.version}-degraded`,
       });
       // the emitted effect is visible on the instance alongside the record
       expect(m.emittedEffects).toEqual([
-        { effect: "interaction.patterns.pattern_failure", detail, patternId: def.patternId, patternVersion: def.version },
+        { effect: "interaction.patterns.pattern_failure", detail, patternId: def.patternId, patternVersion: `${def.version}-degraded` },
       ]);
       // the history carries the transition that produced the failure
       expect(m.history.at(-1)).toEqual({
         id: "fail_pattern",
         from: "running",
         to: "failed",
-        patternVersion: def.version,
+        patternVersion: `${def.version}-degraded`,
       });
     }
   });

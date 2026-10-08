@@ -8,15 +8,17 @@ import { genericPattern, REGISTRY } from "./fixtures";
 
 describe("interaction-patterns properties: completion", () => {
   it("a pattern declares success, rejection, cancellation, deferral, failure, and unresolved completion conditions where applicable", () => {
-    // success and failure are applicable to every pattern
+    // success is applicable to every pattern; failure is declared where the
+    // pattern can fail (see pattern_failure_recorded) and travels with the
+    // canonical fixtures
     expect(patternCompletionExplicit(genericPattern()).ok).toBe(true);
-    // dropping the failure condition leaves completion implicit
-    const noFailure = patternCompletionExplicit(genericPattern({ conditions: ["success"] }));
-    expect(noFailure.ok).toBe(false);
-    expect(noFailure.reason).toBe("missing completion conditions: failure");
+    // dropping success leaves completion implicit
+    const noSuccess = patternCompletionExplicit(genericPattern({ conditions: ["failure"] }));
+    expect(noSuccess.ok).toBe(false);
+    expect(noSuccess.reason).toBe("missing completion conditions: success");
     // a cancellable pattern must declare its cancellation condition
     const cancellable = patternCompletionExplicit(
-      genericPattern({ cancellable: true, conditions: ["success", "failure"] }),
+      genericPattern({ cancellable: true, conditions: ["success", "failure", "unresolved"] }),
     );
     expect(cancellable.ok).toBe(false);
     expect(cancellable.reason).toBe("missing completion conditions: cancellation");
@@ -39,14 +41,14 @@ describe("interaction-patterns properties: completion", () => {
     expect(deferring.reason).toBe("missing completion conditions: deferral");
     // the machine's start transition carries the same refusal, naming every missing condition
     const m = createPatternMachine(
-      genericPattern({ supportsRejection: true, supportsDeferral: true, conditions: ["success"] }),
+      genericPattern({ supportsRejection: true, supportsDeferral: true, conditions: [] }),
       REGISTRY,
     );
     m.fire("validate_pattern");
     const r = m.fire("start_pattern");
     expect(r.ok).toBe(false);
     expect(r.reason).toBe(
-      "start_pattern guard pattern_completion_explicit does not hold: missing completion conditions: failure, rejection, deferral",
+      "start_pattern guard pattern_completion_explicit does not hold: missing completion conditions: success, rejection, deferral",
     );
   });
 });
