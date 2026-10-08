@@ -1,0 +1,154 @@
+# wave-2 — next six ready tickets via pi subagents (orchestrator-only lead).
+# Spawn contract: `pi -p -n "subagent:<ticket>:impl" "$(cat <brief>)"` — NEVER --no-session.
+[pipeline]
+name = "wave-2"
+description = "Wave-2 implementation queue: interaction-contract, process-model, interaction-primitives, interaction-policy, interaction-patterns, then fast-check PBT escalation (c2p last — touches pilot tests)"
+
+[pipeline.metadata]
+when = "Continuing the capability epic on the specodelic corpus"
+skills = ["beads", "commit"]
+
+[[steps]]
+id = "jwy-interaction-contract"
+prompt = """
+{topic}: Implement interaction-contract for bead `wanna-jwy` (P2) via pi subagent.
+1. `bd update wanna-jwy --claim`.
+2. Derive brief from the last ticket's brief: sed ticket id + scope dirs
+   (openspec/specs/interaction-contract, .espectacular/interaction-contract,
+   src/interaction-contract, tests/interaction-contract) →
+   `.wai/projects/wanna/briefs/wanna-jwy.md`; SHALL line: validate versioned
+   interaction descriptions.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-jwy:impl" "$(cat .wai/projects/wanna/briefs/wanna-jwy.md)"`.
+4. Verify: `git log --oneline <pre-spawn-head>..HEAD` vs report; `ah check --run-tests`
+   (0 findings), `spk lint openspec`, pretender + eslint on new dirs.
+5. Push; `bd close wanna-jwy`; `bd export`.
+Record evidence: `wai add research "JWY-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "yk-process-model"
+prompt = """
+{topic}: Implement process-model for bead `wanna-1yk` (P2) via pi subagent.
+Same flow: claim `bd update wanna-1yk --claim`; brief → `.wai/projects/wanna/briefs/wanna-1yk.md`
+(scope: process-model spec/contracts/src+tests; SHALL: task progression independent of presentation);
+spawn `pi -p -n "subagent:wanna-1yk:impl" "$(cat .wai/projects/wanna/briefs/wanna-1yk.md)"`;
+verify git log + `ah check --run-tests` + `spk lint openspec` + pretender + eslint;
+push; `bd close wanna-1yk`; `bd export`.
+Record evidence: `wai add research "YK-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "yfj-interaction-primitives"
+prompt = """
+{topic}: Implement interaction-primitives for bead `wanna-yfj` (P2) via pi subagent.
+Same flow: claim `bd update wanna-yfj --claim`; brief → `.wai/projects/wanna/briefs/wanna-yfj.md`
+(scope: interaction-primitives spec/contracts/src+tests; SHALL: separate
+needs/contributions/patterns/presentation/authority/evidence/failure/recovery);
+spawn `pi -p -n "subagent:wanna-yfj:impl" "$(cat .wai/projects/wanna/briefs/wanna-yfj.md)"`;
+verify git log + `ah check --run-tests` + `spk lint openspec` + pretender + eslint;
+push; `bd close wanna-yfj`; `bd export`.
+Record evidence: `wai add research "YFJ-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "i7-interaction-policy"
+prompt = """
+{topic}: Implement interaction-policy for bead `wanna-0i7` (P2) via pi subagent.
+Same flow: claim `bd update wanna-0i7 --claim`; brief → `.wai/projects/wanna/briefs/wanna-0i7.md`
+(scope: interaction-policy spec/contracts/src+tests; SHALL: deterministic eligible
+interaction recommendations in bounded time);
+spawn `pi -p -n "subagent:wanna-0i7:impl" "$(cat .wai/projects/wanna/briefs/wanna-0i7.md)"`;
+verify git log + `ah check --run-tests` + `spk lint openspec` + pretender + eslint;
+push; `bd close wanna-0i7`; `bd export`.
+Record evidence: `wai add research "I7-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "xh-interaction-patterns"
+prompt = """
+{topic}: Implement interaction-patterns for bead `wanna-7xh` (P3) via pi subagent.
+Same flow: claim `bd update wanna-7xh --claim`; brief → `.wai/projects/wanna/briefs/wanna-7xh.md`
+(scope: interaction-patterns spec/contracts/src+tests; SHALL: compose contribution
+primitives into reusable workflows);
+spawn `pi -p -n "subagent:wanna-7xh:impl" "$(cat .wai/projects/wanna/briefs/wanna-7xh.md)"`;
+verify git log + `ah check --run-tests` + `spk lint openspec` + pretender + eslint;
+push; `bd close wanna-7xh`; `bd export`.
+Record evidence: `wai add research "XH-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "c2p-fast-check-pbt"
+prompt = """
+{topic}: Escalate conformance tests to fast-check PBT for bead `wanna-c2p` (P2) via pi subagent.
+1. `bd update wanna-c2p --claim`.
+2. Derive brief → `.wai/projects/wanna/briefs/wanna-c2p.md` — DIFFERENT shape:
+   fast-check per property with 100+ cases for implemented specs; generators recorded
+   in corpus generator column (replacing any::<String>() placeholders); escalate
+   generator-friendly concrete tests in tests/catalog + tests/engine; fix the
+   non-recursive readdirSync walk in properties-static.test.ts (subdirs under src/engine
+   silently under-cover); spk compile proptest blocks + spk verify path.
+3. Spawn `pi -p -n "subagent:wanna-c2p:impl" "$(cat .wai/projects/wanna/briefs/wanna-c2p.md)"`.
+4. Verify: git log vs report; `ah check --run-tests`, `spk lint openspec`, pretender, eslint.
+5. Push; `bd close wanna-c2p`; `bd export`.
+Record evidence: `wai add research "C2P-IMPL: <n> fast-check properties, generator column populated, proptest blocks emitted"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
