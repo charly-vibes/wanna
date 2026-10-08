@@ -11,6 +11,7 @@ import type {
 } from "./types";
 import { TAXONOMY_VERSION } from "./types";
 import { needSchemaValid, needTargetImmediate, unresolvedRequiresChange } from "./invariants";
+import type { Check } from "./invariants";
 
 export const NORMALIZER_VERSION = "interaction-need-normalizer@1.0.0";
 
@@ -125,7 +126,9 @@ function retryTransition(internals: Internals, next: NeedProposal): TransitionRe
     return { ok: false, reason: `transition retry_unresolved cannot fire from state ${internals.state}` };
   }
   const record = internals.unresolvedRecord;
-  const check = record ? unresolvedRequiresChange(record, next) : { ok: false, reason: "no unresolved record" };
+  const check: Check = record
+    ? unresolvedRequiresChange(record, next)
+    : { ok: false, reason: "no unresolved record" };
   if (!check.ok) return check;
   internals.proposal = next;
   internals.state = "proposed";
