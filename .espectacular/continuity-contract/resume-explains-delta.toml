@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/continuity-contract/spec.md"
+command = "npx vitest run tests/continuity-contract/properties*.test.ts -t 'UX contract test: resumed task exposes completed/pending/changed/unresolved/next-action fields'"
 timeout_seconds = 120

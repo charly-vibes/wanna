@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/continuity-contract/spec.md"
+command = "npx vitest run tests/continuity-contract/properties*.test.ts -t 'validated but uncommitted user input is preserved across recoverable interruption unless security/privacy policy requires disposal, in which case the loss is explicit'"
 timeout_seconds = 120
