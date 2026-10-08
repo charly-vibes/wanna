@@ -1,0 +1,87 @@
+# wave-6 — final three tickets via pi subagents (orchestrator-only lead).
+# Spawn contract: `pi -p -n "subagent:<ticket>:impl" "$(cat <brief>)"` — NEVER --no-session.
+[pipeline]
+name = "wave-6"
+description = "Wave-6 (final): accessibility-adaptation, change-transaction, conformance-tests"
+
+[pipeline.metadata]
+when = "Completing the capability epic on the specodelic corpus"
+skills = ["beads", "commit"]
+
+[[steps]]
+id = "dus-accessibility-adaptation"
+prompt = """
+{topic}: Implement accessibility-adaptation for bead `wanna-dus` (via pi subagent).
+1. `bd update wanna-dus --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/accessibility-adaptation, .espectacular/accessibility-adaptation, src/accessibility-adaptation, tests/accessibility-adaptation) →
+   `.wai/projects/wanna/briefs/wanna-dus.md`. SHALL: Accessibility Adaptation — semantics-preserving accessibility adaptation.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-dus:impl" "$(cat .wai/projects/wanna/briefs/wanna-dus.md)"`.
+   NOTE: bounded brief — read spec + freshest exemplar only, then write.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint + tsc on new dirs.
+5. Push; `bd close wanna-dus`; `bd export`.
+Record evidence: `wai add research "DUS-ACCESSIBILITY-ADAPTATION-IMPL: gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "fe-change-transaction"
+prompt = """
+{topic}: Implement change-transaction for bead `wanna-7fe` (via pi subagent).
+1. `bd update wanna-7fe --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/change-transaction, .espectacular/change-transaction, src/change-transaction, tests/change-transaction) →
+   `.wai/projects/wanna/briefs/wanna-7fe.md`. SHALL: Change Transaction — apply capability and policy changes as validated, versioned, recoverable transactions.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-7fe:impl" "$(cat .wai/projects/wanna/briefs/wanna-7fe.md)"`.
+   NOTE: bounded brief — read spec + freshest exemplar only, then write.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint + tsc on new dirs.
+5. Push; `bd close wanna-7fe`; `bd export`.
+Record evidence: `wai add research "FE-CHANGE-TRANSACTION-IMPL: gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "conformance-tests"
+prompt = """
+{topic}: Implement conformance-tests for bead `wanna-504` (via pi subagent).
+1. `bd update wanna-504 --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/conformance-tests, .espectacular/conformance-tests, src/conformance-tests, tests/conformance-tests) →
+   `.wai/projects/wanna/briefs/wanna-504.md`. SHALL: Interaction Engine Conformance Suite — detect cross-host behavioral drift.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-504:impl" "$(cat .wai/projects/wanna/briefs/wanna-504.md)"`.
+   NOTE: bounded brief — read spec + freshest exemplar only, then write.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint + tsc on new dirs.
+5. Push; `bd close wanna-504`; `bd export`.
+Record evidence: `wai add research "CONFORMANCE-TESTS-IMPL: gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
