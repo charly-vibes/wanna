@@ -1,0 +1,11 @@
+id = "construction-without-a-port-is-rejected"
+description = "Scenario: construction without a port is rejected — constructing the shell without a declared persistence port and deduplication scope is rejected before any port contact or evaluation."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=port-is-constructor-required"
+timeout_seconds = 120

@@ -1,0 +1,11 @@
+id = "unsupported-boundary-representation"
+description = "Scenario: unsupported boundary representation — a noncanonical or unsafe stored revision is refused as recovery_required without state mutation."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=review-mapping-checked"
+timeout_seconds = 120

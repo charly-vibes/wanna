@@ -1,0 +1,11 @@
+id = "commit-failure-obeys-declared-semantics"
+description = "Scenario: commit failure obeys declared semantics (open-boundary slice) — injected load failures return the declared typed outcomes with a non-empty reason and no mutation."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=port-failure-semantics-tested"
+timeout_seconds = 120

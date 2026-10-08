@@ -62,11 +62,16 @@ export interface PortOperation {
   readonly replayAdditions: readonly unknown[];
 }
 
+/**
+ * Authoritative load outcomes. `unavailable` and `recovery_required` carry an
+ * optional port-supplied reason; the shell always surfaces a non-empty reason
+ * to its consumer, synthesizing one when the port omits it.
+ */
 export type PortLoadOutcome =
   | { readonly kind: "loaded"; readonly snapshot: AggregateSnapshot }
   | { readonly kind: "not_found" }
-  | { readonly kind: "unavailable" }
-  | { readonly kind: "recovery_required" };
+  | { readonly kind: "unavailable"; readonly reason?: string }
+  | { readonly kind: "recovery_required"; readonly reason?: string };
 
 export type PortCommitOutcome =
   | { readonly kind: "applied"; readonly receipt: PortReceipt; readonly snapshot: AggregateSnapshot }
@@ -97,9 +102,13 @@ export interface OpenReviewSessionInput {
 /**
  * Outcome of opening a review session ([[composition.shell.continuity_restored]]):
  * `ready` unwraps to the shell; the other variants must be handled explicitly.
+ * `rejected` ([[composition.shell.port_required_declared]]) reports a
+ * construction input refused before any port contact — no port method ran and
+ * no state was touched.
  */
 export type OpenReviewSessionOutcome =
   | { readonly kind: "ready"; readonly shell: ReviewSessionShell }
+  | { readonly kind: "rejected"; readonly reason: string }
   | { readonly kind: "unavailable"; readonly reason: string }
   | { readonly kind: "recovery_required"; readonly reason: string };
 

@@ -1,0 +1,11 @@
+id = "projection-mutation-is-inert"
+description = "Scenario: projection mutation is inert — mutating a projected copy handed to a host never changes committed state."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=projection-mutation-is-inert"
+timeout_seconds = 120

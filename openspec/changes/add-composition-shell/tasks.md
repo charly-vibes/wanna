@@ -18,7 +18,7 @@ passing path, and leaves structural tidying to the separate refactor ticket.
 
 ## 2. First human review
 
-- [ ] 2.1 RED→GREEN: declared-port construction/load and host-neutral public
+- [x] 2.1 RED→GREEN: declared-port construction/load and host-neutral public
       interface, with no implicit persistence (wanna-0te).
 - [ ] 2.2 RED→GREEN: need normalization → catalog/policy eligibility → engine;
       explicit mappings, empty result and preserved evidence/version pins (wanna-15e).

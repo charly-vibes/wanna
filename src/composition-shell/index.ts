@@ -1,7 +1,8 @@
 // Purpose: public surface of the composition shell
 // Responsibilities: export the consumer-contract types and the openReviewSession entry point under one barrel
-// Rationale: hosts consumer-example.md (openspec/changes/add-composition-shell); callers import from this barrel, never from layer internals
+// Rationale: hosts consumer-example.md (openspec/changes/add-composition-shell); callers import from this barrel, never from layer internals. wanna-0te owns the open/load behavior; wanna-15e/8k6/gcp own the remaining commands.
 export { COMPOSITION_SHELL_VERSION } from "./types";
+export { openReviewSession } from "./open";
 export type {
   AggregateSnapshot,
   CommitDecisionCommand,
@@ -31,19 +32,3 @@ export type {
   UpdateArtifactCommand,
   UpdateArtifactOutcome,
 } from "./types";
-import type {
-  OpenReviewSessionInput,
-  OpenReviewSessionOutcome,
-} from "./types";
-
-/**
- * Opens a review session from a trusted key, immutable policy/catalog inputs and
- * an explicitly declared persistence port. Behavior is owned by wanna-0te
- * (declared-port construction and load); this scaffold only fixes the signature.
- */
-export async function openReviewSession(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars -- signature scaffold; behavior owned by wanna-0te
-  _input: OpenReviewSessionInput,
-): Promise<OpenReviewSessionOutcome> {
-  throw new Error("not implemented: wanna-0te (declared-port open/load)");
-}

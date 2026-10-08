@@ -1,0 +1,11 @@
+id = "mutation-bypassing-the-port-changes-nothing"
+description = "Scenario: mutation bypassing the port changes nothing — opening mutates nothing and aggregate creation happens only through the port's conditional commit."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=commits-only-via-port"
+timeout_seconds = 120
