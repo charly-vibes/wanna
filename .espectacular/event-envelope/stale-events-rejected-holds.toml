@@ -1,6 +1,6 @@
 archetype = "SA"
 authored_with = "0.9.2"
-derived_from = "stale_events_rejected_holds@2e2dfa1cef0c"
+derived_from = "stale_events_rejected_holds@f2a0857e1fa4"
 description = "`TypeScript conformance test: assert invariant stale_events_rejected at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "stale-events-rejected-holds"
@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "npx vitest run tests/event-envelope/properties*.test.ts -t 'TypeScript conformance test: assert invariant stale_events_rejected at its trust boundary and under its stated edge cases.'"
+command = "npx vitest run tests/event-envelope/properties-pbt.test.ts -t 'TypeScript conformance test: assert invariant stale_events_rejected at its trust boundary and under its stated edge cases.'"
 timeout_seconds = 120
