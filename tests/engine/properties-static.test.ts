@@ -7,19 +7,28 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const ENGINE_DIR = "src/engine";
-const sources = readdirSync(ENGINE_DIR).filter((f) => f.endsWith(".ts")).map((f) =>
-  readFileSync(join(ENGINE_DIR, f), "utf8"),
-);
+
+/** Recursive walk so engine subdirectories cannot silently under-cover. */
+function walkTsFiles(dir: string): { file: string; src: string }[] {
+  return readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+    const p = join(dir, entry.name);
+    if (entry.isDirectory()) return walkTsFiles(p);
+    if (entry.name.endsWith(".ts")) return [{ file: p, src: readFileSync(p, "utf8") }];
+    return [];
+  });
+}
+
+const sources = walkTsFiles(ENGINE_DIR);
 
 describe("core_has_no_host_or_io_imports", () => {
   it("imports nothing outside src/engine (relative-only imports)", () => {
-    const offenders = sources.flatMap((src, i) =>
+    const offenders = sources.flatMap(({ src, file }) =>
       (src.match(/^import[^;]+from\s+["']([^"']+)["']/gm) ?? [])
         .filter((m) => {
           const spec = m.match(/["']([^"']+)["']/)![1]!;
           return !spec.startsWith("./") && !spec.startsWith("../") && spec !== "vitest";
         })
-        .map((m) => `${readdirSync(ENGINE_DIR)[i]}: ${m}`),
+        .map((m) => `${file}: ${m}`),
     );
     expect(offenders).toEqual([]);
   });
@@ -33,7 +42,9 @@ describe("core_has_no_host_or_io_imports", () => {
 describe("core_evaluation_has_no_effects", () => {
   it("references no fs, network, UI, model, or domain-action ports", () => {
     const effects = /\b(require\(|readFileSync|writeFileSync|fetch\(|XMLHttpRequest|http\(|https\(|console\.|process\.)/;
-    const offenders = sources.map((s, i) => (effects.test(s) ? readdirSync(ENGINE_DIR)[i] : null)).filter(Boolean);
+    const offenders = sources
+      .filter((s) => effects.test(s.src))
+      .map((s) => s.file);
     expect(offenders).toEqual([]);
   });
 });

@@ -3,7 +3,7 @@
 // Rationale: derives_from [[spec]] — each describe named after its property id
 import { describe, it, expect } from "vitest";
 import { evaluate, canonicalContextKey } from "../../src/engine/index";
-import { CANDIDATE_ORDER, makeContext, makePolicy } from "./fixtures";
+import { makeContext, makePolicy } from "./fixtures";
 
 describe("context_validation_rejects_malformed", () => {
   it("rejects a context missing a required field", () => {
