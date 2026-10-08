@@ -115,7 +115,9 @@ describe("process-model transitions", () => {
     // evaluated completion criteria also block generic failure
     m2.evaluateCompletion("reviewer_signoff");
     m2.evaluateCompletion("all_checks_green");
-    expect(m2.fire("fail_process", "x").reason).toBe(
+    const blocked2 = m2.fire("fail_process", "x");
+    expect(blocked2.ok).toBe(false);
+    expect(blocked2.reason).toBe(
       "fail_process guard ¬(completion_criteria_explicit ∨ waits_correlated ∨ cancellation_semantics_defined) evaluates false: completion_criteria_explicit holds ∧ waits_correlated holds ∧ cancellation_semantics_defined holds",
     );
     expect(m2.state).toBe("running");

@@ -2,8 +2,9 @@
 // Responsibilities: build canonical valid process definitions and the invalid variants the corpus properties name
 // Rationale: single source of shared process vocabulary for transitions and properties tests
 import { createProcessMachine } from "../../src/process-model/machine";
-import type { ProcessDefinition, ProcessMachine } from "../../src/process-model/machine";
+import type { ProcessMachine } from "../../src/process-model/machine";
 import { SCHEMA_VERSION, TRANSITION_IDS } from "../../src/process-model/types";
+import type { ProcessDefinition } from "../../src/process-model/types";
 
 export function refusalOutcomes(): Record<string, string> {
   return {
