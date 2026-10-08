@@ -60,10 +60,10 @@ export function validRevision(overrides: Partial<PrimitiveRevision> = {}): Primi
 }
 
 export function collapsedRevision(): PrimitiveRevision {
-  return validRevision({
-    layers: [
-      { layer: "need", typeToken: "SameToken", updateRule: "SameRule" },
-      { layer: "contribution", typeToken: "SameToken", updateRule: "SameRule" },
-    ],
-  });
+  // all eleven layers remain declared — the collapse is two layers fusing into
+  // one type and one update rule, not layers going missing
+  const layers = fullLayers().map((l) =>
+    l.layer === "contribution" ? { ...l, typeToken: "Need", updateRule: "normalize proposals into typed needs" } : l,
+  );
+  return validRevision({ layers });
 }

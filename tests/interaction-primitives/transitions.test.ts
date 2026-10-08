@@ -34,7 +34,7 @@ describe("interaction-primitives transitions", () => {
     const r = gate.fire("validate_system_primitives");
     expect(r.ok).toBe(false);
     expect(r.reason).toBe(
-      'semantic layer separation violated: layers "need" and "contribution" share type token "SameToken"',
+      'semantic layer separation violated: layers "need" and "contribution" share type token "Need"',
     );
   });
 
@@ -56,7 +56,7 @@ describe("interaction-primitives transitions", () => {
     expect(r.ok).toBe(true);
     expect(gate.state).toBe("rejected");
     expect(gate.rejectionReason).toBe(
-      'semantic layer separation violated: layers "need" and "contribution" share type token "SameToken"',
+      'semantic layer separation violated: layers "need" and "contribution" share type token "Need"',
     );
   });
 

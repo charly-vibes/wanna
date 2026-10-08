@@ -91,7 +91,6 @@ describe("interaction-primitives properties: types", () => {
       const source = readFileSync(join(dir, file), "utf8");
       const importLines = source.split("\n").filter((l) => l.trimStart().startsWith("import"));
       for (const line of importLines) {
-        const lowered = line.toLowerCase();
         for (const token of HOST_UI_TOKENS) {
           expect(`${file}: ${line}`).not.toContain(token);
         }
