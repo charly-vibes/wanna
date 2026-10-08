@@ -1,0 +1,6 @@
+id = "reject-stale-or-duplicate-moves-validated-to-rejected-commit"
+description = ""
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"

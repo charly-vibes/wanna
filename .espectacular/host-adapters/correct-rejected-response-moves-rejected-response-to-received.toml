@@ -1,0 +1,6 @@
+id = "correct-rejected-response-moves-rejected-response-to-received"
+description = ""
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"

@@ -1,0 +1,6 @@
+id = "approve-candidate-moves-evaluated-to-approved"
+description = ""
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"

@@ -1,0 +1,6 @@
+id = "retire-committed-decision-moves-committed-to-retired"
+description = ""
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"

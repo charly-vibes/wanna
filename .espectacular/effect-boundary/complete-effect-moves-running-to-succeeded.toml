@@ -1,0 +1,6 @@
+id = "complete-effect-moves-running-to-succeeded"
+description = ""
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"

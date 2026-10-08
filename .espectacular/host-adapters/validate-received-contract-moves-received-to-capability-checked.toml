@@ -1,0 +1,6 @@
+id = "validate-received-contract-moves-received-to-capability-checked"
+description = ""
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"

@@ -1,0 +1,6 @@
+id = "reconcile-changed-context-moves-reorienting-to-reconciling"
+description = ""
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"

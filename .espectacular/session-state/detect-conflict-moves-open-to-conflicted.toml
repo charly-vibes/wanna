@@ -1,0 +1,6 @@
+id = "detect-conflict-moves-open-to-conflicted"
+description = ""
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"

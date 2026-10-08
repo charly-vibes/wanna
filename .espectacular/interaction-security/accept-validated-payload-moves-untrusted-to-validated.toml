@@ -1,0 +1,6 @@
+id = "accept-validated-payload-moves-untrusted-to-validated"
+description = ""
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"

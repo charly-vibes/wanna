@@ -1,0 +1,6 @@
+id = "propose-adaptation-moves-baseline-to-candidate-adaptation"
+description = ""
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"

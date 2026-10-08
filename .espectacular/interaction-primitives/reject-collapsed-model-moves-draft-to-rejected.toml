@@ -1,0 +1,6 @@
+id = "reject-collapsed-model-moves-draft-to-rejected"
+description = ""
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
