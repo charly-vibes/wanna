@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/cognitive-ergonomics/spec.md"
+command = "npx vitest run tests/cognitive-ergonomics/properties*.test.ts -t 'Interaction test: non-safety adaptation cannot replace or reorder the active response surface during entry'"
 timeout_seconds = 120
