@@ -12,7 +12,7 @@ describe("interaction-policy determinism properties", () => {
       eligibleCandidate({ id: "cand-a", score: 5 }),
       eligibleCandidate({ id: "cand-b", kind: "choose", score: 9 }),
       eligibleCandidate({ id: "cand-c", kind: "rank", score: 9 }),
-      eligibleCandidate({ id: "cand-d", kind: "verify", failedHardGates: ["export_restricted"] }),
+      eligibleCandidate({ id: "cand-d", kind: "choose", failedHardGates: ["export_restricted"] }),
     ];
     const permutations = [
       pool,

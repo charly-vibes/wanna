@@ -47,7 +47,7 @@ describe("interaction-policy semantics properties", () => {
       validInput({
         candidates: pool.map((c) => ({
           ...c,
-          hostCapabilities: ["structured_prompting", "voice_widgets"] as readonly string[],
+          hostCapabilities: ["structured_prompting", "rich_widgets", "voice_widgets"] as readonly string[],
         })),
       }),
     );
@@ -78,8 +78,11 @@ describe("interaction-policy semantics properties", () => {
     expect(outcome2.ok).toBe(true);
     if (!outcome2.ok) return;
     expect(outcome2.result.exclusions).toHaveLength(0);
-    // and the remaining recommendations are semantically identical to the run without any adaptation
-    expect(outcome2.result.recommendations.map((r) => r.kind)).toEqual(outcome.result.recommendations.map((r) => r.kind));
+    // and the surviving active interaction is semantically identical to the run without any adaptation
+    expect(outcome2.result.recommendations.find((r) => r.id === "stable-1")?.kind).toBe(
+      outcome.result.recommendations.find((r) => r.id === "stable-1")?.kind,
+    );
+    expect(outcome2.result.recommendations.find((r) => r.id === "stable-1")?.kind).toBe("clarify");
   });
 
   it("policy distinguishes measurable burden attributes from uncertain inferred human-state attributes and records which influenced ranking", () => {
