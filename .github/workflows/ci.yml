@@ -1,0 +1,55 @@
+# CI workflow - runs the same commands as local development.
+#
+# Uses `just ci` to ensure parity between local and CI environments
+# (ddl standard, mirrors the gently/specodelic ci.yml pattern). If CI
+# fails, run `just ci` locally to reproduce the issue.
+#
+# Ecosystem tools are installed pinned (specodelic 0.7.0 = Revision 18,
+# espectacular 0.9.3 = .espectacular/config.toml tool_version,
+# pretender 0.7.0) and smoke-dogfooded: installed tools must run, not
+# just install. The devenv shell (node 24 from the pinned nixpkgs
+# input) is the toolchain source of truth — this workflow matches its
+# node major; .github/workflows/devenv.yml proves the exact shell on a
+# clean runner (DDL-irv).
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  ci:
+    name: Full pipeline (just ci)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node (major matches the devenv shell)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install just
+        uses: extractions/setup-just@v2
+
+      - name: npm ci
+        run: npm ci
+
+      - name: Install ecosystem tools (pinned)
+        run: cargo install --locked pretender@0.7.0 specodelic@0.7.0 espectacular@0.9.3
+
+      - name: Smoke dogfooded tools
+        run: |
+          pretender --version >/dev/null
+          spk --version >/dev/null
+          ah --version >/dev/null
+
+      - name: Run CI pipeline
+        run: just ci
