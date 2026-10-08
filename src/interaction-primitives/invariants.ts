@@ -13,10 +13,7 @@ import { EVIDENCE_CLASSES, SEMANTIC_LAYERS } from "./types";
 
 export { EVIDENCE_CLASSES, SEMANTIC_LAYERS } from "./types";
 
-export interface Check {
-  readonly ok: boolean;
-  readonly reason?: string;
-}
+export type Check = { readonly ok: true; readonly reason?: undefined } | { readonly ok: false; readonly reason: string };
 
 const HOST_UI_TOKENS = ["dom", "react", "window", "document", "browser", "tui", "mcp"] as const;
 
@@ -62,8 +59,9 @@ function firstSharedPair(
 ): Check {
   for (let i = 0; i < revision.layers.length; i++) {
     for (let j = i + 1; j < revision.layers.length; j++) {
-      const a = revision.layers[i];
-      const b = revision.layers[j];
+      // invariant: i and j are valid indices into revision.layers by loop construction
+      const a = revision.layers[i]!;
+      const b = revision.layers[j]!;
       if (a[field] === b[field]) {
         return fail(
           `semantic layer separation violated: layers "${a.layer}" and "${b.layer}" share ${label} "${a[field]}"`,
