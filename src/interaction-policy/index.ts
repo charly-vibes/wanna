@@ -16,7 +16,6 @@ export {
   policyInputValid,
   rankCandidates,
 } from "./invariants";
-export type { Check } from "./invariants";
 export {
   MAX_RECOMMENDATIONS_CEILING,
   POLICY_VERSION,

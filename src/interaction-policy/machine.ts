@@ -176,7 +176,10 @@ function makeMachine(s: Internals): PolicyMachine {
   };
 }
 
-function makeActions(s: Internals): Omit<PolicyMachine, keyof ReturnType<typeof makeGetters>> {
+/** The four read-only getters are defined inline in makeMachine; actions cover the rest. */
+type PolicyMachineGetters = Pick<PolicyMachine, "state" | "lastResult" | "rejectionReason" | "lastInput">;
+
+function makeActions(s: Internals): Omit<PolicyMachine, keyof PolicyMachineGetters> {
   return {
     fire: (id) => fireTransition(s, id),
     evaluate: () => evaluateOnlyFromReady(s),
