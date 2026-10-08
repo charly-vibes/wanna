@@ -1,0 +1,61 @@
+# wave-5 — next two ready tickets via pi subagents (orchestrator-only lead).
+# Spawn contract: `pi -p -n "subagent:<ticket>:impl" "$(cat <brief>)"` — NEVER --no-session.
+[pipeline]
+name = "wave-5"
+description = "Wave-5: host-adapters, capability-lifecycle"
+
+[pipeline.metadata]
+when = "Continuing the capability epic on the specodelic corpus"
+skills = ["beads", "commit"]
+
+[[steps]]
+id = "zlj-host-adapters"
+prompt = """
+{topic}: Implement host-adapters for bead `wanna-zlj` (via pi subagent).
+1. `bd update wanna-zlj --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/host-adapters, .espectacular/host-adapters, src/host-adapters, tests/host-adapters) →
+   `.wai/projects/wanna/briefs/wanna-zlj.md`. SHALL: Host Adapters — preserve host-neutral interaction semantics across supported hosts.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-zlj:impl" "$(cat .wai/projects/wanna/briefs/wanna-zlj.md)"`.
+   NOTE: pass a bounded brief — read spec + freshest exemplar only, then write.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-zlj`; `bd export`.
+Record evidence: `wai add research "ZLJ-HOST-ADAPTERS-IMPL: gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "rvu-capability-lifecycle"
+prompt = """
+{topic}: Implement capability-lifecycle for bead `wanna-rvu` (via pi subagent).
+1. `bd update wanna-rvu --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/capability-lifecycle, .espectacular/capability-lifecycle, src/capability-lifecycle, tests/capability-lifecycle) →
+   `.wai/projects/wanna/briefs/wanna-rvu.md`. SHALL: Capability Lifecycle — propose/inspect/preview/evaluate/accept/use/retire with version + state discipline.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-rvu:impl" "$(cat .wai/projects/wanna/briefs/wanna-rvu.md)"`.
+   NOTE: pass a bounded brief — read spec + freshest exemplar only, then write.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-rvu`; `bd export`.
+Record evidence: `wai add research "RVU-CAPABILITY-LIFECYCLE-IMPL: gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
