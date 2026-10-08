@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/conformance-tests/spec.md"
+command = "npx vitest run tests/conformance-tests/properties*.test.ts -t 'TypeScript CI test: one failed/skipped mandatory scenario or target prevents the suite from entering passed'"
 timeout_seconds = 120

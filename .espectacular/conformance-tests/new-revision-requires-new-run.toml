@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/conformance-tests/spec.md"
+command = "npx vitest run tests/conformance-tests/properties*.test.ts -t \"Release gate test: a changed code/spec/policy/catalog revision cannot inherit the prior revision's pass status\""
 timeout_seconds = 120

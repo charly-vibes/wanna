@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/conformance-tests/spec.md"
+command = "npx vitest run tests/conformance-tests/properties*.test.ts -t 'TypeScript CI test: retry after failure requires a committed fix and retained regression case'"
 timeout_seconds = 120
