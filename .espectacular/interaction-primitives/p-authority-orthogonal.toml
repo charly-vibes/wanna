@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "p_authority_orthogonal@74af2b84cae3"
+derived_from = "p_authority_orthogonal@2650dcf771de"
 description = "`model confidence, recommendation, verification, acknowledgement, UI rendering, or a generic click cannot independently grant protected authority`"
 falsifiability_class = "safety"
 id = "p-authority-orthogonal"
@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "npx vitest run tests/interaction-primitives/properties*.test.ts -t 'model confidence, recommendation, verification, acknowledgement, UI rendering, or a generic click cannot independently grant protected authority'"
+command = "npx vitest run tests/interaction-primitives/properties-pbt.test.ts -t 'model confidence, recommendation, verification, acknowledgement, UI rendering, or a generic click cannot independently grant protected authority'"
 timeout_seconds = 120
