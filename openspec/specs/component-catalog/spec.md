@@ -41,9 +41,9 @@ The catalog is a versioned allowlist and compatibility boundary. It defines the 
 | roles_allowlisted_holds | unit | [[spec.roles_allowlisted]] | `any::<String>()` | `TypeScript conformance test: assert invariant roles_allowlisted at its trust boundary and under its stated edge cases.` |
 | host_capabilities_declared_holds | unit | [[spec.host_capabilities_declared]] | `any::<String>()` | `TypeScript conformance test: assert invariant host_capabilities_declared at its trust boundary and under its stated edge cases.` |
 | schema_mapping_explicit_holds | unit | [[spec.schema_mapping_explicit]] | `any::<String>()` | `TypeScript conformance test: assert invariant schema_mapping_explicit at its trust boundary and under its stated edge cases.` |
-| fallback_graph_acyclic_holds | unit | [[spec.fallback_graph_acyclic]] | `any::<String>()` | `TypeScript conformance test: assert invariant fallback_graph_acyclic at its trust boundary and under its stated edge cases.` |
+| fallback_graph_acyclic_holds | unit | [[spec.fallback_graph_acyclic]] | `fc.array(fc.record({role: fc.stringMatching(/^[a-z]{1,6}$/), fallback: fc.option(fc.stringMatching(/^[a-z]{1,6}$/))})) deduplicated by role, with injected two-node fallback cycles and dangling fallback targets` | `TypeScript conformance test: assert invariant fallback_graph_acyclic at its trust boundary and under its stated edge cases.` |
 | catalog_changes_reviewed_holds | unit | [[spec.catalog_changes_reviewed]] | `any::<String>()` | `TypeScript conformance test: assert invariant catalog_changes_reviewed at its trust boundary and under its stated edge cases.` |
-| limits_consistent_holds | unit | [[spec.limits_consistent]] | `any::<String>()` | `TypeScript conformance test: assert invariant limits_consistent at its trust boundary and under its stated edge cases.` |
+| limits_consistent_holds | unit | [[spec.limits_consistent]] | `fc.nat({max:1000000}) global maxPayloadBytes x fc.nat({max:1000}) global maxRoles x fc.integer({min:1,max:10000}) payload overshoot x fc.integer({min:1,max:100}) role overshoot x fc.nat({max:5}) host count` | `TypeScript conformance test: assert invariant limits_consistent at its trust boundary and under its stated edge cases.` |
 
 ## Requirements
 

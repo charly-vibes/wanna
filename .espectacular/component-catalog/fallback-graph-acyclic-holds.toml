@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "fallback_graph_acyclic_holds@f8c5f3eab168"
+derived_from = "fallback_graph_acyclic_holds@6e373a2285f3"
 description = "`TypeScript conformance test: assert invariant fallback_graph_acyclic at its trust boundary and under its stated edge cases.`"
 falsifiability_class = "safety"
 id = "fallback-graph-acyclic-holds"
@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "npx vitest run tests/catalog/fallback-graph-acyclic.test.ts"
+command = "npx vitest run tests/catalog/properties-pbt.test.ts -t 'TypeScript conformance test: assert invariant fallback_graph_acyclic at its trust boundary and under its stated edge cases.'"
 timeout_seconds = 120
