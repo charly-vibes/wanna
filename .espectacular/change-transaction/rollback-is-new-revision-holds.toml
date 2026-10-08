@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/change-transaction/spec.md"
+command = "npx vitest run tests/change-transaction/properties*.test.ts -t 'TypeScript conformance test: assert invariant rollback_is_new_revision at its trust boundary and under its stated edge cases.'"
 timeout_seconds = 120
