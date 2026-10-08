@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-contract/spec.md"
+command = "npx vitest run tests/interaction-contract/properties*.test.ts -t 'TypeScript test: each field rejects values just above its declared limit and accepts allowed boundary values'"
 timeout_seconds = 120
