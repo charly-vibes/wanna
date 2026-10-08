@@ -13,3 +13,8 @@
 .pretender/last-check.json
 node_modules/
 specodelic/
+
+# devenv.sh state (see devenv.nix)
+.devenv/
+.devenv.flake.nix
+.direnv/
