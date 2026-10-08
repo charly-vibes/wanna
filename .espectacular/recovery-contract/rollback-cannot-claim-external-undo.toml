@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/recovery-contract/spec.md"
+command = "npx vitest run tests/recovery-contract/properties*.test.ts -t 'TypeScript test: rollback result with external effects records residual effects unless compensation succeeds'"
 timeout_seconds = 120

@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/recovery-contract/spec.md"
+command = "npx vitest run tests/recovery-contract/properties*.test.ts -t 'when recovery requires human judgment, the interaction exposes valid alternatives including safe abort/escalation rather than forcing a single repair path'"
 timeout_seconds = 120
