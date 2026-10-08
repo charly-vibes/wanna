@@ -1,0 +1,10 @@
+id = "no-host-imports-in-the-shell-module"
+description = "Static import-graph check: the shell module declares no DOM, TUI or transport imports."
+archetype = "NR"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+
+[[tests.vitest]]
+flags = "--testNamePattern=composition shell module imports no host or transport modules"
+timeout_seconds = 120

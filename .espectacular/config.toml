@@ -6,6 +6,6 @@ changes = "openspec/changes"
 
 [runners]
 
-vitest = ["vitest", "run"]
+vitest = ["npx", "vitest", "run"]
 [spk]
 version = "0.5.1"

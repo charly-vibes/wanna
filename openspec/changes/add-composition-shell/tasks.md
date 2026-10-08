@@ -11,7 +11,7 @@ passing path, and leaves structural tidying to the separate refactor ticket.
       expected outcomes in proposal/design/consumer-example/delta (wanna-40i).
 - [x] 1.2 Specify persistence operations, conditional commits, dedup scope and
       authoritative reconciliation with typed outcomes (wanna-d0h).
-- [ ] 1.3 Scaffold public types and consumer conformance harness; prove its failing
+- [x] 1.3 Scaffold public types and consumer conformance harness; prove its failing
       sentinel is executed and reported; bind actual behavior as it lands (wanna-y8j).
 - [ ] 1.4 Make consumer-example.md an executable failing public-API contract;
       specify happy path and failure inputs/outputs before implementation (wanna-9wu).
