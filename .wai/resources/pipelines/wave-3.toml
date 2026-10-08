@@ -1,0 +1,209 @@
+# wave-3 — eight ready tickets via pi subagents (orchestrator-only lead).
+# Spawn contract: `pi -p -n "subagent:<ticket>:impl" "$(cat <brief>)"` — NEVER --no-session.
+[pipeline]
+name = "wave-3"
+description = "Wave-3 implementation queue: human-authority, effect-boundary, amplification-policy, cognitive-ergonomics, presentation-contract, interaction-runtime, failure-model, evidence-provenance"
+
+[pipeline.metadata]
+when = "Continuing the capability epic on the specodelic corpus"
+skills = ["beads", "commit"]
+
+[[steps]]
+id = "9hc-human-authority"
+prompt = """
+{topic}: Implement human-authority for bead `wanna-9hc` (via pi subagent).
+1. `bd update wanna-9hc --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/human-authority, .espectacular/human-authority, src/human-authority, tests/human-authority) →
+   `.wai/projects/wanna/briefs/wanna-9hc.md`. SHALL: Human Authority — authorization independent of presentation and confidence.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-9hc:impl" "$(cat .wai/projects/wanna/briefs/wanna-9hc.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-9hc`; `bd export`.
+Record evidence: `wai add research "9HC-HUMAN-AUTHORITY-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "hif-effect-boundary"
+prompt = """
+{topic}: Implement effect-boundary for bead `wanna-hif` (via pi subagent).
+1. `bd update wanna-hif --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/effect-boundary, .espectacular/effect-boundary, src/effect-boundary, tests/effect-boundary) →
+   `.wai/projects/wanna/briefs/wanna-hif.md`. SHALL: Effect Boundary — no unauthorized external effects from previews/shadows/untrusted proposals.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-hif:impl" "$(cat .wai/projects/wanna/briefs/wanna-hif.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-hif`; `bd export`.
+Record evidence: `wai add research "HIF-EFFECT-BOUNDARY-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "yx8-amplification-policy"
+prompt = """
+{topic}: Implement amplification-policy for bead `wanna-yx8` (via pi subagent).
+1. `bd update wanna-yx8 --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/amplification-policy, .espectacular/amplification-policy, src/amplification-policy, tests/amplification-policy) →
+   `.wai/projects/wanna/briefs/wanna-yx8.md`. SHALL: Amplification Policy — least-burdensome eligible interaction selection.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-yx8:impl" "$(cat .wai/projects/wanna/briefs/wanna-yx8.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-yx8`; `bd export`.
+Record evidence: `wai add research "YX8-AMPLIFICATION-POLICY-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "cl-cognitive-ergonomics"
+prompt = """
+{topic}: Implement cognitive-ergonomics for bead `wanna-2cl` (via pi subagent).
+1. `bd update wanna-2cl --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/cognitive-ergonomics, .espectacular/cognitive-ergonomics, src/cognitive-ergonomics, tests/cognitive-ergonomics) →
+   `.wai/projects/wanna/briefs/wanna-2cl.md`. SHALL: Cognitive Ergonomics — measurable burden and stability constraints.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-2cl:impl" "$(cat .wai/projects/wanna/briefs/wanna-2cl.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-2cl`; `bd export`.
+Record evidence: `wai add research "CL-COGNITIVE-ERGONOMICS-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "znw-presentation-contract"
+prompt = """
+{topic}: Implement presentation-contract for bead `wanna-znw` (via pi subagent).
+1. `bd update wanna-znw --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/presentation-contract, .espectacular/presentation-contract, src/presentation-contract, tests/presentation-contract) →
+   `.wai/projects/wanna/briefs/wanna-znw.md`. SHALL: Presentation Contract — host-neutral semantic presentation data from validated interaction intent.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-znw:impl" "$(cat .wai/projects/wanna/briefs/wanna-znw.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-znw`; `bd export`.
+Record evidence: `wai add research "ZNW-PRESENTATION-CONTRACT-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "130-interaction-runtime"
+prompt = """
+{topic}: Implement interaction-runtime for bead `wanna-130` (via pi subagent).
+1. `bd update wanna-130 --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/interaction-runtime, .espectacular/interaction-runtime, src/interaction-runtime, tests/interaction-runtime) →
+   `.wai/projects/wanna/briefs/wanna-130.md`. SHALL: Interaction Runtime — apply validated events only when preconditions hold.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-130:impl" "$(cat .wai/projects/wanna/briefs/wanna-130.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-130`; `bd export`.
+Record evidence: `wai add research "130-INTERACTION-RUNTIME-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "hvq-failure-model"
+prompt = """
+{topic}: Implement failure-model for bead `wanna-hvq` (via pi subagent).
+1. `bd update wanna-hvq --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/failure-model, .espectacular/failure-model, src/failure-model, tests/failure-model) →
+   `.wai/projects/wanna/briefs/wanna-hvq.md`. SHALL: Failure Model — failure scope, effect certainty, recoverability on deviation.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-hvq:impl" "$(cat .wai/projects/wanna/briefs/wanna-hvq.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-hvq`; `bd export`.
+Record evidence: `wai add research "HVQ-FAILURE-MODEL-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
+
+[[steps]]
+id = "d-evidence-provenance"
+prompt = """
+{topic}: Implement evidence-provenance for bead `wanna-53d` (via pi subagent).
+1. `bd update wanna-53d --claim`.
+2. Derive brief from the previous ticket's brief (sed ticket id, scope dirs:
+   openspec/specs/evidence-provenance, .espectacular/evidence-provenance, src/evidence-provenance, tests/evidence-provenance) →
+   `.wai/projects/wanna/briefs/wanna-53d.md`. SHALL: Evidence Provenance — traceable support for decisions and changes.
+3. Commit brief; spawn `pi -p -n "subagent:wanna-53d:impl" "$(cat .wai/projects/wanna/briefs/wanna-53d.md)"`.
+4. Verify: git log vs report; `ah check --run-tests` (0 findings), `spk lint openspec`,
+   pretender + eslint on new dirs.
+5. Push; `bd close wanna-53d`; `bd export`.
+Record evidence: `wai add research "D-EVIDENCE-PROVENANCE-IMPL: <n> transitions + <n> properties, gates green"`
+Advance: `wai pipeline next`
+"""
+
+[steps.gate.structural]
+min_artifacts = 1
+types = ["research"]
+
+[[steps.gate.oracles]]
+name = "ah-check"
+description = "ah check --run-tests clean AND spk lint clean"
+scope = "all"
