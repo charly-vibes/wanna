@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-primitives/spec.md"
+command = "npx vitest run tests/interaction-primitives/properties*.test.ts -t 'resumption includes reorientation and reconciliation semantics, not merely reloading serialized state'"
 timeout_seconds = 120

@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-primitives/spec.md"
+command = "npx vitest run tests/interaction-primitives/properties*.test.ts -t 'model confidence, recommendation, verification, acknowledgement, UI rendering, or a generic click cannot independently grant protected authority'"
 timeout_seconds = 120
