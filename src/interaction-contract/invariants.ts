@@ -80,8 +80,15 @@ export function contractDeclaresContribution(contract: InteractionContract): Che
   return { ok: true };
 }
 
+/** Views an untrusted payload value as a record; undefined/null/primitives yield undefined. */
+function recordOf(value: unknown): Partial<Record<string, unknown>> | undefined {
+  return typeof value === "object" && value !== null
+    ? (value as Partial<Record<string, unknown>>)
+    : undefined;
+}
+
 export function accessibilityObligationsCarried(contract: InteractionContract): Check {
-  const a = contract.accessibility as Partial<Record<string, unknown>> | undefined;
+  const a = recordOf(contract.accessibility);
   const required = ["naming", "operation", "focusNavigation", "statusErrors", "timing"] as const;
   for (const key of required) {
     if (!a || !(key in a) || (a[key] !== null && typeof a[key] !== "string")) {
@@ -92,7 +99,7 @@ export function accessibilityObligationsCarried(contract: InteractionContract): 
 }
 
 export function escapePathsDeclared(contract: InteractionContract): Check {
-  const e = contract.escapePaths as Partial<Record<string, unknown>> | undefined;
+  const e = recordOf(contract.escapePaths);
   const required = ["reject", "defer", "cancel", "dismiss", "timeout"] as const;
   for (const key of required) {
     if (!e || typeof e[key] !== "string" || (e[key] as string).length === 0) {
@@ -276,7 +283,7 @@ export function correctedContractReceived(rejected: InteractionContract, next?: 
   return { ok: true };
 }
 
-function explicitFormRequires(command: Exclude<RetirementCommand, { retire: true }>): Check | null {
+function explicitFormRequires(command: Exclude<RetirementCommand, { retire: true }>): Check {
   if ("supersededBy" in command && command.supersededBy.length > 0) return { ok: true };
   if ("expiresAt" in command && command.expiresAt.length > 0) return { ok: true };
   const field = "supersededBy" in command ? "supersession" : "expiry";
