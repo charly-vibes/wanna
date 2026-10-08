@@ -11,6 +11,10 @@ pre-commit:
     # <!-- SPK:END -->
     pretender-gate:
       run: pretender check --staged --mode gate
+    tsc-gate:
+      # type-level drift gate: full project typecheck (no emit), scoped to the
+      # project tsconfig (src/ and tests/) — fails the commit on any type error
+      run: npx tsc --noEmit -p tsconfig.json
     eslint-gate:
       # boundary linting is independent of the test layer: runs on every commit
       run: npx eslint src
