@@ -1,8 +1,9 @@
 # testaruda configuration
 
 [adapters]
-# Default adapter when no extension matches
-default = "testaruda-adapter-rust"
+# Default adapter when no extension matches — this is a TypeScript repo;
+# rust default caused exec to run cargo in a repo with no Cargo.toml
+default = "testaruda-adapter-typescript"
 
 [adapters.extensions]
 # Map file extensions to adapter binaries.
