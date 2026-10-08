@@ -114,7 +114,7 @@ describe("interaction-security properties (lifecycle)", () => {
     const ownership = trustedOwnership();
     // an invalid payload with every relaxation field an agent might try
     const invalid = agentPayload({ options: Array.from({ length: 9 }, (_, i) => `opt-${i}`) });
-    const overridden: AgentPayload = {
+    const overridden = {
       ...invalid,
       overridePolicy: true,
       skipValidation: true,
@@ -136,7 +136,7 @@ describe("interaction-security properties (lifecycle)", () => {
     );
     expect(cleanGate.state).toBe(relaxedGate.state);
     // and a valid payload with overrides produces the same validated verdict
-    const validOverridden: AgentPayload = {
+    const validOverridden = {
       ...agentPayload(),
       overridePolicy: true,
       skipValidation: true,

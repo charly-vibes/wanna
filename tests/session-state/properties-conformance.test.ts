@@ -148,7 +148,7 @@ describe("session-state properties", () => {
       m.fire("begin_recovery", {
         serialized: tamperSerialized(raw, (r) => {
           const pending = r.pending as Record<string, { contractRevision: string }>;
-          pending["int-1"].contractRevision = "contract-9";
+          pending["int-1"]!.contractRevision = "contract-9";
         }),
       }),
     ).toEqual({
@@ -160,7 +160,7 @@ describe("session-state properties", () => {
       m.fire("begin_recovery", {
         serialized: tamperSerialized(raw, (r) => {
           const pending = r.pending as Record<string, { taskRevision: string }>;
-          pending["int-1"].taskRevision = "";
+          pending["int-1"]!.taskRevision = "";
         }),
       }),
     ).toEqual({

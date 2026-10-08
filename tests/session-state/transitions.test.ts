@@ -76,7 +76,7 @@ describe("session-state transitions", () => {
     m.fire("begin_recovery", { serialized: serializedSession() });
     const tampered = tamperSerialized(serializedSession(), (r) => {
       const pending = r.pending as Record<string, { contractRevision: string }>;
-      pending["int-1"].contractRevision = "contract-9";
+      pending["int-1"]!.contractRevision = "contract-9";
     });
     const r = m.fire("resume_session", { serialized: tampered });
     expect(r).toEqual({

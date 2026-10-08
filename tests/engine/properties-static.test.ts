@@ -35,7 +35,7 @@ describe("core_has_no_host_or_io_imports", () => {
 
   it("declares no ambient host types", () => {
     const hostTypes = /\b(HTMLElement|React\.|TUI|Document|Window)\b/;
-    expect(sources.filter((s) => hostTypes.test(s))).toEqual([]);
+    expect(sources.filter((s) => hostTypes.test(s.src))).toEqual([]);
   });
 });
 

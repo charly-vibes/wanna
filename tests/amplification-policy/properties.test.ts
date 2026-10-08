@@ -106,8 +106,9 @@ describe("amplification-policy properties", () => {
     // escalation is monotone in evidence severity — never a decrease along the ladder
     const ladder = ["sufficient", "uncertain", "ambiguous", "conflicting"] as const;
     for (let i = 1; i < ladder.length; i++) {
-      const before = evidenceEscalation(ladder[i - 1]);
-      const after = evidenceEscalation(ladder[i]);
+      // invariant: i and i-1 are valid indices into ladder by loop construction
+      const before = evidenceEscalation(ladder[i - 1]!);
+      const after = evidenceEscalation(ladder[i]!);
       expect(REVIEW_LEVEL_ORDER.indexOf(after)).toBeGreaterThanOrEqual(
         REVIEW_LEVEL_ORDER.indexOf(before),
       );

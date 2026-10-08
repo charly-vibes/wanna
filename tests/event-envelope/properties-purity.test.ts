@@ -7,7 +7,8 @@ import { reduceEvent } from "../../src/event-envelope/reducer";
 import { createEnvelopeMachine } from "../../src/event-envelope/machine";
 import { RESULT_CODES } from "../../src/event-envelope/types";
 import { validEnvelope, validContext } from "./fixtures";
-import type { EnvelopeContext, EventEnvelope, ResultCode, ReduceOutcome } from "../../src/event-envelope/types";
+import type { EnvelopeContext, EventEnvelope, ResultCode, TransitionResult } from "../../src/event-envelope/types";
+import type { ReduceOutcome } from "../../src/event-envelope/reducer";
 
 describe("event-envelope purity and rejection-typing properties", () => {
   it("TypeScript conformance test: assert invariant reducer_pure at its trust boundary and under its stated edge cases.", () => {
@@ -58,8 +59,8 @@ describe("event-envelope purity and rejection-typing properties", () => {
     expect(new Set<string>(RESULT_CODES).size).toBe(RESULT_CODES.length);
     // each class is reachable with its own stable code
     const observed = new Map<ResultCode, string>();
-    function record(outcome: ReduceOutcome): void {
-      if (!outcome.ok) observed.set(outcome.code, outcome.reason);
+    function record(outcome: ReduceOutcome | TransitionResult): void {
+      if (!outcome.ok && outcome.code !== undefined) observed.set(outcome.code, outcome.reason);
     }
     const cases: readonly [EventEnvelope, EnvelopeContext][] = [
       // invalid payload

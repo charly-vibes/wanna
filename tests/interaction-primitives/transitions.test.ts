@@ -40,7 +40,7 @@ describe("interaction-primitives transitions", () => {
 
   it("validate_system_primitives refuses with the precise collapse reason when layers share an update rule", () => {
     const layers = validRevision().layers.map((l, i) =>
-      i === 1 ? { ...l, updateRule: validRevision().layers[0].updateRule } : l,
+      i === 1 ? { ...l, updateRule: validRevision().layers[0]!.updateRule } : l,
     );
     const gate = createPrimitiveSystemGate(validRevision({ layers }));
     const r = gate.fire("validate_system_primitives");

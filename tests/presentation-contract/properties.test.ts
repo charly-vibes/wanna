@@ -121,23 +121,24 @@ describe("presentation-contract properties", () => {
   it("TypeScript conformance test: assert invariant response_semantics_preserved at its trust boundary and under its stated edge cases.", () => {
     const draft = validDraft();
     const declared = draft.actions!;
+    // invariant: the valid draft always declares "choose-target" first, so declared[0] exists
     // a host rendering that preserves id, meaning, and response schema passes
     expect(responseSemanticsPreserved(declared, [
-      { actionId: "choose-target", meaning: declared[0].meaning, responseSchema: declared[0].responseSchema },
+      { actionId: "choose-target", meaning: declared[0]!.meaning, responseSchema: declared[0]!.responseSchema },
     ]).ok).toBe(true);
     // each violated aspect is named precisely
     const dropped = responseSemanticsPreserved(declared, []);
     expect(dropped.reason).toBe("host rendering drops declared action choose-target");
     const meaningChanged = responseSemanticsPreserved(declared, [
-      { actionId: "choose-target", meaning: "other", responseSchema: declared[0].responseSchema },
+      { actionId: "choose-target", meaning: "other", responseSchema: declared[0]!.responseSchema },
     ]);
     expect(meaningChanged.reason).toBe("host rendering changed the meaning of action choose-target");
     const schemaChanged = responseSemanticsPreserved(declared, [
-      { actionId: "choose-target", meaning: declared[0].meaning, responseSchema: [{ name: "target", type: "number" }] },
+      { actionId: "choose-target", meaning: declared[0]!.meaning, responseSchema: [{ name: "target", type: "number" }] },
     ]);
     expect(schemaChanged.reason).toBe("host rendering changed the response schema of action choose-target");
     const introduced = responseSemanticsPreserved(declared, [
-      { actionId: "choose-target", meaning: declared[0].meaning, responseSchema: declared[0].responseSchema },
+      { actionId: "choose-target", meaning: declared[0]!.meaning, responseSchema: declared[0]!.responseSchema },
       { actionId: "extra", meaning: "x", responseSchema: [] },
     ]);
     expect(introduced.reason).toBe("host rendering introduces undeclared action extra");

@@ -4,11 +4,11 @@
 import type {
   AuthorizationContext,
   EffectIntent,
-  EffectTransport,
   ExecutorConfig,
   OutcomeRecord,
 } from "../../src/effect-boundary/types";
 import { SAFE_TEST_ENVIRONMENT } from "../../src/effect-boundary/types";
+import type { EffectTransport } from "../../src/effect-boundary/executor";
 
 export { SAFE_TEST_ENVIRONMENT };
 

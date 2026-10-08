@@ -20,7 +20,7 @@ import { migrateInteractionContract } from "../../src/interaction-contract/regis
 import { KIND_CONTRACT_SCHEMAS, CONTRACT_CONTENT_LIMITS } from "../../src/interaction-contract/registries";
 import { CONTRACT_SCHEMA_VERSION } from "../../src/interaction-contract/types";
 import { responseFor, validContract, payloadForKind, fullAccessibility } from "./fixtures";
-import type { InteractionContract } from "../../src/interaction-contract/types";
+import type { InteractionContract, RetirementCommand } from "../../src/interaction-contract/types";
 
 const PINNED_KINDS = Object.keys(KIND_CONTRACT_SCHEMAS);
 const UNSUPPORTED_VERSION = "interaction-contract-schema-9.9.9";
@@ -218,14 +218,14 @@ describe("interaction-contract properties", () => {
       "contract_has_bounded_content does not hold: label of 121 characters exceeds the declared maximum of 120",
     );
     // the reason code is stable and documented, the diagnostic is non-sensitive
-    expect(rejectionCodeFor(first.reason)).toBe("contract_has_bounded_content");
+    // both payloads above were asserted to fail, so their reasons are defined
+    expect(rejectionCodeFor(first.reason!)).toBe("contract_has_bounded_content");
     expect(first.reason).not.toContain("sk-secret-value-123");
     expect(contractPayloadValid(validContract({ interactionId: "" })).reason).toBe(
       "contract_has_identity_and_version does not hold: missing interaction ID",
     );
-    expect(rejectionCodeFor(contractPayloadValid(validContract({ interactionId: "" })).reason)).toBe(
-      "contract_has_identity_and_version",
-    );
+    const missingId = contractPayloadValid(validContract({ interactionId: "" }));
+    expect(rejectionCodeFor(missingId.reason!)).toBe("contract_has_identity_and_version");
   });
 
   it("TypeScript test: any missing required identity/version field makes validation fail", () => {
@@ -267,7 +267,8 @@ describe("interaction-contract properties", () => {
     expect(m.fire("retire_contract").reason).toBe(
       "retirement_requested does not hold: retirement requires an explicit retire, supersede, or expiry command",
     );
-    expect(m.fire("retire_contract", { command: { retire: true } }).reason).toBe(
+    // deliberately invalid: a retire command without its required reason must be refused
+    expect(m.fire("retire_contract", { command: { retire: true } as RetirementCommand }).reason).toBe(
       "retirement_requested does not hold: an explicit retirement command requires a reason",
     );
     expect(m.fire("retire_contract", { command: { supersededBy: "" } }).reason).toBe(

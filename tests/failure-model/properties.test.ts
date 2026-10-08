@@ -10,7 +10,7 @@ import {
   retryPathAllowed,
 } from "../../src/failure-model/index";
 import { assessment, draftFailure, typedFailureRecord } from "./fixtures";
-import type { FailureClass, Recoverability } from "../../src/failure-model/types";
+import type { FailureClass, FailureRecord, Recoverability } from "../../src/failure-model/types";
 
 function containedMachine(record = typedFailureRecord()) {
   const m = createFailureModel(record);
