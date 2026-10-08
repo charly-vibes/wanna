@@ -3,7 +3,7 @@
 // Rationale: contract .espectacular/evaluation-telemetry/metrics-have-definitions-holds.toml binds via `vitest run -t '<name>'`
 import { describe, it, expect } from "vitest";
 import { metricsHaveDefinitions } from "../../src/evaluation-telemetry/invariants";
-import { validMetric, validRecord } from "./fixtures";
+import { failureOf, validMetric, validRecord } from "./fixtures";
 
 describe("evaluation-telemetry properties", () => {
   it("TypeScript conformance test: assert invariant metrics_have_definitions at its trust boundary and under its stated edge cases.", () => {
@@ -26,7 +26,7 @@ describe("evaluation-telemetry properties", () => {
       const metric = validMetric({ [field]: "" });
       const check = metricsHaveDefinitions([metric]);
       expect(check.ok).toBe(false);
-      expect(check.reason).toBe(
+      expect(failureOf(check)).toBe(
         `guard metrics_have_definitions does not hold: metric "${metric.name}" does not declare ${dimension}`,
       );
     }
@@ -34,7 +34,7 @@ describe("evaluation-telemetry properties", () => {
     const unnamed = validMetric({ name: "", unit: "" });
     const check = metricsHaveDefinitions([unnamed]);
     expect(check.ok).toBe(false);
-    expect(check.reason).toBe(
+    expect(failureOf(check)).toBe(
       'guard metrics_have_definitions does not hold: metric "" does not declare name, unit',
     );
   });

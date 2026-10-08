@@ -3,7 +3,7 @@
 // Rationale: contract .espectacular/evaluation-telemetry/agreement-not-correctness-holds.toml binds via `vitest run -t '<name>'`
 import { describe, it, expect } from "vitest";
 import { agreementNotCorrectness } from "../../src/evaluation-telemetry/invariants";
-import { validAgreement } from "./fixtures";
+import { failureOf, validAgreement } from "./fixtures";
 
 describe("evaluation-telemetry properties", () => {
   it("TypeScript conformance test: assert invariant agreement_not_correctness at its trust boundary and under its stated edge cases.", () => {
@@ -14,7 +14,7 @@ describe("evaluation-telemetry properties", () => {
       validAgreement({ recordedAs: "correctness" }),
     );
     expect(relabeled.ok).toBe(false);
-    expect(relabeled.reason).toBe(
+    expect(failureOf(relabeled)).toBe(
       'guard agreement_not_correctness does not hold: agreement with incumbent "impl-incumbent@1.4.0" is recorded as correctness ground truth',
     );
     // edge case: independently established correctness may be recorded as correctness

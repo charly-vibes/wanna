@@ -3,7 +3,7 @@
 // Rationale: contract .espectacular/evaluation-telemetry/metrics-versioned-holds.toml binds via `vitest run -t '<name>'`
 import { describe, it, expect } from "vitest";
 import { metricsVersioned } from "../../src/evaluation-telemetry/invariants";
-import { validRecord } from "./fixtures";
+import { failureOf, validRecord } from "./fixtures";
 
 describe("evaluation-telemetry properties", () => {
   it("TypeScript conformance test: assert invariant metrics_versioned at its trust boundary and under its stated edge cases.", () => {
@@ -19,14 +19,14 @@ describe("evaluation-telemetry properties", () => {
     for (const [label, override] of cases) {
       const check = metricsVersioned(validRecord(override));
       expect(check.ok).toBe(false);
-      expect(check.reason).toBe(
+      expect(failureOf(check)).toBe(
         `guard metrics_versioned does not hold: evaluation record does not identify ${label}`,
       );
     }
     // edge case: unversioned policy thresholds are not versioned provenance
     const noThresholds = metricsVersioned(validRecord({ policyThresholds: [] }));
     expect(noThresholds.ok).toBe(false);
-    expect(noThresholds.reason).toBe(
+    expect(failureOf(noThresholds)).toBe(
       "guard metrics_versioned does not hold: evaluation record does not identify the policy thresholds",
     );
   });

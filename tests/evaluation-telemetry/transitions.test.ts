@@ -7,6 +7,7 @@ import {
   EVALUATION_TRANSITIONS,
 } from "../../src/evaluation-telemetry/machine";
 import {
+  failureOf,
   WORKLOAD,
   allGatesPass,
   breach,
@@ -42,7 +43,7 @@ describe("evaluation-telemetry transitions", () => {
     );
     const r = m.fire("evaluate_candidate", undefined);
     expect(r.ok).toBe(false);
-    expect(r.reason).toBe(METRICS_REASON);
+    expect(failureOf(r)).toBe(METRICS_REASON);
     expect(m.state).toBe("collecting");
   });
 
@@ -61,7 +62,7 @@ describe("evaluation-telemetry transitions", () => {
     m.fire("evaluate_candidate", undefined);
     const r = m.fire("mark_eligible", undefined);
     expect(r.ok).toBe(false);
-    expect(r.reason).toBe(EVIDENCE_REASON);
+    expect(failureOf(r)).toBe(EVIDENCE_REASON);
     expect(m.state).toBe("evaluated");
   });
 
@@ -82,7 +83,7 @@ describe("evaluation-telemetry transitions", () => {
     m.fire("mark_eligible", undefined);
     const r = m.fire("promote_candidate", undefined);
     expect(r.ok).toBe(false);
-    expect(r.reason).toBe(VERSIONED_REASON);
+    expect(failureOf(r)).toBe(VERSIONED_REASON);
     expect(m.state).toBe("eligible");
   });
 
@@ -105,7 +106,7 @@ describe("evaluation-telemetry transitions", () => {
     m.fire("promote_candidate", undefined);
     const r = m.fire("detect_degradation", breach("safety"));
     expect(r.ok).toBe(false);
-    expect(r.reason).toBe(NO_POLICY_REASON);
+    expect(failureOf(r)).toBe(NO_POLICY_REASON);
     expect(m.state).toBe("promoted");
   });
 
@@ -130,7 +131,7 @@ describe("evaluation-telemetry transitions", () => {
     m.fire("detect_degradation", breach("safety"));
     const r = m.fire("rollback_candidate", undefined);
     expect(r.ok).toBe(false);
-    expect(r.reason).toBe(NO_ROLLBACK_REASON);
+    expect(failureOf(r)).toBe(NO_ROLLBACK_REASON);
     expect(m.state).toBe("degraded");
   });
 
@@ -142,7 +143,7 @@ describe("evaluation-telemetry transitions", () => {
       if (row.id === "evaluate_candidate") continue;
       const r = m.fire(row.id, row.id === "detect_degradation" ? breach("quality") : undefined);
       expect(r.ok).toBe(false);
-      expect(r.reason).toContain(row.id);
+      expect(failureOf(r)).toContain(row.id);
       expect(m.state).toBe("collecting");
     }
   });

@@ -3,7 +3,7 @@
 // Rationale: contract .espectacular/evaluation-telemetry/privacy-minimized-holds.toml binds via `vitest run -t '<name>'`
 import { describe, it, expect } from "vitest";
 import { privacyMinimized } from "../../src/evaluation-telemetry/invariants";
-import { validCollection } from "./fixtures";
+import { failureOf, validCollection } from "./fixtures";
 
 describe("evaluation-telemetry properties", () => {
   it("TypeScript conformance test: assert invariant privacy_minimized at its trust boundary and under its stated edge cases.", () => {
@@ -12,25 +12,25 @@ describe("evaluation-telemetry properties", () => {
     // purpose limitation
     const noPurpose = privacyMinimized(validCollection({ purpose: "" }));
     expect(noPurpose.ok).toBe(false);
-    expect(noPurpose.reason).toBe(
+    expect(failureOf(noPurpose)).toBe(
       "guard privacy_minimized does not hold: telemetry collection does not declare a collection purpose",
     );
     // data minimization: raw-content fields beyond the declared purpose are refused
     const raw = privacyMinimized(validCollection({ collectedFields: ["interaction_id", "raw_transcript"] }));
     expect(raw.ok).toBe(false);
-    expect(raw.reason).toBe(
+    expect(failureOf(raw)).toBe(
       "guard privacy_minimized does not hold: telemetry collection collects raw-content fields beyond the declared purpose: raw_transcript",
     );
     // access controls
     const open = privacyMinimized(validCollection({ accessControls: [] }));
     expect(open.ok).toBe(false);
-    expect(open.reason).toBe(
+    expect(failureOf(open)).toBe(
       "guard privacy_minimized does not hold: telemetry collection does not declare access controls",
     );
     // configured retention
     const unbounded = privacyMinimized(validCollection({ retentionDays: 0 }));
     expect(unbounded.ok).toBe(false);
-    expect(unbounded.reason).toBe(
+    expect(failureOf(unbounded)).toBe(
       "guard privacy_minimized does not hold: telemetry collection does not declare configured retention",
     );
   });

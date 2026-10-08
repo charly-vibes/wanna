@@ -3,7 +3,7 @@
 // Rationale: contract .espectacular/evaluation-telemetry/shadow-effects-suppressed-holds.toml binds via `vitest run -t '<name>'`
 import { describe, it, expect } from "vitest";
 import { shadowEffectsSuppressed } from "../../src/evaluation-telemetry/invariants";
-import { validCollection } from "./fixtures";
+import { failureOf, validCollection } from "./fixtures";
 
 describe("evaluation-telemetry properties", () => {
   it("TypeScript conformance test: assert invariant shadow_effects_suppressed at its trust boundary and under its stated edge cases.", () => {
@@ -21,7 +21,7 @@ describe("evaluation-telemetry properties", () => {
     expect(shadowEffectsSuppressed(validCollection({ mode: "live" })).ok).toBe(true);
     // precise failure reason
     const leaky = shadowEffectsSuppressed(validCollection({ mode: "shadow" }));
-    expect(leaky.reason).toBe(
+    expect(failureOf(leaky)).toBe(
       "guard shadow_effects_suppressed does not hold: shadow evaluation neither suppresses live effects nor uses isolated test doubles",
     );
   });

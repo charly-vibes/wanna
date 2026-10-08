@@ -3,6 +3,7 @@
 // Rationale: single source of shared evaluation vocabulary for transitions and properties tests
 import type {
   AgreementRecord,
+  Check,
   DegradationSignal,
   EvaluationRecord,
   GateKind,
@@ -11,7 +12,14 @@ import type {
   PolicyThreshold,
   RecoveryPolicy,
   TelemetryCollection,
+  TransitionResult,
 } from "../../src/evaluation-telemetry/types";
+
+// narrows a failing TransitionResult/Check so tests can assert the exact reason type-safely
+export function failureOf(result: TransitionResult | Check): string {
+  if (result.ok) throw new Error("expected the transition or invariant to fail");
+  return result.reason;
+}
 
 export const WORKLOAD = "wl-7";
 

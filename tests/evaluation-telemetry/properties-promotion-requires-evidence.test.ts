@@ -3,7 +3,7 @@
 // Rationale: contract .espectacular/evaluation-telemetry/promotion-requires-evidence-holds.toml binds via `vitest run -t '<name>'`
 import { describe, it, expect } from "vitest";
 import { promotionRequiresEvidence } from "../../src/evaluation-telemetry/invariants";
-import { WORKLOAD, allGatesPass, validGate, validRecord } from "./fixtures";
+import { failureOf, WORKLOAD, allGatesPass, validGate, validRecord } from "./fixtures";
 
 describe("evaluation-telemetry properties", () => {
   it("TypeScript conformance test: assert invariant promotion_requires_evidence at its trust boundary and under its stated edge cases.", () => {
@@ -14,7 +14,7 @@ describe("evaluation-telemetry properties", () => {
       validRecord({ gateResults: allGatesPass().slice(0, 3) }),
     );
     expect(noLatency.ok).toBe(false);
-    expect(noLatency.reason).toBe(
+    expect(failureOf(noLatency)).toBe(
       `guard promotion_requires_evidence does not hold: no latency gate result for workload "${WORKLOAD}"`,
     );
     // edge case: a failing gate is named precisely
@@ -24,7 +24,7 @@ describe("evaluation-telemetry properties", () => {
       }),
     );
     expect(failedSafety.ok).toBe(false);
-    expect(failedSafety.reason).toBe(
+    expect(failureOf(failedSafety)).toBe(
       `guard promotion_requires_evidence does not hold: safety gate has not passed for workload "${WORKLOAD}"`,
     );
     // edge case: a gate passed for a different workload is not evidence for this one
@@ -39,7 +39,7 @@ describe("evaluation-telemetry properties", () => {
       }),
     );
     expect(otherWorkload.ok).toBe(false);
-    expect(otherWorkload.reason).toBe(
+    expect(failureOf(otherWorkload)).toBe(
       `guard promotion_requires_evidence does not hold: no quality gate result for workload "${WORKLOAD}"`,
     );
   });
