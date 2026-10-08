@@ -10,6 +10,7 @@ import type {
   PresentationView,
   TransitionId,
   TransitionResult,
+  UncertaintyMetric,
 } from "./types";
 import { densityBounded, semanticRoleRequired, untrustedTextInert } from "./invariants";
 import { fallbackIsSemantic, responseSemanticsPreserved, uncertaintySemanticsPreserved } from "./rendering";
@@ -91,7 +92,11 @@ function renderEffect(s: Internals, request: HostRenderRequest): TransitionResul
   const guard = responseSemanticsPreserved(s.contract.actions ?? [], request.actions);
   if (!guard.ok) return guard;
   if (request.uncertainty !== undefined) {
-    const uncertainty = uncertaintySemanticsPreserved(s.contract.uncertainty ?? [], request.uncertainty);
+    // supplied metrics ride on the draft as an optional extension field, read defensively
+    const supplied =
+      (s.contract as PresentationContract & { readonly uncertainty?: readonly UncertaintyMetric[] })
+        .uncertainty ?? [];
+    const uncertainty = uncertaintySemanticsPreserved(supplied, request.uncertainty);
     if (!uncertainty.ok) return uncertainty;
   }
   s.view = buildView(s.contract, request.actions, request.uncertainty ?? []);

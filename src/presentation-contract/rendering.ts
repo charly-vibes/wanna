@@ -12,8 +12,8 @@ import type {
 import { FALLBACK_KINDS } from "./types";
 
 function sameSchema(
-  a: readonly SemanticAction["responseSchema"],
-  b: readonly RenderedAction["responseSchema"],
+  a: SemanticAction["responseSchema"],
+  b: RenderedAction["responseSchema"],
 ): boolean {
   return JSON.stringify(a) === JSON.stringify(b);
 }
