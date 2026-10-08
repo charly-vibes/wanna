@@ -1,6 +1,6 @@
 archetype = "PF"
 authored_with = "0.9.2"
-derived_from = "identical_inputs_are_deterministic@746894ba57d5"
+derived_from = "identical_inputs_are_deterministic@d94866437b6c"
 description = "`TypeScript test: repeated evaluation returns deeply equal ordered results`"
 falsifiability_class = "safety"
 id = "identical-inputs-are-deterministic"
@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "npx vitest run tests/engine/properties-core.test.ts -t 'repeated evaluation returns deeply equal ordered results'"
+command = "npx vitest run tests/engine/properties-pbt.test.ts -t 'TypeScript test: repeated evaluation returns deeply equal ordered results'"
 timeout_seconds = 120
