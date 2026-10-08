@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/human-authority/spec.md"
+command = "npx vitest run tests/human-authority/properties*.test.ts -t 'Policy test: bounded unattended automation can proceed only inside an explicit grant'"
 timeout_seconds = 120

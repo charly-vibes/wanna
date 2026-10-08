@@ -3,7 +3,7 @@
 // Rationale: loose reason regexes let real bypasses through; each refusal asserts the precise reason string
 import { describe, it, expect } from "vitest";
 import { createAuthorityMachine } from "../../src/human-authority/machine";
-import { automationGrant, humanGrant, validRequest, verificationClaim } from "./fixtures";
+import { humanGrant, validRequest, verificationClaim } from "./fixtures";
 
 describe("human-authority transitions", () => {
   it("request_approval moves not_required → pending when approval_scope_explicit holds", () => {
