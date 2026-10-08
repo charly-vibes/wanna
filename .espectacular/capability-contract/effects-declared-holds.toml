@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/capability-contract/spec.md"
+command = "npx vitest run tests/capability-contract/properties*.test.ts -t 'TypeScript conformance test: assert invariant effects_declared at its trust boundary and under its stated edge cases.'"
 timeout_seconds = 120
