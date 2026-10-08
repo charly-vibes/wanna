@@ -60,8 +60,10 @@ describe("event-envelope properties (fast-check)", () => {
       fc.property(envelopeArb, contextArb, (envelope, context) => {
         // a stale event names an expected task revision that is not the current revision;
         // staleness is only reachable for an authorized source (that gate runs first)
+        // and for an event that is not already committed (duplicate_idempotent gates first)
         const stale = { ...envelope, expectedTaskRevision: context.currentTaskRevision + "-stale" };
-        const outcome = reduceEvent(stale, { ...context, authorizedSources: [envelope.source] });
+        const uncommitted = { ...context, committedEventIds: context.committedEventIds.filter((id) => id !== envelope.eventId), authorizedSources: [envelope.source] };
+        const outcome = reduceEvent(stale, uncommitted);
         expect(outcome).toMatchObject({ ok: false, code: "stale_revision" });
         if (!outcome.ok) expect(outcome.reason).toMatch(/never silently applied/);
       }),
