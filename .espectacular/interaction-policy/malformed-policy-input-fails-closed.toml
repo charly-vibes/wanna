@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-policy/spec.md"
+command = "npx vitest run tests/interaction-policy/properties*.test.ts -t 'TypeScript test: malformed or version-incomplete input returns a typed failure and no recommendation'"
 timeout_seconds = 120

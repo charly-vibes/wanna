@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-policy/spec.md"
+command = "npx vitest run tests/interaction-policy/properties*.test.ts -t 'TypeScript test: permutations of the same candidate set return the same ordered recommendation IDs and reasons'"
 timeout_seconds = 120

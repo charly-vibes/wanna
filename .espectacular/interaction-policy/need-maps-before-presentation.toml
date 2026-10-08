@@ -8,5 +8,5 @@ status = "active"
 superseded_by = ""
 
 [[tests.shell]]
-command = "spk lint openspec/specs/interaction-policy/spec.md"
+command = "npx vitest run tests/interaction-policy/properties*.test.ts -t 'Policy test: changing host component availability cannot silently change contribution semantics'"
 timeout_seconds = 120
