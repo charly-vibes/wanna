@@ -136,15 +136,14 @@ describe("evaluation-telemetry transitions", () => {
 
   it("every transition refuses to fire from a state it does not originate from", () => {
     const m = createEvaluationPipeline(validRecord());
-    // every declared transition starts at a state other than the initial one
+    // from the initial state, every transition except evaluate_candidate is unreachable
     expect(EVALUATION_TRANSITIONS.length).toBe(5);
     for (const row of EVALUATION_TRANSITIONS) {
-      expect(row.from).not.toBe("collecting" as const);
+      if (row.id === "evaluate_candidate") continue;
+      const r = m.fire(row.id, row.id === "detect_degradation" ? breach("quality") : undefined);
+      expect(r.ok).toBe(false);
+      expect(r.reason).toContain(row.id);
+      expect(m.state).toBe("collecting");
     }
-    // mark_eligible starts at evaluated, not collecting
-    const r = m.fire("mark_eligible", undefined);
-    expect(r.ok).toBe(false);
-    expect(r.reason).toContain("mark_eligible");
-    expect(m.state).toBe("collecting");
   });
 });
