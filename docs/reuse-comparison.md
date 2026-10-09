@@ -36,8 +36,8 @@ Defined before either implementation was graded:
 
 ## Initial effort
 
-(wanna-01q + wanna-9r2 + wanna-snh + wanna-gcp landed the shell, adapter and
-first screen consumer; recorded here as the baseline construction cost.)
+Tickets wanna-01q + wanna-9r2 + wanna-snh + wanna-gcp landed the shell, adapter
+and first screen consumer; recorded here as the baseline construction cost.
 
 - Shell + durable adapter + first screen consumer: 5 tickets, 4 commits
   (`dd41405`, `0116865`, `29a9661`, plus the shell itself).
@@ -123,7 +123,10 @@ for the second consumer.
 
 ## Decision
 
-narrow — reuse is demonstrated on semantic coordination (one public-barrel
+**Decision: narrow.** Reuse is demonstrated on semantic coordination, but the
+coordination-line evidence is inconclusive on this slice.
+
+The reasoning: reuse is demonstrated on semantic coordination (one public-barrel
 import, zero core changes, every acceptance rule owned by the shell) but the
 raw coordination-line evidence is inconclusive: the on-disk margin (187 vs
 190) is formatting noise, and the baseline store excludes the failure modes

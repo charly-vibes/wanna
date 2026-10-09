@@ -1,13 +1,15 @@
 # Review composition quickstart
 
 This documents the **actual implemented** review-composition surface (surface
-version **0.3.0**, see `openspec/changes/add-composition-shell/compatibility.md`)
+version **0.3.0**, see `openspec/changes/archive/2026-10-09-add-composition-shell/compatibility.md`)
 as exercised by the executable consumer example (`examples/review-workbench/`)
 and the executable consumer tests (`tests/composition-shell/`,
 `tests/review-workbench/`). Nothing here is a planned or aspirational API — a
 documentation contract test (`tests/review-workbench/review-docs.test.ts`)
 fails if any documented shell call is not demonstrated by the executable
-consumer code.
+consumer code. Every section is verified — the quickstart documents only
+demonstrated behavior, and the doc-contract test makes doc drift from the
+public surface a red contract.
 
 ## What this is — and what it is not
 
@@ -35,12 +37,15 @@ Open a session shell over a declared persistence port. The result is typed —
 handle all three kinds:
 
 ```ts
+import { openReviewSession } from "@wanna/composition-shell"; // + ReviewPolicy/ReviewCatalog types
+import { createReviewIndexDbPort } from "@wanna/review-indexeddb"; // in-repo source aliases (no npm package)
+
 const key = { sessionId: "session-1", taskId: "artifact-1" };
 const open = await openReviewSession({
   key,
-  policy,
-  catalog,
-  port, // the declared ReviewPersistencePort (e.g. createReviewIndexDbPort)
+  policy: { policyVersion: "fixture-policy-1" }, // host-declared, shape per ReviewPolicy type
+  catalog: { catalogVersion: "fixture-catalog-1" }, // host-declared, shape per ReviewCatalog type
+  port, // the declared ReviewPersistencePort — createReviewIndexDbPort(...) (durable) or a test store
 });
 if (open.kind !== "ready") {
   // "unavailable" (storage could not be read) or "recovery_required"
@@ -51,11 +56,14 @@ const shell = open.shell;
 ```
 
 Opening a key with no persisted session still yields a `ready` shell — the
-session is not persisted until the first operation commits. The initial
-artifact revision is created through `updateArtifact` with a **null expected
-version** (the shell's conditional commit creates the initial aggregate; a
-re-open that repeats the same operation returns `duplicate`, never a second
-mutation):
+session is not persisted until the first operation commits.
+
+## Initial write (conditional commit)
+
+The initial artifact revision is created through `updateArtifact` with a
+**null expected version** — the shell's conditional commit creates the
+initial aggregate; a re-open that repeats the same operation returns
+`duplicate`, never a second mutation:
 
 ```ts
 const update = await shell.updateArtifact({
@@ -150,14 +158,16 @@ const cancel = await shell.cancel({
 
 Durable state lives behind the port, not in the shell instance. A new shell
 opened over the same port and key restores the revision, completed/pending/
-retired reviews and provenance; the projection also carries `aggregateVersion`
-— the authoritative version the next conditional commit must carry.
+retired reviews and provenance. Only committed operations (and their receipts)
+survive — a decision evaluated but never committed is not durable and is
+re-evaluated after restart. Only a fresh consumer demonstrates the resume
+path; a re-open in the same process never returns `duplicate`.
+
+The projection also carries `aggregateVersion` — the authoritative version the
+next conditional commit must carry.
 
 ```ts
 const resumed = await openReviewSession({ key, policy, catalog, port });
 if (resumed.kind !== "ready") return;
 const continuity = resumed.shell.project();
 ```
-
-A decision evaluated but never committed is not durable — after restart it is
-re-evaluated. Only committed operations (and their receipts) survive.

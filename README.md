@@ -67,7 +67,7 @@ and limitations live in [`docs/review-quickstart.md`](docs/review-quickstart.md)
 the second-consumer reuse evidence and its recorded distribution decision live
 in [`docs/reuse-comparison.md`](docs/reuse-comparison.md); surface revision
 history lives in
-`openspec/changes/add-composition-shell/compatibility.md`.
+`openspec/changes/archive/2026-10-09-add-composition-shell/compatibility.md`.
 
 ## Provenance
 
@@ -77,10 +77,20 @@ provenance artifact for the deployed corpus: the corpus under
 (81 findings). Do not regenerate the corpus from the zip casually — treat the
 zip as read-only provenance and the corpus as the live source of truth.
 
+## Docs
+
+- [`docs/review-quickstart.md`](docs/review-quickstart.md) — human-facing quickstart for the review-composition surface (construction, submission, recovery, resume).
+- [`docs/reuse-comparison.md`](docs/reuse-comparison.md) — evidence record for the second-consumer reuse claim (`add-workbench-spa:3.1`).
+
+## Docs contract
+
+The human-facing docs are verification artifacts, not prose: any shell call documented in the quickstart must be exercised by the executable consumer code. `tests/review-workbench/review-docs.test.ts` fails if a documented call is not demonstrated or if an outcome kind shown does not exist on the public surface. When a capability or consumer surface changes, update the docs and run that test.
+
 ## Workflow quick reference
 
 ```bash
-just --global-justfile --list   # project commands, if any
+just ci                         # full local/CI gate: tsc, eslint, vitest, ah check, spk lint, pretender
+just --list                     # all project recipes (default target)
 bd ready                        # next available ticket
 spk lint openspec               # corpus gates
 ah check --run-tests            # correspondence + tests
