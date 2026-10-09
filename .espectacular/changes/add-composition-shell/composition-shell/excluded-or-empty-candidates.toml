@@ -1,0 +1,11 @@
+id = "excluded-or-empty-candidates"
+description = "Scenario: excluded or empty candidates — a hard-gate excluded candidate carries its policy reason code and never re-enters a decision's recommendations, and zero eligible candidates returns no_candidate with exclusions without creating an interaction."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=excluded-or-empty-candidates"
+timeout_seconds = 120

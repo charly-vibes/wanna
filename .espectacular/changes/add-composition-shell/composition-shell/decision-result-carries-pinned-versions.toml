@@ -1,0 +1,11 @@
+id = "decision-result-carries-pinned-versions"
+description = "Scenario: decision result carries pinned versions — the decision retains proposal/evidence identity and pins the evaluation policy/catalog versions independently of the runtime surface version; the fixed runtime policy constant is never reported as the evaluation policy."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=decision-result-carries-pinned-versions"
+timeout_seconds = 120

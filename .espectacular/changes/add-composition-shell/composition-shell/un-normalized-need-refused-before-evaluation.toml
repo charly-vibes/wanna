@@ -1,0 +1,11 @@
+id = "un-normalized-need-refused-before-evaluation"
+description = "Scenario: un-normalized need refused before evaluation — a malformed or un-normalized need surfaces the need layer's typed refusal unchanged, before any engine evaluation runs."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=un-normalized-need-refused-before-evaluation"
+timeout_seconds = 120

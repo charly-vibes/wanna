@@ -142,17 +142,36 @@ export type UpdateArtifactOutcome =
 export interface NeedProposalInput {
   readonly kind: string;
   readonly target: string;
-  readonly taskRevision: number;
+  /**
+   * Nonnegative safe integer in either public form: a number, or an exact
+   * canonical decimal string ([[composition.shell.review_mapping_explicit]]).
+   * Noncanonical or unsafe values are typed refusals, never parsed.
+   */
+  readonly taskRevision: number | string;
   readonly proposalId: string;
   readonly evidenceRefs: readonly string[];
   readonly evidenceStrength: string;
+}
+
+/** A policy-excluded candidate as carried by a decision, with the policy layer's reason code. */
+export interface DecisionExclusion {
+  readonly id: string;
+  readonly reasonCode: string;
+}
+
+/** A policy recommendation as carried by a decision: policy score preserved verbatim, engine priority an ordinal rank. */
+export interface DecisionRecommendation {
+  readonly id: string;
+  readonly kind: string;
+  readonly policyScore: number;
+  readonly enginePriority: number;
 }
 
 /** Immutable evaluated inputs bound by a decision id ([[composition.shell.evaluation_versions_pinned]]). */
 export interface DecisionProvenance {
   readonly proposalId: string;
   readonly evidenceRefs: readonly string[];
-  readonly exclusions: readonly string[];
+  readonly exclusions: readonly DecisionExclusion[];
   readonly normalizerIdentity: string;
   readonly policyVersion: string;
   readonly catalogVersion: string;
@@ -170,8 +189,10 @@ export type EvaluateNeedOutcome =
       readonly id: string;
       readonly taskRevision: number;
       readonly provenance: DecisionProvenance;
+      /** Policy recommendations in policy order; engine priority is an adapter rank. */
+      readonly recommendations: readonly DecisionRecommendation[];
     }
-  | { readonly kind: "no_candidate"; readonly exclusions: readonly string[] }
+  | { readonly kind: "no_candidate"; readonly exclusions: readonly DecisionExclusion[] }
   | { readonly kind: "unsupported_kind"; readonly requestedKind: string }
   | { readonly kind: "refused"; readonly reason: string };
 

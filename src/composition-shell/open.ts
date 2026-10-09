@@ -16,6 +16,7 @@ import {
   shellStateFromSnapshot,
 } from "./session";
 import type { ShellState } from "./session";
+import type { ShellPins } from "./evaluate";
 
 type ReasonCheck = () => string | null;
 
@@ -153,14 +154,14 @@ function portReason(kind: FailedLoad["kind"], reason: string | undefined): strin
   return `port load reported ${kind} without a reason`;
 }
 
-function readyOutcome(state: ShellState): OpenReviewSessionOutcome {
-  return { kind: "ready", shell: createReviewSessionShell(state) };
+function readyOutcome(state: ShellState, pins: ShellPins): OpenReviewSessionOutcome {
+  return { kind: "ready", shell: createReviewSessionShell(state, pins) };
 }
 
-function loadedOutcome(snapshot: AggregateSnapshot): OpenReviewSessionOutcome {
+function loadedOutcome(snapshot: AggregateSnapshot, pins: ShellPins): OpenReviewSessionOutcome {
   const rejection = storedStateRejection(snapshot);
   if (rejection !== null) return { kind: "recovery_required", reason: rejection };
-  return readyOutcome(shellStateFromSnapshot(snapshot));
+  return readyOutcome(shellStateFromSnapshot(snapshot), pins);
 }
 
 function failedLoadOutcome(outcome: FailedLoad): OpenReviewSessionOutcome {
@@ -170,9 +171,9 @@ function failedLoadOutcome(outcome: FailedLoad): OpenReviewSessionOutcome {
   return { kind: "recovery_required", reason: portReason("recovery_required", outcome.reason) };
 }
 
-function mapLoadOutcome(outcome: PortLoadOutcome): OpenReviewSessionOutcome {
-  if (outcome.kind === "loaded") return loadedOutcome(outcome.snapshot);
-  if (outcome.kind === "not_found") return readyOutcome(emptyShellState());
+function mapLoadOutcome(outcome: PortLoadOutcome, pins: ShellPins): OpenReviewSessionOutcome {
+  if (outcome.kind === "loaded") return loadedOutcome(outcome.snapshot, pins);
+  if (outcome.kind === "not_found") return readyOutcome(emptyShellState(), pins);
   return failedLoadOutcome(outcome);
 }
 
@@ -201,6 +202,11 @@ export async function openReviewSession(
 ): Promise<OpenReviewSessionOutcome> {
   const rejection = constructionRejection(input);
   if (rejection !== null) return { kind: "rejected", reason: rejection };
+  const pins: ShellPins = {
+    key: input.key,
+    policy: input.policy,
+    catalog: input.catalog,
+  };
   const loaded = await loadThroughPort(input.port, input.key);
-  return mapLoadOutcome(loaded);
+  return mapLoadOutcome(loaded, pins);
 }
