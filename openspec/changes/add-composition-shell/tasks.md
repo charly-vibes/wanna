@@ -20,7 +20,7 @@ passing path, and leaves structural tidying to the separate refactor ticket.
 
 - [x] 2.1 RED→GREEN: declared-port construction/load and host-neutral public
       interface, with no implicit persistence (wanna-0te).
-- [ ] 2.2 RED→GREEN: need normalization → catalog/policy eligibility → engine;
+- [x] 2.2 RED→GREEN: need normalization → catalog/policy eligibility → engine;
       explicit mappings, empty result and preserved evidence/version pins (wanna-15e).
 - [ ] 2.3 RED→GREEN: initial decision freshness and current response completion
       through atomic conditional aggregate/replay/receipt commits (wanna-8k6).
