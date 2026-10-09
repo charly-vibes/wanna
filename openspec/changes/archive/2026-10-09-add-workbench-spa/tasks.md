@@ -16,7 +16,7 @@ use red→green; structural refactoring is tracked separately as wanna-lwo.
 - [x] 2.1 RED→GREEN: visible stale decision/response, retained draft, explicit new
       review, cancel-after-display, shared writers, replay, reload, lost acknowledgement
       and incompatible-storage outcomes using actual adapter boundaries (wanna-9r2).
-- [ ] 2.2 Complete scenario bindings and run integrated conformance/falsifiability
+- [x] 2.2 Complete scenario bindings and run integrated conformance/falsifiability
       gates after separate tidy; same verification ticket as shell:4.3 (wanna-2o8).
 
 ## 3. Evidence before distribution

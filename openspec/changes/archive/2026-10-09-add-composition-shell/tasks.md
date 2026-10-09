@@ -13,7 +13,7 @@ passing path, and leaves structural tidying to the separate refactor ticket.
       authoritative reconciliation with typed outcomes (wanna-d0h).
 - [x] 1.3 Scaffold public types and consumer conformance harness; prove its failing
       sentinel is executed and reported; bind actual behavior as it lands (wanna-y8j).
-- [ ] 1.4 Make consumer-example.md an executable failing public-API contract;
+- [x] 1.4 Make consumer-example.md an executable failing public-API contract;
       specify happy path and failure inputs/outputs before implementation (wanna-9wu).
 
 ## 2. First human review
@@ -40,11 +40,11 @@ adapter, independent clients and browser reload, including stale initial decisio
 
 ## 4. Quality and handoff
 
-- [ ] 4.1 Separate tidy ticket/commit after consumer acceptance; retain behavior
+- [x] 4.1 Separate tidy ticket/commit after consumer acceptance; retain behavior
       and rerun existing contracts, or record no justified refactor (wanna-lwo).
-- [ ] 4.2 Quickstart from the executable example, truthful README implementation
+- [x] 4.2 Quickstart from the executable example, truthful README implementation
       status and provisional v0 compatibility decision (wanna-jw2).
-- [ ] 4.3 Complete property bindings and execute corpus + consumer gates; inject
+- [x] 4.3 Complete property bindings and execute corpus + consumer gates; inject
       one semantic violation, prove ah check --run-tests reports it, and restore
       green (wanna-2o8; shared with add-workbench-spa:2.2).
 
