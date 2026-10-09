@@ -7,8 +7,8 @@ import type {
 } from "@wanna/composition-shell";
 import type { ReviewFixture } from "./fixture";
 import {
-  contentFor,
   contentRefFor,
+  renderArtifact,
   renderHistory,
   setStatus,
 } from "./dom";
@@ -49,7 +49,7 @@ export function wireDemoControls(
   const advance = section.querySelector<HTMLButtonElement>(".demo-advance")!;
   const reconcile = section.querySelector<HTMLButtonElement>(".demo-reconcile")!;
   const redeliver = section.querySelector<HTMLButtonElement>(".demo-redeliver")!;
-  const fresh = section.querySelector<HTMLButtonElement>(".demo-fresh-review")!;
+  const fresh = freshReviewButton(section);
   advance.addEventListener("click", () => {
     void handleAdvance(section, shell, fixture);
   });
@@ -62,6 +62,11 @@ export function wireDemoControls(
   fresh.addEventListener("click", () => {
     void handleFreshReview(section, shell, fixture, state);
   });
+}
+
+/** The reviewer-facing fresh-review control (hidden until a stale rejection needs it). */
+function freshReviewButton(section: HTMLElement): HTMLButtonElement {
+  return section.querySelector<HTMLButtonElement>(".demo-fresh-review")!;
 }
 
 async function handleSubmit(
@@ -98,7 +103,7 @@ async function handleSubmit(
       section,
       "The artifact changed since this review opened. Your draft is preserved below; start a fresh review before submitting it.",
     );
-    const fresh = section.querySelector<HTMLButtonElement>(".demo-fresh-review")!;
+    const fresh = freshReviewButton(section);
     fresh.hidden = false;
     fresh.textContent = `Review revision ${shell.project().taskRevision}`;
     return;
@@ -168,10 +173,7 @@ async function handleAdvance(
     setStatus(section, `The demonstration revision advance was refused (${update.kind}).`);
     return;
   }
-  const dd = section.querySelector<HTMLElement>("[data-field=artifact-revision]")!;
-  dd.textContent = String(revision);
-  const content = section.querySelector<HTMLElement>("[data-field=artifact-content]")!;
-  content.textContent = fixture.demo.content;
+  renderArtifact(section, fixture, revision);
   setStatus(
     section,
     `Demonstration: the artifact advanced to revision ${revision}.`,
@@ -256,17 +258,14 @@ async function handleFreshReview(
     return;
   }
   renderHistory(section, shell.project());
-  const dd = section.querySelector<HTMLElement>("[data-field=artifact-revision]")!;
-  dd.textContent = String(revision);
-  const content = section.querySelector<HTMLElement>("[data-field=artifact-content]")!;
-  content.textContent = contentFor(fixture, revision);
+  renderArtifact(section, fixture, revision);
   state.eventId = `feedback-${revision}`;
   state.viewedRevision = revision;
   const submit = section.querySelector<HTMLButtonElement>("button[type=submit]")!;
   submit.disabled = false;
   const feedback = section.querySelector<HTMLTextAreaElement>("#review-feedback")!;
   feedback.disabled = false;
-  const fresh = section.querySelector<HTMLButtonElement>(".demo-fresh-review")!;
+  const fresh = freshReviewButton(section);
   fresh.hidden = true;
   setStatus(section, `A fresh review of revision ${revision} is active; your draft is preserved.`);
 }

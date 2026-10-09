@@ -125,6 +125,18 @@ function mountDemoControls(document: Document, section: HTMLElement): void {
   section.append(aside);
 }
 
+/** Update the visible artifact fields for `revision` (display-only; content resolution matches mountSection). */
+export function renderArtifact(
+  section: HTMLElement,
+  fixture: ReviewFixture,
+  revision: number,
+): void {
+  section.querySelector<HTMLElement>("[data-field=artifact-revision]")!.textContent =
+    String(revision);
+  section.querySelector<HTMLElement>("[data-field=artifact-content]")!.textContent =
+    contentFor(fixture, revision);
+}
+
 export function setStatus(section: HTMLElement, message: string): void {
   const status = section.querySelector("[role=status]");
   if (status instanceof HTMLElement) status.textContent = message;
