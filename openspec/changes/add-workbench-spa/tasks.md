@@ -8,7 +8,7 @@ use red→green; structural refactoring is tracked separately as wanna-lwo.
 - [x] 1.1 RED→GREEN: durable IndexedDB adapter contract with conditional aggregate,
       replay and receipt writes; independent connections and reconstruction tests
       (wanna-snh; depends on shell proposed API contract, not complete shell).
-- [ ] 1.2 RED→GREEN: minimal revision-7 review screen using public shell and durable
+- [x] 1.2 RED→GREEN: minimal revision-7 review screen using public shell and durable
       adapter, semantic controls, feedback and recorded outcome (wanna-01q).
 
 ## 2. Recovery acceptance

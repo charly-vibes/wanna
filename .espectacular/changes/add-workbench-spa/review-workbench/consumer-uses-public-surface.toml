@@ -1,0 +1,10 @@
+id = "consumer-uses-public-surface"
+description = "Static import-graph check on the workbench consumer example: it imports only the shell public barrel, the adapter public entry or its own modules — never layer internals — and implements no acceptance or recovery rules of its own."
+archetype = "NR"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+
+[[tests.vitest]]
+flags = "--testNamePattern=consumer uses public surface"
+timeout_seconds = 120

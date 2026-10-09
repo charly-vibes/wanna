@@ -1,0 +1,10 @@
+id = "review-revision-visible"
+description = "Browser first path: opening revision 7 shows artifact identity, revision, content and review request; submitting valid feedback records it only through the public shell and the screen shows the recorded outcome tied to revision 7; no authorization or external action occurs."
+archetype = "NR"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+
+[[tests.vitest]]
+flags = "--testNamePattern=review revision visible"
+timeout_seconds = 120

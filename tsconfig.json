@@ -1,6 +1,6 @@
 // Purpose: TypeScript compiler options for the wanna corpus implementation
 // Responsibilities: strict module resolution for src/ and tests/
-// Rationale: tracer-bullet phase 1 (wanna-79h) — strict mode from the start
+// Rationale: tracer-bullet phase 1 (wanna-79h) — strict mode from the start; wanna-01q adds the examples/ consumer and the @wanna/* source aliases (no package/workspace prerequisite)
 {
   "compilerOptions": {
     "target": "ES2022",
@@ -11,7 +11,12 @@
     "noImplicitOverride": true,
     "skipLibCheck": true,
     "noEmit": true,
-    "types": ["vitest/globals", "node"]
+    "types": ["vitest/globals", "node"],
+    "baseUrl": ".",
+    "paths": {
+      "@wanna/composition-shell": ["./src/composition-shell/index.ts"],
+      "@wanna/review-indexeddb": ["./src/review-workbench/adapters/review-indexeddb/index.ts"]
+    }
   },
-  "include": ["src", "tests"]
+  "include": ["src", "tests", "examples"]
 }
