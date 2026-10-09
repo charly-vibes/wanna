@@ -18,3 +18,4 @@ specodelic/
 .devenv/
 .devenv.flake.nix
 .direnv/
+.gate-timing.log

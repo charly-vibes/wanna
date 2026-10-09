@@ -27,11 +27,14 @@ pre-commit:
 
 pre-push:
   commands:
+    # Timing-wrapped (tools/gate-timing.sh) to measure the pre-push cost
+    # distribution — TEMPORARY instrumentation pending ah --base/--head
+    # (charly-vibes/espectacular GH#42); see bd removal ticket in this repo.
     pretender-gate:
       # scope to first-party code: a full-scan pulls in node_modules vendor
       # violations (9613 in typescript/vitest libs) that would gate every push
-      run: pretender check src tests tools --mode gate
+      run: tools/gate-timing.sh pretender-gate pretender check src tests tools --mode gate
     ah-check-gate:
-      run: ah check --run-tests
+      run: tools/gate-timing.sh espectacular-contracts ah check --run-tests
     testaruda-gate:
-      run: testaruda select; code=$?; test "$code" -eq 0 -o "$code" -eq 20
+      run: tools/gate-timing.sh testaruda-select sh -c 'testaruda select; code=$?; test "$code" -eq 0 -o "$code" -eq 20'
