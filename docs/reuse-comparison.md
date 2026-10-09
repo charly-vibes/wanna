@@ -123,7 +123,7 @@ for the second consumer.
 
 ## Decision
 
-**Decision: narrow.** Reuse is demonstrated on semantic coordination, but the
+narrow — Reuse is demonstrated on semantic coordination, but the
 coordination-line evidence is inconclusive on this slice.
 
 The reasoning: reuse is demonstrated on semantic coordination (one public-barrel
