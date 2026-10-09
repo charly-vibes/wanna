@@ -1,0 +1,11 @@
+id = "surface-change-ships-a-compatibility-decision"
+description = "Scenario: surface change ships a compatibility decision — a revision changing the shell's input, output, or effect semantics carries a recorded compatibility decision and migration note"
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=surface-change-ships-a-compatibility-decision"
+timeout_seconds = 120

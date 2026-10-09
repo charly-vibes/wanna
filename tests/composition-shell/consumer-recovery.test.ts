@@ -4,11 +4,7 @@
 import { describe, expect, it } from "vitest";
 import * as shellApi from "../../src/composition-shell";
 import {
-  cancelBehaviorLanded,
-  coreBehaviorLanded,
-  reconcileBehaviorLanded,
   CATALOG,
-  ExplicitCancelShell,
   expectApplied,
   FakeReviewStore,
   FIRST_FEEDBACK,
@@ -19,9 +15,9 @@ import {
 } from "./consumer-support";
 
 describe(
-  "composition-shell consumer behavior — recovery and concurrency",
+  "composition-shell consumer behavior — recovery and concurrency (reconcile and cancel landed: wanna-gcp)",
   () => {
-    it.skipIf(!coreBehaviorLanded)("shared-writers — two shells on one base version apply exactly one of two distinct responses", async () => {
+    it("shared-writers — two shells on one base version apply exactly one of two distinct responses", async () => {
       const store = new FakeReviewStore();
       await reachActiveReview(store);
 
@@ -60,7 +56,7 @@ describe(
       expect(resumed.feedback).toBe(recordedFeedback);
     });
 
-    it.skipIf(!coreBehaviorLanded)("duplicate-delivery — a retried event id yields a typed duplicate correlated with the stored receipt, also after reconstruction", async () => {
+    it("duplicate-delivery — a retried event id yields a typed duplicate correlated with the stored receipt, also after reconstruction", async () => {
       const store = new FakeReviewStore();
       const { shell } = await reachActiveReview(store);
       const view = shell.project();
@@ -106,7 +102,7 @@ describe(
       expect(after.feedback).toBe(FIRST_FEEDBACK);
     });
 
-    it.skipIf(!coreBehaviorLanded)("restart — reopening the same durable store restores revision, completed work and provenance", async () => {
+    it("restart — reopening the same durable store restores revision, completed work and provenance", async () => {
       const store = new FakeReviewStore();
       const { shell } = await reachActiveReview(store);
       const view = shell.project();
@@ -137,7 +133,7 @@ describe(
       );
     });
 
-    it.skipIf(!reconcileBehaviorLanded)("lost-acknowledgement — an unknown outcome blocks mutation until reconcile and replay never repeats the committed response", async () => {
+    it("lost-acknowledgement — an unknown outcome blocks mutation until reconcile and replay never repeats the committed response", async () => {
       const store = new FakeReviewStore();
       const { shell } = await reachActiveReview(store);
       const view = shell.project();
@@ -175,29 +171,32 @@ describe(
       expect(resumed.feedback).toBe(FIRST_FEEDBACK);
     });
 
-    it.skipIf(!cancelBehaviorLanded)("cancel-after-display — an explicit cancel retires the displayed review and history remains available", async () => {
+    it("cancel-after-display — an explicit cancel retires the displayed review and history remains available", async () => {
       const store = new FakeReviewStore();
       const { shell } = await reachActiveReview(store);
       const view = shell.project();
       expect(view.status).toBe("pending"); // displayed to the host
 
-      const cancelled = await (shell as unknown as ExplicitCancelShell).cancel({
+      const cancelled = await shell.cancel({
         operationId: "cancel-review-7",
         interactionId: view.interactionId,
       });
       expect(cancelled.kind).toBe("retired");
       expect(shell.project().status).toBe("retired");
 
-      // history remains available after reconstruction
+      // history remains available after reconstruction, including the retired review
       const history = (await openReadyShell(store)).project();
       expect(
-        [...history.completedReviews, ...history.pendingReviews].some(
-          (r) => r.revision === 7,
-        ),
+        [
+          ...history.completedReviews,
+          ...history.pendingReviews,
+          ...history.retiredReviews,
+        ].some((r) => r.revision === 7),
       ).toBe(true);
+      expect(history.retiredReviews.some((r) => r.revision === 7)).toBe(true);
     });
 
-    it.skipIf(!coreBehaviorLanded)("incompatible-storage — an unsupported stored version yields recovery_required and preserves existing data", async () => {
+    it("incompatible-storage — an unsupported stored version yields recovery_required and preserves existing data", async () => {
       const store = new FakeReviewStore();
       const shell = await openReadyShell(store);
       const created = await shell.updateArtifact({

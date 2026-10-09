@@ -88,6 +88,45 @@ async function consumerExampleFlow(
 }
 
 describe("composition-shell consumer contract", () => {
+  it("composition-without-layer-internals — no layer in the src import graph imports another layer's internals, only declared public modules", () => {
+    const srcDir = join(import.meta.dirname, "..", "..", "src");
+    const layerDirs = readdirSync(srcDir, { withFileTypes: true })
+      .filter((d) => d.isDirectory())
+      .map((d) => d.name);
+    // A cross-layer import is legal only through the target layer's declared
+    // public modules: its index barrel, types vocabulary, or invariants module.
+    const publicModules = new Set(["index.ts", "types.ts", "invariants.ts"]);
+    const walk = (dir: string): string[] =>
+      readdirSync(dir, { withFileTypes: true }).flatMap((entry) =>
+        entry.isDirectory()
+          ? walk(join(dir, entry.name))
+          : entry.name.endsWith(".ts")
+            ? [join(dir, entry.name)]
+            : [],
+      );
+    for (const file of layerDirs.flatMap((layer) => walk(join(srcDir, layer)))) {
+      const ownLayer = file.slice(srcDir.length + 1).split("/")[0];
+      const source = readFileSync(file, "utf8");
+      const specifiers = [...source.matchAll(/from\s+["']([^"']+)['"]/g)].map(
+        (m) => m[1]!,
+      );
+      for (const spec of specifiers) {
+        if (!spec.startsWith(".")) continue;
+        const resolved = join(file, "..", spec);
+        const rel = resolved.slice(srcDir.length + 1);
+        const targetLayer = rel.split("/")[0]!;
+        if (targetLayer === ownLayer || !layerDirs.includes(targetLayer)) continue;
+        const stem = rel.split("/")[1];
+        const targetFile =
+          stem === undefined ? "index.ts" : stem.endsWith(".ts") ? stem : `${stem}.ts`;
+        expect(
+          publicModules.has(targetFile),
+          `${file} imports ${spec}: only the target layer's public modules (index/types/invariants) may be imported across layers`,
+        ).toBe(true);
+      }
+    }
+  });
+
   it("public barrel exposes the consumer example surface", () => {
     expect(typeof shellApi.openReviewSession).toBe("function");
     expect(shellApi.COMPOSITION_SHELL_VERSION).toMatch(/^\d+\.\d+\.\d+$/);

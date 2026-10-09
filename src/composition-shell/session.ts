@@ -1,6 +1,6 @@
-// Purpose: ready-shell session object for the composition shell (wanna-0te open slice, wanna-15e evaluation slice, wanna-8k6 commit/submit slice)
-// Responsibilities: hold the aggregate state loaded through the declared port without aliasing it, compose the evaluateNeed pipeline over the shell's immutable pins, and run updateArtifact/commitDecision/submit through the port's conditional commit with revision-bound freshness checks; refresh reloads the authoritative snapshot (full retry semantics stay with wanna-gcp)
-// Rationale: wanna-0te owns declared-port construction and load; evaluation is wanna-15e; commit/submit transactions, stale/duplicate/failure mappings and replay-folded continuity are wanna-8k6; reconcile and retry-blocking remain wanna-gcp stubs
+// Purpose: ready-shell session object for the composition shell (wanna-0te open slice, wanna-15e evaluation slice, wanna-8k6 commit/submit slice, wanna-gcp lifecycle slice)
+// Responsibilities: hold the aggregate state loaded through the declared port without aliasing it, compose the evaluateNeed pipeline over the shell's immutable pins, run updateArtifact/commitDecision/submit/cancel through the port's conditional commit with revision-bound freshness checks, refuse mutations after cross-writer stale rejections until refresh, block mutations after unknown commit effects until reconciliation, and implement reconcile/refresh over the port
+// Rationale: wanna-0te owns declared-port construction and load; evaluation is wanna-15e; commit/submit transactions, stale/duplicate/failure mappings and replay-folded continuity are wanna-8k6; explicit retirement, retry-requires-refresh and uncertain-effect reconciliation are wanna-gcp
 // Spec: openspec/changes/add-composition-shell/specs/composition-shell/spec.md
 import type {
   AggregateSnapshot,
@@ -8,7 +8,6 @@ import type {
   NeedProposalInput,
   PortCommitOutcome,
   PortLoadOutcome,
-  PortOperation,
   ReviewPersistencePort,
   ReviewProjection,
   ReviewSessionShell,
@@ -16,10 +15,16 @@ import type {
 import type { EvaluatedDecision, ShellPins } from "./evaluate";
 import { evaluateNeedCommand } from "./evaluate";
 import { domainFromReplay, projectFromDomain } from "./domain";
+import {
+  absorbCommitOutcome,
+  applySnapshot,
+  cancelCommand,
+  commitOperation,
+  findInteraction,
+  mutationRefusal,
+  reconcileCommand,
+} from "./lifecycle";
 import type { InteractionRecord, ShellReplayEvent } from "./domain";
-
-/** Commit outcomes that do not carry a fresh authoritative snapshot. */
-type NonAppliedCommit = Exclude<PortCommitOutcome, { kind: "applied" }>;
 
 /**
  * Committed-state view held by an opened shell. Copied from the port snapshot
@@ -60,11 +65,6 @@ export function projectState(state: ShellState): ReviewProjection {
   );
 }
 
-/** Not-yet-landed command stub naming the owning ticket in the message. */
-function stub(command: string, owner: string): never {
-  throw new Error(`not implemented: ${owner} (${command})`);
-}
-
 /** Opened-review replay event for a committed decision, with deterministic identities. */
 function reviewOpenedEvent(
   taskId: string,
@@ -100,46 +100,35 @@ function reviewCompletedEvent(
  * the immutable policy/catalog pins and the declared port
  * ([[composition.shell.evaluation_versions_pinned]], [[composition.shell.commit_through_declared_port]]).
  */
-interface ShellContext {
+export interface ShellContext {
   pins: ShellPins;
   port: ReviewPersistencePort;
   /** Shell-local memory for evaluated decisions, consumed by the compare-and-commit path. */
   evaluatedDecisions: Map<string, EvaluatedDecision>;
   current: ShellState;
+  /**
+   * A cross-writer state-precondition rejection stands ([[composition.shell.refresh_requires_new_snapshot]]):
+   * mutations are refused until a refreshed authoritative snapshot arrives.
+   */
+  requiresRefresh: boolean;
+  /**
+   * Operation ids with an unknown durable effect ([[composition.shell.uncertain_effect_blocks_mutation]]):
+   * mutations are refused until reconciliation proves application or non-application.
+   */
+  uncertain: Set<string>;
 }
 
 function interactionsOf(ctx: ShellContext): InteractionRecord[] {
   return domainFromReplay(ctx.current.replay);
 }
 
-function applySnapshot(ctx: ShellContext, snapshot: AggregateSnapshot): void {
-  ctx.current = shellStateFromSnapshot(snapshot);
-}
 
 function projectOf(ctx: ShellContext): ReviewProjection {
   return projectFromDomain(ctx.current.taskRevision, interactionsOf(ctx));
 }
 
-/** One conditional commit through the declared port ([[composition.shell.commit_through_declared_port]]). */
-async function commitOperation(
-  ctx: ShellContext,
-  expectedVersion: number | null,
-  operation: PortOperation,
-): Promise<PortCommitOutcome> {
-  try {
-    return await ctx.port.compareAndCommit(ctx.pins.key, expectedVersion, operation);
-  } catch {
-    // A thrown commit has an unknown durable effect; mapping to `unavailable`
-    // would authorize a retry and risk silent double application
-    // ([[composition.shell.uncertain_effect_blocks_mutation]]'s safe mapping).
-    return { kind: "unknown_effect" };
-  }
-}
-
 /** Outcome mapping shared by the commit-bound commands. */
-function mapSimpleCommit(
-  outcome: PortCommitOutcome,
-): { applied: AggregateSnapshot } | { typed: NonAppliedCommit } {
+function mapSimpleCommit(outcome: PortCommitOutcome): { applied: AggregateSnapshot } | { typed: Exclude<PortCommitOutcome, { kind: "applied" }> } {
   if (outcome.kind === "applied") return { applied: outcome.snapshot };
   return { typed: outcome }; // narrowed to the non-applied declared outcomes
 }
@@ -148,6 +137,8 @@ async function updateArtifactCommand(
   ctx: ShellContext,
   command: Parameters<ReviewSessionShell["updateArtifact"]>[0],
 ): Promise<Awaited<ReturnType<ReviewSessionShell["updateArtifact"]>>> {
+  const refusal = mutationRefusal(ctx);
+  if (refusal) return refusal;
   const outcome = await commitOperation(ctx, command.expectedAggregateVersion, {
     operationId: command.operationId,
     expectedTaskRevision: null,
@@ -158,6 +149,7 @@ async function updateArtifactCommand(
     },
     replayAdditions: [],
   });
+  absorbCommitOutcome(ctx, command.expectedAggregateVersion, command.operationId, outcome);
   const mapped = mapSimpleCommit(outcome);
   if ("applied" in mapped) {
     applySnapshot(ctx, mapped.applied);
@@ -186,6 +178,8 @@ async function commitDecisionCommand(
   ctx: ShellContext,
   command: Parameters<ReviewSessionShell["commitDecision"]>[0],
 ): Promise<Awaited<ReturnType<ReviewSessionShell["commitDecision"]>>> {
+  const refusal = mutationRefusal(ctx);
+  if (refusal) return refusal;
   const decision = ctx.evaluatedDecisions.get(command.decisionId);
   // A decision this shell never evaluated, or one bound to a revision that
   // is no longer authoritative, cannot commit as current
@@ -203,6 +197,7 @@ async function commitDecisionCommand(
     stateChanges: { reviewOpened: event },
     replayAdditions: [event],
   });
+  absorbCommitOutcome(ctx, ctx.current.aggregateVersion, command.operationId, outcome);
   const mapped = mapSimpleCommit(outcome);
   if ("applied" in mapped) {
     applySnapshot(ctx, mapped.applied);
@@ -215,6 +210,8 @@ async function submitCommand(
   ctx: ShellContext,
   command: Parameters<ReviewSessionShell["submit"]>[0],
 ): Promise<Awaited<ReturnType<ReviewSessionShell["submit"]>>> {
+  const refusal = mutationRefusal(ctx);
+  if (refusal) return refusal;
   const interaction = findInteraction(ctx, command.interactionId);
   if (interaction === null) return { kind: "stale" };
   const preconditionMismatch =
@@ -237,23 +234,13 @@ async function submitCommand(
     stateChanges: { reviewCompleted: event },
     replayAdditions: [event],
   });
+  absorbCommitOutcome(ctx, ctx.current.aggregateVersion, command.eventId, outcome);
   const mapped = mapSimpleCommit(outcome);
   if ("applied" in mapped) {
     applySnapshot(ctx, mapped.applied);
     return { kind: "recorded" };
   }
   return mapped.typed.kind === "conflict" ? { kind: "stale" } : mapped.typed;
-}
-
-function findInteraction(
-  ctx: ShellContext,
-  interactionId: string,
-): InteractionRecord | null {
-  return (
-    interactionsOf(ctx).find(
-      (record) => record.interactionId === interactionId,
-    ) ?? null
-  );
 }
 
 async function refreshFromPort(
@@ -267,14 +254,16 @@ async function refreshFromPort(
   }
   if (loaded.kind === "loaded") {
     applySnapshot(ctx, loaded.snapshot);
+    ctx.requiresRefresh = false;
     return { kind: "refreshed", projection: projectOf(ctx) };
   }
   if (loaded.kind === "not_found") {
     ctx.current = emptyShellState();
+    ctx.requiresRefresh = false;
     return { kind: "refreshed", projection: projectOf(ctx) };
   }
-  // recovery_required surfaces at the open boundary; full refresh/retry
-  // semantics (including refusal without a new snapshot) stay with wanna-gcp.
+  // recovery_required surfaces at the open boundary; refresh leaves the
+  // refresh requirement standing — no refreshed snapshot arrived.
   return { kind: "unavailable" };
 }
 
@@ -296,6 +285,8 @@ export function createReviewSessionShell(
     // evaluated by this shell instance cannot commit as current.
     evaluatedDecisions: new Map<string, EvaluatedDecision>(),
     current: state,
+    requiresRefresh: false,
+    uncertain: new Set<string>(),
   };
   return {
     updateArtifact: (command) => updateArtifactCommand(ctx, command),
@@ -303,7 +294,8 @@ export function createReviewSessionShell(
     commitDecision: (command) => commitDecisionCommand(ctx, command),
     project: () => projectOf(ctx),
     submit: (command) => submitCommand(ctx, command),
-    reconcile: async () => stub("reconcile", "wanna-gcp"),
+    cancel: (command) => cancelCommand(ctx, command),
+    reconcile: (operationId) => reconcileCommand(ctx, operationId),
     refresh: () => refreshFromPort(ctx),
   };
 }

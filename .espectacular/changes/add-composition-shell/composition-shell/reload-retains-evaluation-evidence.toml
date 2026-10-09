@@ -1,0 +1,11 @@
+id = "reload-retains-evaluation-evidence"
+description = "Scenario: reload retains evaluation evidence — a committed review reopened from storage preserves proposal, evidence, exclusions and evaluation versions separately from runtime versions, with empty evidence distinguishable"
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=reload-retains-evaluation-evidence"
+timeout_seconds = 120

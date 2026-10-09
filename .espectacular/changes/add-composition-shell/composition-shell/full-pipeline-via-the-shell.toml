@@ -1,0 +1,11 @@
+id = "full-pipeline-via-the-shell"
+description = "Scenario: full pipeline via the shell — need normalization, engine evaluation, commit, and projection all execute through the single shell entry point"
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=first-review"
+timeout_seconds = 120

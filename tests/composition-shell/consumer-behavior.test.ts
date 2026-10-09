@@ -4,7 +4,6 @@
 import { expect, it } from "vitest";
 import * as shellApi from "../../src/composition-shell";
 import {
-  coreBehaviorSuite,
   CATALOG,
   expectApplied,
   FakeReviewStore,
@@ -14,9 +13,9 @@ import {
   reachActiveReview,
 } from "./consumer-support";
 
-coreBehaviorSuite(
-  // skip reason lives in the suite name so the skipped state is self-explaining
-  "composition-shell consumer behavior — core flow (guarded until the full first path lands: wanna-0te/15e/8k6)",
+describe(
+  // suite name keeps the historical guard note so the landed state stays self-explaining
+  "composition-shell consumer behavior — core flow (first path landed: wanna-0te/15e/8k6)",
   () => {
     it("first-review — a revision-7 review completes with feedback and provenance persisted and no authorization or external action", async () => {
       const store = new FakeReviewStore();

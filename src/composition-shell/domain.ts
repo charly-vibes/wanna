@@ -27,7 +27,21 @@ export interface ReviewCompletedEvent {
   readonly feedback: string;
 }
 
-export type ShellReplayEvent = ReviewOpenedEvent | ReviewCompletedEvent;
+/**
+ * Replay event appended through `replayAdditions` when an explicit retire,
+ * cancel, supersede or expire command retires an active interaction
+ * ([[composition.shell.retirement_explicit]]).
+ */
+export interface ReviewRetiredEvent {
+  readonly shellEvent: "review_retired";
+  readonly interactionId: string;
+  readonly operationId: string;
+}
+
+export type ShellReplayEvent =
+  | ReviewOpenedEvent
+  | ReviewCompletedEvent
+  | ReviewRetiredEvent;
 
 /** One review interaction reconstructed from the replay log, in open order. */
 export interface InteractionRecord {
@@ -63,11 +77,21 @@ function isReviewCompletedCandidate(c: ShellEventCandidate): boolean {
   );
 }
 
+function isReviewRetiredCandidate(c: ShellEventCandidate): boolean {
+  return (
+    c.shellEvent === "review_retired" &&
+    typeof c.interactionId === "string" &&
+    typeof c.operationId === "string"
+  );
+}
+
 export function isShellReplayEvent(value: unknown): value is ShellReplayEvent {
   if (typeof value !== "object" || value === null) return false;
   const candidate = value as ShellEventCandidate;
   return (
-    isReviewOpenedCandidate(candidate) || isReviewCompletedCandidate(candidate)
+    isReviewOpenedCandidate(candidate) ||
+    isReviewCompletedCandidate(candidate) ||
+    isReviewRetiredCandidate(candidate)
   );
 }
 
@@ -93,6 +117,15 @@ export function foldReplayEvent(
         feedback: null,
       },
     ];
+  }
+  if (event.shellEvent === "review_retired") {
+    // only a pending interaction retires; completed history is never reopened
+    return interactions.map((record) =>
+      record.interactionId === event.interactionId &&
+      record.status === "pending"
+        ? { ...record, status: "retired" }
+        : record,
+    );
   }
   return interactions.map((record) =>
     record.interactionId === event.interactionId
@@ -170,6 +203,7 @@ export function projectFromDomain(
       provenance: null,
       completedReviews: [],
       pendingReviews: [],
+      retiredReviews: [],
     };
   }
   const completedReviews = interactions
@@ -177,6 +211,9 @@ export function projectFromDomain(
     .map(completedView);
   const pendingReviews: PendingReview[] = interactions
     .filter((record) => record.status === "pending")
+    .map((record) => ({ reviewId: record.reviewId, revision: record.revision }));
+  const retiredReviews: PendingReview[] = interactions
+    .filter((record) => record.status === "retired")
     .map((record) => ({ reviewId: record.reviewId, revision: record.revision }));
   return {
     taskRevision,
@@ -187,5 +224,6 @@ export function projectFromDomain(
     provenance: copyProvenance(latest.provenance),
     completedReviews,
     pendingReviews,
+    retiredReviews,
   };
 }

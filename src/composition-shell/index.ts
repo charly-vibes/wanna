@@ -1,10 +1,12 @@
 // Purpose: public surface of the composition shell
 // Responsibilities: export the consumer-contract types and the openReviewSession entry point under one barrel
-// Rationale: hosts consumer-example.md (openspec/changes/add-composition-shell); callers import from this barrel, never from layer internals. wanna-0te owns the open/load behavior; wanna-15e/8k6/gcp own the remaining commands.
+// Rationale: hosts consumer-example.md (openspec/changes/add-composition-shell); callers import from this barrel, never from layer internals. wanna-0te owns the open/load behavior; wanna-15e/8k6 own the composed pipeline; wanna-gcp owns the lifecycle commands (cancel, reconcile, refresh-blocking).
 export { COMPOSITION_SHELL_VERSION } from "./types";
 export { openReviewSession } from "./open";
 export type {
   AggregateSnapshot,
+  CancelCommand,
+  CancelOutcome,
   CommitDecisionCommand,
   CommitDecisionOutcome,
   CompletedReview,

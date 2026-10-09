@@ -3,8 +3,13 @@
 // Rationale: hosts consumer-example.md (openspec/changes/add-composition-shell) with host-neutral types only; behavior is owned by wanna-0te/15e/8k6/gcp
 // Spec: openspec/changes/add-composition-shell/specs/composition-shell/spec.md
 
-/** Semantic version of the shell's public surface ([[composition.shell.shell_surface_versioned]]). */
-export const COMPOSITION_SHELL_VERSION = "0.1.0";
+/**
+ * Semantic version of the shell's public surface ([[composition.shell.shell_surface_versioned]]).
+ * 0.2.0 — additive lifecycle revision (wanna-gcp): adds the explicit `cancel`
+ * command and the `retiredReviews` projection field. Compatibility decision and
+ * migration note: openspec/changes/add-composition-shell/compatibility.md.
+ */
+export const COMPOSITION_SHELL_VERSION = "0.2.0";
 
 /** Trusted key binding a review session to one task of one session. */
 export interface SessionTaskKey {
@@ -119,9 +124,34 @@ export interface ReviewSessionShell {
   commitDecision(command: CommitDecisionCommand): Promise<CommitDecisionOutcome>;
   project(): ReviewProjection;
   submit(event: SubmitEventCommand): Promise<SubmitOutcome>;
+  cancel(command: CancelCommand): Promise<CancelOutcome>;
   reconcile(operationId: string): Promise<ReconcileOutcome>;
   refresh(): Promise<RefreshOutcome>;
 }
+
+/**
+ * Explicit retirement command ([[composition.shell.retirement_explicit]]):
+ * an active interaction retires only through this declared command — never
+ * implicitly through artifact changes, evaluation or feedback.
+ */
+export interface CancelCommand {
+  readonly operationId: string;
+  readonly interactionId: string;
+}
+
+/**
+ * Retirement outcomes. Refusal semantics are shared with the other
+ * commit-bound commands: while the shell is in the uncertain-effect recovery
+ * state a refused mutation is declared `unknown_effect` (no port attempt was
+ * made; reconcile before retrying), and while a cross-writer state-precondition
+ * rejection stands it is declared `stale` (refresh before retrying).
+ */
+export type CancelOutcome =
+  | { readonly kind: "retired" }
+  | { readonly kind: "stale" }
+  | { readonly kind: "duplicate"; readonly receipt: PortReceipt }
+  | { readonly kind: "unavailable" }
+  | { readonly kind: "unknown_effect" };
 
 /** Trusted artifact revision update; contents stay with the host via contentRef. */
 export interface UpdateArtifactCommand {
@@ -219,6 +249,8 @@ export interface ReviewProjection {
   readonly provenance: DecisionProvenance | null;
   readonly completedReviews: readonly CompletedReview[];
   readonly pendingReviews: readonly PendingReview[];
+  /** Explicitly retired reviews ([[composition.shell.retirement_explicit]]); history stays inspectable. */
+  readonly retiredReviews: readonly PendingReview[];
 }
 
 export interface CompletedReview {

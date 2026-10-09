@@ -1,0 +1,11 @@
+id = "composition-without-layer-internals"
+description = "Scenario: composition without layer internals — no layer imports another layer's internals; cross-layer imports go only through declared public modules"
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=composition-without-layer-internals"
+timeout_seconds = 120

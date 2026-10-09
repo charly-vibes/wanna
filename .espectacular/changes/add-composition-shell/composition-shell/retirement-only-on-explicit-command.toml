@@ -1,0 +1,11 @@
+id = "retirement-only-on-explicit-command"
+description = "Scenario: retirement only on explicit command — cancellation, expiry, supersession, or retirement happens only through the interaction's explicit permitted command"
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=retirement-only-on-explicit-command"
+timeout_seconds = 120

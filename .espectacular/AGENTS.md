@@ -56,10 +56,14 @@ When wanna-0te/15e/8k6/gcp land behavior (and remove the probe), add one
 scenario-scoped `[[tests.vitest]] flags = "--testNamePattern=<slug>…"` entry per
 green scenario under `.espectacular/changes/add-composition-shell/composition-shell/`.
 
-Two recorded surface gaps the owning tickets must reconcile with this file:
-- `describe.skipIf` takes only the condition in this vitest version — the skip
-  reason lives in the suite name string.
-- The public surface declares no explicit retire/cancel command
-  ([[composition.shell.retire_only_explicit]]); the cancel-after-display test
-  asserts through a minimal consumer-side `ExplicitCancelShell` extension until
-  wanna-gcp lands the command shape.
+Resolved surface gaps (wanna-gcp, 2026-10-09):
+- The transitional skip-guard probes and the consumer-side
+  `ExplicitCancelShell` extension were removed once behavior landed; the
+  consumer suites run unconditionally and assert through the declared
+  `shell.cancel` command and the `retiredReviews` projection field.
+- One scenario-scoped contract TOML was added per green scenario (8 entries
+  added with wanna-gcp: acknowledgement-lost-after-durable-write,
+  composition-without-layer-internals, full-pipeline-via-the-shell,
+  reload-retains-evaluation-evidence, restart-restores-the-review,
+  retirement-only-on-explicit-command, retry-requires-refreshed-snapshot,
+  surface-change-ships-a-compatibility-decision).

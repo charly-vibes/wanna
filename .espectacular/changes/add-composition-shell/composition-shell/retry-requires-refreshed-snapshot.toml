@@ -1,0 +1,11 @@
+id = "retry-requires-refreshed-snapshot"
+description = "Scenario: retry requires refreshed snapshot — a retry after a state-precondition rejection is refused without a refreshed committed-state snapshot"
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=retry-requires-refreshed-snapshot"
+timeout_seconds = 120

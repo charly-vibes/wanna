@@ -31,7 +31,7 @@ on packaging. A first-path demonstration is not final delivery.
 
 ## 3. Recovery and lifecycle
 
-- [ ] 3.1 RED→GREEN: observational projection, permitted retirement after display,
+- [x] 3.1 RED→GREEN: observational projection, permitted retirement after display,
       explicit supersession, refresh, restart and uncertain-effect reconciliation
       without automatic rebinding of stale feedback (wanna-gcp).
 

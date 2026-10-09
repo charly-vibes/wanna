@@ -1,0 +1,11 @@
+id = "acknowledgement-lost-after-durable-write"
+description = "Scenario: acknowledgement lost after durable write — a response commits in storage but its acknowledgement is lost; the pending operation remains identifiable, mutation is blocked until reconciliation, and the committed response is not applied twice"
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=acknowledgement-lost-after-durable-write"
+timeout_seconds = 120

@@ -1,0 +1,11 @@
+id = "restart-restores-the-review"
+description = "Scenario: restart restores the review — destroying and reopening the shell on the same durable store restores completed, pending, changed and unresolved reviews with their original revisions and provenance"
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=restart — reopening the same durable store"
+timeout_seconds = 120
