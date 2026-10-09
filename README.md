@@ -60,6 +60,13 @@ dependency-ordered wave structure (`bd ready`); their specs are already
 covered by corpus conformance contracts, so each ticket is a
 red→green→refactor implementation against a pre-verified spec.
 
+The composition-shell / review-workbench prototype is implemented
+(`src/composition-shell/`, `src/review-workbench/`) with an executable
+consumer example (`examples/review-workbench/`). Its documented capabilities
+and limitations live in [`docs/review-quickstart.md`](docs/review-quickstart.md);
+surface revision history lives in
+`openspec/changes/add-composition-shell/compatibility.md`.
+
 ## Provenance
 
 `interaction-uiux-amplification-specodelic-v2.zip` at the repo root is the
