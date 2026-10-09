@@ -8,11 +8,15 @@ import { describe, expect, it } from "vitest";
 const repoRoot = process.cwd();
 const reportPath = join(repoRoot, "docs", "reuse-comparison.md");
 
-/** Total line count of every .ts source in an example directory. */
+/** Total line count of every .ts source in an example directory (wc -l semantics). */
 function sourceLines(dir: string): number {
   return readdirSync(dir)
     .filter((n) => n.endsWith(".ts"))
-    .map((n) => readFileSync(join(dir, n), "utf8").split("\n").length)
+    .map((n) => {
+      const content = readFileSync(join(dir, n), "utf8");
+      const lines = content.split("\n");
+      return lines.at(-1) === "" ? lines.length - 1 : lines.length;
+    })
     .reduce((a, b) => a + b, 0);
 }
 
