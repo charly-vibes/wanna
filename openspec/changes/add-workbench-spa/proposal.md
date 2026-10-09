@@ -11,6 +11,11 @@ and recovery supplied by Wanna. A local browser workbench makes that claim testa
 
 - Add a minimal review screen showing the exact artifact revision, review request,
   feedback entry, recorded outcome, and pending/changed work after reopening.
+- Semantic change found during implementation (wanna-9r2): the composition shell's
+  projection gains an additive `aggregateVersion` field (surface 0.3.0) — conditional
+  artifact changes are otherwise unreachable for consumers once invisible operations
+  (decision commits, responses) advance the version past the last value they observed.
+  Recorded in add-composition-shell compatibility.md and its spec delta.
 - Add a local durable IndexedDB adapter outside the shell, with atomic conditional
   writes, replay and receipts, and explicit pending-operation reconciliation.
 - Consume the shell public barrel; keep policy, lifecycle, revision, deduplication

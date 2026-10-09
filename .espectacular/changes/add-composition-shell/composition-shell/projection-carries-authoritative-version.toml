@@ -1,0 +1,10 @@
+id = "projection-carries-authoritative-version"
+description = "After every applied operation the projection's aggregateVersion equals the authoritative version the next conditional commit through the port must expect, so consumers can construct revision changes without hand-tracking versions."
+archetype = "NR"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+
+[[tests.vitest]]
+flags = "--testNamePattern=projection-carries-authoritative-version"
+timeout_seconds = 120

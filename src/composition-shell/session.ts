@@ -61,6 +61,7 @@ export function shellStateFromSnapshot(snapshot: AggregateSnapshot): ShellState 
 export function projectState(state: ShellState): ReviewProjection {
   return projectFromDomain(
     state.taskRevision,
+    state.aggregateVersion,
     domainFromReplay(state.replay),
   );
 }
@@ -124,7 +125,7 @@ function interactionsOf(ctx: ShellContext): InteractionRecord[] {
 
 
 function projectOf(ctx: ShellContext): ReviewProjection {
-  return projectFromDomain(ctx.current.taskRevision, interactionsOf(ctx));
+  return projectFromDomain(ctx.current.taskRevision, ctx.current.aggregateVersion, interactionsOf(ctx));
 }
 
 /** Outcome mapping shared by the commit-bound commands. */

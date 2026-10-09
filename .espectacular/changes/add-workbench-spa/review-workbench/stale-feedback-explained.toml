@@ -1,0 +1,10 @@
+id = "stale-feedback-explained"
+description = "Revision 8 replaces revision 7 while feedback is being entered: submission is rejected through the shell, the draft remains visible and the reviewer must explicitly review revision 8 before submitting against it — never a silent rebinding."
+archetype = "NR"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+
+[[tests.vitest]]
+flags = "--testNamePattern=stale feedback explained"
+timeout_seconds = 120

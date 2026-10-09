@@ -20,6 +20,12 @@ export interface ReviewFixture {
     readonly evidenceStrength: string;
     readonly reason: string;
   };
+  /** Host-owned demonstration data for the developer fault/revision controls. */
+  readonly demo: {
+    readonly nextRevision: number;
+    readonly content: string;
+    readonly contentRef: string;
+  };
 }
 
 /** The scripted first-path scenario: review revision 7 of artifact-1. */
@@ -41,6 +47,12 @@ export function scriptedRevision7Fixture(): ReviewFixture {
       evidenceStrength: "sufficient",
       reason:
         "The scripted agent requests human review of revision 7 before the note is recorded as accepted.",
+    },
+    demo: {
+      nextRevision: 8,
+      content:
+        "Artifact revision 8: the design note after the revision-7 feedback round.",
+      contentRef: "artifact-1/revisions/8",
     },
   };
 }

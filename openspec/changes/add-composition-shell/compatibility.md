@@ -4,6 +4,22 @@ Recorded compatibility decisions for revisions that change the shell's input,
 output or effect semantics ([[composition.shell.shell_surface_versioned]]).
 The newest decision is first.
 
+## 0.3.0 — additive consumer-support projection field (wanna-9r2)
+
+- **Decision:** additive. The 0.2.0 surface is fully preserved; no input,
+  output or effect semantics of existing commands changed.
+- **Added:** the `aggregateVersion` field on `ReviewProjection`
+  ([[composition.shell.projection_derived_not_authoritative]]) — the
+  authoritative version a consumer must pass as `expectedAggregateVersion` for
+  its next conditional commit through the port.
+- **Migration note:** consumers that never change the artifact after the
+  initial creation need no changes (`updateArtifact` with a null expected
+  version keeps creating the initial aggregate). Consumers that advance the
+  artifact revision mid-session now read `projection.aggregateVersion` instead
+  of hand-tracking versions from applied outcomes — decision commits and
+  response submissions advance the version without returning it, so any
+  consumer-side version tracking silently diverges.
+
 ## 0.2.0 — additive lifecycle surface (wanna-gcp)
 
 - **Decision:** additive. The 0.1.0 surface is fully preserved; no input,

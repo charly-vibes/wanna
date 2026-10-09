@@ -13,7 +13,7 @@ use red→green; structural refactoring is tracked separately as wanna-lwo.
 
 ## 2. Recovery acceptance
 
-- [ ] 2.1 RED→GREEN: visible stale decision/response, retained draft, explicit new
+- [x] 2.1 RED→GREEN: visible stale decision/response, retained draft, explicit new
       review, cancel-after-display, shared writers, replay, reload, lost acknowledgement
       and incompatible-storage outcomes using actual adapter boundaries (wanna-9r2).
 - [ ] 2.2 Complete scenario bindings and run integrated conformance/falsifiability

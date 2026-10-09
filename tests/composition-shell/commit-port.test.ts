@@ -159,4 +159,32 @@ describe("composition-shell commit-boundary port semantics (wanna-8k6)", () => {
     ]);
     expect(storageFingerprint(store)).toBe(before);
   });
+
+  it("projection-carries-authoritative-version — after every applied operation the projection's aggregateVersion is exactly what the next conditional commit must expect", async () => {
+    const store = new FakeReviewStore();
+    const { shell, view } = await reachActiveReview(store);
+
+    // the version advances invisibly through the decision commit and the
+    // response; the projection must still carry the authoritative value
+    const submitted = await shell.submit(
+      submitCommand({
+        interactionId: view.interactionId,
+        expectedInteractionRevision: view.interactionRevision,
+      }),
+    );
+    expect(submitted.kind).toBe("recorded");
+    const after = shell.project();
+    expect(after.aggregateVersion).toBeGreaterThan(view.aggregateVersion);
+
+    // the exposed version is exactly the port precondition: an artifact change
+    // conditioned on it applies without any consumer-side version tracking
+    const advanced = await shell.updateArtifact({
+      operationId: "artifact-revision-8",
+      expectedAggregateVersion: after.aggregateVersion,
+      revision: 8,
+      contentRef: "artifact-1/revisions/8",
+    });
+    expect(advanced).toEqual({ kind: "applied", aggregateVersion: after.aggregateVersion + 1 });
+    expect(shell.project().aggregateVersion).toBe(after.aggregateVersion + 1);
+  });
 });

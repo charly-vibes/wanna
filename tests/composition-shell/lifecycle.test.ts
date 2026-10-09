@@ -247,7 +247,7 @@ describe("composition-shell lifecycle (wanna-gcp)", () => {
     );
   });
 
-  it("surface-change-ships-a-compatibility-decision — the 0.2.0 surface revision records its compatibility decision and migration note", () => {
+  it("surface-change-ships-a-compatibility-decision — each surface revision records its compatibility decision and migration note", () => {
     const record = readFileSync(
       join(
         import.meta.dirname,
@@ -260,9 +260,10 @@ describe("composition-shell lifecycle (wanna-gcp)", () => {
       ),
       "utf8",
     );
-    expect(shellApi.COMPOSITION_SHELL_VERSION).toBe("0.2.0");
+    expect(shellApi.COMPOSITION_SHELL_VERSION).toBe("0.3.0");
     expect(record).toContain("0.1.0");
     expect(record).toContain("0.2.0");
+    expect(record).toContain("0.3.0");
     expect(record).toContain("additive");
     expect(record).toContain("Migration");
   });

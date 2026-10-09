@@ -1,0 +1,10 @@
+id = "resume-outcomes-visible"
+description = "Reload restores completed, pending and changed review information with original provenance; uncertain effects block mutation until reconciliation (live and after reconstruction); duplicate re-delivery never creates a second completion; incompatible storage is recovery-required with data preserved."
+archetype = "NR"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+
+[[tests.vitest]]
+flags = "--testNamePattern=resume outcomes visible"
+timeout_seconds = 120

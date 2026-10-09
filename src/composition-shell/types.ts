@@ -5,11 +5,13 @@
 
 /**
  * Semantic version of the shell's public surface ([[composition.shell.shell_surface_versioned]]).
- * 0.2.0 — additive lifecycle revision (wanna-gcp): adds the explicit `cancel`
- * command and the `retiredReviews` projection field. Compatibility decision and
- * migration note: openspec/changes/add-composition-shell/compatibility.md.
+ * 0.3.0 — additive consumer-support revision (wanna-9r2): adds the
+ * `aggregateVersion` field on `ReviewProjection` so consumers can construct the
+ * conditional artifact revisions the port contract requires. Compatibility
+ * decision and migration note:
+ * openspec/changes/add-composition-shell/compatibility.md.
  */
-export const COMPOSITION_SHELL_VERSION = "0.2.0";
+export const COMPOSITION_SHELL_VERSION = "0.3.0";
 
 /** Trusted key binding a review session to one task of one session. */
 export interface SessionTaskKey {
@@ -242,6 +244,15 @@ export type CommitDecisionOutcome =
 /** Derived observation of review state; mutating it cannot change committed state. */
 export interface ReviewProjection {
   readonly taskRevision: number;
+  /**
+   * Authoritative aggregate version ([[composition.shell.projection_derived_not_authoritative]]):
+   * the exact expected version the next conditional commit through the port
+   * must carry ([[composition.shell.commit_through_declared_port]]). Exposed
+   * because conditional artifact changes are otherwise unreachable for
+   * consumers once invisible operations (decision commits, responses) have
+   * advanced the version past the last value a consumer observed.
+   */
+  readonly aggregateVersion: number;
   readonly interactionId: string;
   readonly interactionRevision: number;
   readonly status: "active" | "completed" | "changed" | "pending" | "retired";

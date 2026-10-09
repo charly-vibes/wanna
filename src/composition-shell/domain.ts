@@ -182,6 +182,25 @@ function projectedStatus(
   return taskRevision > latest.revision ? "changed" : "pending";
 }
 
+/** The open-slice view with no recorded interaction (wanna-8k6). */
+function emptyProjection(
+  taskRevision: number,
+  aggregateVersion: number,
+): ReviewProjection {
+  return {
+    taskRevision,
+    aggregateVersion,
+    interactionId: "",
+    interactionRevision: 0,
+    status: "active",
+    feedback: null,
+    provenance: null,
+    completedReviews: [],
+    pendingReviews: [],
+    retiredReviews: [],
+  };
+}
+
 /**
  * Derived projection over the authoritative task revision and the folded
  * interaction state ([[composition.shell.projection_derived_not_authoritative]]).
@@ -190,22 +209,11 @@ function projectedStatus(
  */
 export function projectFromDomain(
   taskRevision: number,
+  aggregateVersion: number,
   interactions: readonly InteractionRecord[],
 ): ReviewProjection {
   const latest = latestInteraction(interactions);
-  if (latest === null) {
-    return {
-      taskRevision,
-      interactionId: "",
-      interactionRevision: 0,
-      status: "active",
-      feedback: null,
-      provenance: null,
-      completedReviews: [],
-      pendingReviews: [],
-      retiredReviews: [],
-    };
-  }
+  if (latest === null) return emptyProjection(taskRevision, aggregateVersion);
   const completedReviews = interactions
     .filter((record) => record.status === "completed")
     .map(completedView);
@@ -217,6 +225,7 @@ export function projectFromDomain(
     .map((record) => ({ reviewId: record.reviewId, revision: record.revision }));
   return {
     taskRevision,
+    aggregateVersion,
     interactionId: latest.interactionId,
     interactionRevision: latest.interactionRevision,
     status: projectedStatus(taskRevision, latest),

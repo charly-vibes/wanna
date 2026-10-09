@@ -95,6 +95,7 @@ A restored retired interaction cannot accept further responses.
 | commits_only_via_port | unit | [[composition.shell.commit_through_declared_port]] | `any::<String>()` | `TypeScript test: state mutation attempts that bypass the declared port leave committed state and replay log unchanged` |
 | stale_event_typed_rejection | unit | [[composition.shell.event_preconditions_current]] | `any::<String>()` | `TypeScript test: a stale-revision or duplicate event returns a typed rejection and leaves committed state unchanged` |
 | projection_mutation_is_inert | unit | [[composition.shell.projection_derived_not_authoritative]] | `any::<String>()` | `TypeScript test: mutating a projection copy never changes committed or authority state` |
+| projection_carries_authoritative_version | unit | [[composition.shell.projection_derived_not_authoritative]] | `any::<String>()` | `TypeScript test: after every applied operation the projection's aggregateVersion equals the authoritative version the next conditional commit must expect` |
 | retry_requires_refresh | unit | [[composition.shell.refresh_requires_new_snapshot]] | `any::<String>()` | `TypeScript test: retry after state-precondition rejection is refused until a refreshed snapshot arrives` |
 | retire_only_explicit | unit | [[composition.shell.retirement_explicit]] | `any::<String>()` | `TypeScript test: cancellation, expiry, supersession, and retirement occur only on their explicit commands` |
 | no_host_types_in_shell | unit | [[composition.shell.host_binding_confined]] | `any::<String>()` | `Static dependency test: the shell module public types and transitive imports contain no DOM, TUI, or transport dependencies` |
@@ -187,6 +188,16 @@ retire, cancel, supersede, or expire command permitted for that interaction kind
 - **WHEN** a consumer mutates a projection copy handed to a host
 - **THEN** committed and authority state are unchanged
 - **VERIFIES** [[composition.shell.projection_mutation_is_inert]]
+
+### Requirement: Projection carries authoritative versions
+
+The shell SHALL expose in every projection the authoritative aggregate version
+that the consumer's next conditional commit through the port must expect.
+
+#### Scenario: projection carries authoritative version
+- **WHEN** a consumer reads the projection after any applied operation
+- **THEN** the projection's aggregateVersion equals the authoritative version the next conditional commit must expect
+- **VERIFIES** [[composition.shell.projection_carries_authoritative_version]]
 
 #### Scenario: retirement only on explicit command
 - **WHEN** cancellation, expiry, supersession, or retirement is requested
@@ -368,6 +379,16 @@ retire, cancel, supersede, or expire command permitted for that interaction kind
 - **WHEN** a consumer mutates a projection copy handed to a host
 - **THEN** committed and authority state are unchanged
 - **VERIFIES** [[composition.shell.projection_mutation_is_inert]]
+
+### Requirement: Projection carries authoritative versions
+
+The shell SHALL expose in every projection the authoritative aggregate version
+that the consumer's next conditional commit through the port must expect.
+
+#### Scenario: projection carries authoritative version
+- **WHEN** a consumer reads the projection after any applied operation
+- **THEN** the projection's aggregateVersion equals the authoritative version the next conditional commit must expect
+- **VERIFIES** [[composition.shell.projection_carries_authoritative_version]]
 
 #### Scenario: retirement only on explicit command
 - **WHEN** cancellation, expiry, supersession, or retirement is requested
