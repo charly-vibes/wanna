@@ -1,16 +1,16 @@
-[tools.pretender]
-description = "Multi-language structural code-quality checks"
-
-[tools.pretender.detector]
-type = "file"
-path = "pretender.toml"
-
 [tools.wai]
 description = "Workflow manager for AI-assisted development"
 
 [tools.wai.detector]
 type = "directory"
 path = ".wai"
+
+[tools.pretender]
+description = "Multi-language structural code-quality checks"
+
+[tools.pretender.detector]
+type = "file"
+path = "pretender.toml"
 
 [tools.testaruda]
 description = "Language-agnostic test selection engine"
