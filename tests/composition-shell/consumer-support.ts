@@ -1,16 +1,31 @@
 // Purpose: shared consumer-owned support for the composition-shell consumer behavior contracts
 // Responsibilities: in-memory fake durable store/port built purely from declared public port types, the behavior-landed probe, and the scenario harness helpers used by the split consumer suites
 // Rationale: openspec/changes/add-composition-shell/consumer-example.md; extracted from the wanna-9wu consumer-behavior contract to satisfy pretender file/function limits without behavior change
+// GUARD DESIGN (wanna-8k6, option b — split probes):
+// Behavioral consumer tests are SKIP-GUARDED by one-time probes. Skipped-while-
+// unimplemented is the DEFERRED-EVIDENCE state, never behavioral evidence. The
+// probes flip as behavior lands and are REMOVED at wanna-gcp completion:
 //
-// TRANSITIONAL RED STATE (wanna-9wu):
-// While the shell behavior is unimplemented, every behavioral test in the
-// consumer suites is SKIP-GUARDED by a one-time probe that attempts
-// `openReviewSession` on a fake port and detects the scaffold's
-// `not implemented` error. Skipped-while-unimplemented is the DEFERRED-EVIDENCE
-// state, never behavioral evidence. The owning tickets (wanna-0te, wanna-15e,
-// wanna-8k6, wanna-gcp) flip the suites to green by landing behavior and then
-// REMOVE the probe. Forcing the guard must produce ONLY missing-behavior
-// failures — see .wai/projects/wanna/research/2026-10-10-9wu-red-evidence.md.
+// - coreBehaviorLanded — true exactly when the full first path
+//   (open → updateArtifact → evaluateNeed → commitDecision → submit → recorded)
+//   works on a healthy fake port. Owned by wanna-0te + wanna-15e + wanna-8k6.
+//   Enables the happy-path consumer tests: first-review, stale-decision,
+//   stale-response, duplicate-delivery, restart, shared-writers,
+//   unsupported-or-empty — plus new-review and incompatible-storage, which
+//   pass incidentally through 8k6's revision-bound commits and the 0te open
+//   path (wanna-gcp still owns supersession and recovery semantics).
+//   Unit-level duplicate/conflict evidence lives in commit.test.ts; the
+//   durable browser-level shared-store proof is separately required by
+//   wanna-9r2.
+// - reconcileBehaviorLanded — true when `reconcile` returns a typed outcome
+//   instead of its stub error (wanna-gcp). Enables lost-acknowledgement,
+//   which additionally needs mutation blocking between unknown_effect and
+//   reconciliation ([[composition.shell.uncertain_effect_blocks_mutation]]).
+// - cancelBehaviorLanded — true when the explicit cancel/retire command
+//   exists on the shell surface (wanna-gcp). Enables cancel-after-display.
+//
+// Forcing a guard must produce ONLY missing-behavior failures — see
+// .wai/projects/wanna/research/2026-10-10-9wu-red-evidence.md.
 //
 // Test-port interpretation contract (consumer-owned):
 // - The shell owns its `stateChanges` vocabulary (typed `unknown` at the public
@@ -32,259 +47,150 @@
 import { describe } from "vitest";
 import * as shellApi from "../../src/composition-shell";
 import type {
-  AggregateSnapshot,
-  PortCommitOutcome,
-  PortLoadOutcome,
-  PortOperation,
-  PortReconcileOutcome,
-  ReviewCatalog,
-  ReviewPersistencePort,
-  ReviewPolicy,
   ReviewProjection,
   ReviewSessionShell,
   SessionTaskKey,
 } from "../../src/composition-shell";
+import {
+  FakePort,
+  FakeReviewStore,
+  KEY,
+  POLICY,
+  CATALOG,
+  FIRST_FEEDBACK,
+} from "./consumer-fakes";
 
-export const KEY: SessionTaskKey = { sessionId: "session-1", taskId: "artifact-1" };
-export const POLICY: ReviewPolicy = { policyVersion: "policy-1" };
-export const CATALOG: ReviewCatalog = { catalogVersion: "catalog-1" };
-export const FIRST_FEEDBACK = "The explanation needs one concrete example.";
-
-export interface StoredState {
-  aggregateVersion: number; // 0 = nothing persisted yet
-  taskRevision: number; // 0 = no artifact revision yet
-  replay: unknown[];
-  receipts: Map<string, { operationId: string; applied: boolean }>;
-}
-
-export interface StoreConfig {
-  /** operation ids whose durable commit succeeds but whose acknowledgement is lost (declared `unknown_effect`). */
-  readonly ackLoss: Set<string>;
-  /** when set, `load()` short-circuits into this outcome (incompatible-storage simulation). */
-  loadOverride?: PortLoadOutcome;
-  /** when true, the next compareAndCommit applies durably but loses its acknowledgement. */
-  loseNextAck: boolean;
-}
-
-/**
- * Consumer-owned fake durable store. One store can serve several ports
- * (shared writers, restart) and records every committed operation verbatim so
- * a reconstructed shell can replay its own vocabulary.
- */
-export class FakeReviewStore {
-  readonly config: StoreConfig = { ackLoss: new Set(), loseNextAck: false };
-  private readonly states = new Map<string, StoredState>();
-
-  state(key: SessionTaskKey): StoredState {
-    const id = `${key.sessionId}/${key.taskId}`;
-    let state = this.states.get(id);
-    if (!state) {
-      state = {
-        aggregateVersion: 0,
-        taskRevision: 0,
-        replay: [],
-        receipts: new Map(),
-      };
-      this.states.set(id, state);
-    }
-    return state;
-  }
-
-  /** Direct observation of persisted data, bypassing the port outcome types. */
-  rawState(key: SessionTaskKey): StoredState {
-    return this.state(key);
-  }
-
-  loseAckFor(operationId: string): void {
-    this.config.ackLoss.add(operationId);
-  }
-
-  loseNextAck(): void {
-    this.config.loseNextAck = true;
-  }
-
-  setLoadOverride(outcome: PortLoadOutcome): void {
-    this.config.loadOverride = outcome;
-  }
-
-  port(key: SessionTaskKey): ReviewPersistencePort {
-    return new FakePort(this, key);
-  }
-
-  static snapshot(state: StoredState): AggregateSnapshot {
-    return {
-      aggregateVersion: state.aggregateVersion,
-      taskRevision: state.taskRevision,
-      replay: [...state.replay],
-      receipts: [...state.receipts.values()],
-    };
-  }
-}
-
-class FakePort implements ReviewPersistencePort {
-  readonly supportsAtomicCommitAndReplay = true;
-  constructor(
-    private readonly store: FakeReviewStore,
-    private readonly key: SessionTaskKey,
-  ) {}
-
-  get deduplicationScope(): ReadonlySet<string> {
-    return new Set([this.key.sessionId]);
-  }
-
-  async load(): Promise<PortLoadOutcome> {
-    if (this.store.config.loadOverride) return this.store.config.loadOverride;
-    const state = this.store.state(this.key);
-    if (state.aggregateVersion === 0) return { kind: "not_found" };
-    return { kind: "loaded", snapshot: FakeReviewStore.snapshot(state) };
-  }
-
-  async compareAndCommit(
-    _key: SessionTaskKey,
-    expectedVersion: number | null,
-    operation: PortOperation,
-  ): Promise<PortCommitOutcome> {
-    const state = this.store.state(this.key);
-    const duplicate = this.findDuplicate(state, operation.operationId);
-    if (duplicate) return duplicate;
-    if (this.ackIsLost(operation.operationId)) {
-      this.apply(state, operation);
-      return { kind: "unknown_effect" };
-    }
-    return this.commitChecked(state, expectedVersion, operation);
-  }
-
-  async reconcile(
-    _key: SessionTaskKey,
-    operationId: string,
-  ): Promise<PortReconcileOutcome> {
-    const state = this.store.state(this.key);
-    const receipt = state.receipts.get(operationId);
-    if (receipt && receipt.applied) {
-      return {
-        kind: "applied",
-        receipt,
-        snapshot: FakeReviewStore.snapshot(state),
-      };
-    }
-    return { kind: "not_applied" };
-  }
-
-  private findDuplicate(
-    state: StoredState,
-    operationId: string,
-  ): PortCommitOutcome | undefined {
-    const existing = state.receipts.get(operationId);
-    return existing ? { kind: "duplicate", receipt: existing } : undefined;
-  }
-
-  /** Durable side effect: consumes the pending lose-next-ack fault if set. */
-  private ackIsLost(operationId: string): boolean {
-    const lost =
-      this.store.config.ackLoss.has(operationId) ||
-      this.store.config.loseNextAck;
-    this.store.config.loseNextAck = false;
-    return lost;
-  }
-
-  private commitChecked(
-    state: StoredState,
-    expectedVersion: number | null,
-    operation: PortOperation,
-  ): PortCommitOutcome {
-    if (!this.preconditionMet(state, expectedVersion)) {
-      return { kind: "conflict" };
-    }
-    this.apply(state, operation);
-    const receipt = state.receipts.get(operation.operationId);
-    if (!receipt)
-      throw new Error(
-        "fake port invariant violated: receipt missing after apply",
-      );
-    return {
-      kind: "applied",
-      receipt,
-      snapshot: FakeReviewStore.snapshot(state),
-    };
-  }
-
-  private preconditionMet(
-    state: StoredState,
-    expectedVersion: number | null,
-  ): boolean {
-    if (expectedVersion === null) return state.aggregateVersion === 0;
-    return state.aggregateVersion === expectedVersion;
-  }
-
-  private apply(state: StoredState, operation: PortOperation): void {
-    const revision = pickNumber(
-      operation.stateChanges,
-      "taskRevision",
-      "revision",
-    );
-    if (revision !== undefined) state.taskRevision = revision;
-    state.aggregateVersion += 1;
-    state.replay.push(
-      {
-        operationId: operation.operationId,
-        stateChanges: operation.stateChanges,
-      },
-      ...operation.replayAdditions,
-    );
-    state.receipts.set(operation.operationId, {
-      operationId: operation.operationId,
-      applied: true,
-    });
-  }
-}
-
-function isFiniteNumber(value: unknown): value is number {
-  return typeof value === "number" && Number.isFinite(value);
-}
-
-function pickNumber(
-  source: unknown,
-  ...fieldNames: string[]
-): number | undefined {
-  if (typeof source !== "object" || source === null) return undefined;
-  const record = source as Record<string, unknown>;
-  const candidates = fieldNames.map((name) => record[name]);
-  return candidates.find(isFiniteNumber);
-}
+export {
+  FakeReviewStore,
+  FakePort,
+  KEY,
+  POLICY,
+  CATALOG,
+  FIRST_FEEDBACK,
+};
 
 function isNotImplementedStub(error: unknown): boolean {
   return error instanceof Error && error.message.startsWith("not implemented");
 }
 
 /**
- * One-time probe: has shell behavior landed? False only while the scaffold
- * still throws its `not implemented` stub error (or cannot open on a healthy
- * fake port). Any other error means behavior IS expected to be present and the
- * consumer suites will surface it as a real failure.
+ * One-time probe: has the full first path landed? True exactly when
+ * open → updateArtifact → evaluateNeed → commitDecision → submit → recorded
+ * works on a healthy fake port ([[composition.shell.review_completion_recorded]]);
+ * stub errors or non-landed typed outcomes return false.
  */
-async function probeBehaviorLanded(): Promise<boolean> {
-  const store = new FakeReviewStore();
+async function openProbeShell(
+  store: FakeReviewStore,
+  key: SessionTaskKey,
+): Promise<ReviewSessionShell | null> {
+  const open = await shellApi.openReviewSession({
+    key,
+    policy: { policyVersion: "probe-policy" },
+    catalog: { catalogVersion: "probe-catalog" },
+    port: store.port(key),
+  });
+  if (open.kind !== "ready") return null;
+  return open.shell;
+}
+
+/** Runs `probe`; a stub error means "not landed yet" (false); other errors propagate so the suite surfaces them. */
+async function probeLanded(probe: () => Promise<boolean>): Promise<boolean> {
   try {
-    const open = await shellApi.openReviewSession({
-      key: { sessionId: "probe-session", taskId: "probe-task" },
-      policy: { policyVersion: "probe-policy" },
-      catalog: { catalogVersion: "probe-catalog" },
-      port: store.port({ sessionId: "probe-session", taskId: "probe-task" }),
-    });
-    if (open.kind !== "ready") return false;
-    await open.shell.updateArtifact({
-      operationId: "probe-update",
-      expectedAggregateVersion: null,
-      revision: 1,
-      contentRef: "probe/revisions/1",
-    });
-    return true;
+    return await probe();
   } catch (error) {
-    return !isNotImplementedStub(error);
+    if (isNotImplementedStub(error)) return false;
+    throw error;
   }
 }
 
-export const behaviorLanded = await probeBehaviorLanded();
+function isDeclaredReconcileOutcome(outcome: { kind: string }): boolean {
+  return (
+    outcome.kind === "applied" ||
+    outcome.kind === "not_applied" ||
+    outcome.kind === "unknown_effect"
+  );
+}
+
+async function probeFullFirstPath(): Promise<boolean> {
+  return probeLanded(async () => {
+    const key = { sessionId: "probe-session", taskId: "probe-task" };
+    const shell = await openProbeShell(new FakeReviewStore(), key);
+    if (!shell) return false;
+    return probeArtifactUpdate(shell);
+  });
+}
+
+async function probeArtifactUpdate(shell: ReviewSessionShell): Promise<boolean> {
+  const applied = await shell.updateArtifact({
+    operationId: "probe-update",
+    expectedAggregateVersion: null,
+    revision: 1,
+    contentRef: "probe/revisions/1",
+  });
+  if (applied.kind !== "applied") return false;
+  return probeDecisionAndSubmit(shell);
+}
+
+async function probeDecisionAndSubmit(
+  shell: ReviewSessionShell,
+): Promise<boolean> {
+  const decision = await shell.evaluateNeed({
+    kind: "review_artifact",
+    target: "probe-task",
+    taskRevision: 1,
+    proposalId: "probe-proposal",
+    evidenceRefs: ["probe/revisions/1"],
+    evidenceStrength: "sufficient",
+  });
+  if (decision.kind !== "decided") return false;
+  return probeCommitAndSubmit(shell, decision.id);
+}
+
+async function probeCommitAndSubmit(
+  shell: ReviewSessionShell,
+  decisionId: string,
+): Promise<boolean> {
+  const committed = await shell.commitDecision({
+    operationId: "probe-decision",
+    decisionId,
+  });
+  if (committed.kind !== "committed") return false;
+  const view = shell.project();
+  const submitted = await shell.submit({
+    eventId: "probe-feedback",
+    interactionId: view.interactionId,
+    expectedTaskRevision: 1,
+    expectedInteractionRevision: view.interactionRevision,
+    feedback: "probe feedback",
+  });
+  return submitted.kind === "recorded";
+}
+
+async function probeReconcileLanded(): Promise<boolean> {
+  return probeLanded(async () => {
+    const key = { sessionId: "probe-session", taskId: "probe-task" };
+    const shell = await openProbeShell(new FakeReviewStore(), key);
+    if (!shell) return false;
+    const outcome = await shell.reconcile("probe-operation");
+    return isDeclaredReconcileOutcome(outcome);
+  });
+}
+
+async function probeCancelLanded(): Promise<boolean> {
+  return probeLanded(async () => {
+    const key = { sessionId: "probe-session", taskId: "probe-task" };
+    const shell = await openProbeShell(new FakeReviewStore(), key);
+    if (!shell) return false;
+    return (
+      typeof (shell as unknown as Partial<ExplicitCancelShell>).cancel ===
+      "function"
+    );
+  });
+}
+
+export const coreBehaviorLanded = await probeFullFirstPath();
+export const reconcileBehaviorLanded = await probeReconcileLanded();
+export const cancelBehaviorLanded = await probeCancelLanded();
 
 export async function openReadyShell(
   store: FakeReviewStore,
@@ -366,4 +272,4 @@ export type ExplicitCancelShell = ReviewSessionShell & {
   }): Promise<{ readonly kind: string; readonly reason?: string }>;
 };
 
-export const behaviorSuite = describe.skipIf(!behaviorLanded);
+export const coreBehaviorSuite = describe.skipIf(!coreBehaviorLanded);

@@ -1,10 +1,12 @@
 // Purpose: consumer behavior contract, part 2 of 2 — concurrency, recovery and reconciliation (consumer-example.md outcome table)
 // Responsibilities: shared-writers, duplicate-delivery, restart, lost-acknowledgement, cancel-after-display and incompatible-storage scenarios through ONLY the public composition-shell barrel
 // Rationale: openspec/changes/add-composition-shell/consumer-example.md + specs (change overlay); wanna-9wu; fakes/helpers and the transitional skip guard live in ./consumer-support
-import { expect, it } from "vitest";
+import { describe, expect, it } from "vitest";
 import * as shellApi from "../../src/composition-shell";
 import {
-  behaviorSuite,
+  cancelBehaviorLanded,
+  coreBehaviorLanded,
+  reconcileBehaviorLanded,
   CATALOG,
   ExplicitCancelShell,
   expectApplied,
@@ -16,11 +18,10 @@ import {
   reachActiveReview,
 } from "./consumer-support";
 
-behaviorSuite(
-  // skip reason lives in the suite name so the skipped state is self-explaining
-  "composition-shell consumer behavior — recovery and concurrency (transitional RED: auto-enables when wanna-0te/15e/8k6/gcp land shell behavior)",
+describe(
+  "composition-shell consumer behavior — recovery and concurrency",
   () => {
-    it("shared-writers — two shells on one base version apply exactly one of two distinct responses", async () => {
+    it.skipIf(!coreBehaviorLanded)("shared-writers — two shells on one base version apply exactly one of two distinct responses", async () => {
       const store = new FakeReviewStore();
       await reachActiveReview(store);
 
@@ -59,7 +60,7 @@ behaviorSuite(
       expect(resumed.feedback).toBe(recordedFeedback);
     });
 
-    it("duplicate-delivery — a retried event id yields a typed duplicate correlated with the stored receipt, also after reconstruction", async () => {
+    it.skipIf(!coreBehaviorLanded)("duplicate-delivery — a retried event id yields a typed duplicate correlated with the stored receipt, also after reconstruction", async () => {
       const store = new FakeReviewStore();
       const { shell } = await reachActiveReview(store);
       const view = shell.project();
@@ -105,7 +106,7 @@ behaviorSuite(
       expect(after.feedback).toBe(FIRST_FEEDBACK);
     });
 
-    it("restart — reopening the same durable store restores revision, completed work and provenance", async () => {
+    it.skipIf(!coreBehaviorLanded)("restart — reopening the same durable store restores revision, completed work and provenance", async () => {
       const store = new FakeReviewStore();
       const { shell } = await reachActiveReview(store);
       const view = shell.project();
@@ -136,7 +137,7 @@ behaviorSuite(
       );
     });
 
-    it("lost-acknowledgement — an unknown outcome blocks mutation until reconcile and replay never repeats the committed response", async () => {
+    it.skipIf(!reconcileBehaviorLanded)("lost-acknowledgement — an unknown outcome blocks mutation until reconcile and replay never repeats the committed response", async () => {
       const store = new FakeReviewStore();
       const { shell } = await reachActiveReview(store);
       const view = shell.project();
@@ -174,7 +175,7 @@ behaviorSuite(
       expect(resumed.feedback).toBe(FIRST_FEEDBACK);
     });
 
-    it("cancel-after-display — an explicit cancel retires the displayed review and history remains available", async () => {
+    it.skipIf(!cancelBehaviorLanded)("cancel-after-display — an explicit cancel retires the displayed review and history remains available", async () => {
       const store = new FakeReviewStore();
       const { shell } = await reachActiveReview(store);
       const view = shell.project();
@@ -196,7 +197,7 @@ behaviorSuite(
       ).toBe(true);
     });
 
-    it("incompatible-storage — an unsupported stored version yields recovery_required and preserves existing data", async () => {
+    it.skipIf(!coreBehaviorLanded)("incompatible-storage — an unsupported stored version yields recovery_required and preserves existing data", async () => {
       const store = new FakeReviewStore();
       const shell = await openReadyShell(store);
       const created = await shell.updateArtifact({

@@ -1,0 +1,11 @@
+id = "independent-writers-share-a-base-revision"
+description = "Scenario: independent writers share a base revision — two independent shells sharing one atomic port submit distinct responses from the same aggregate version; exactly one applies and the other receives a typed conflict with no second completion (unit-level fake-port proof; durable browser-level proof is wanna-9r2)."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=independent-writers-share-a-base-revision"
+timeout_seconds = 120

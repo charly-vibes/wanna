@@ -1,0 +1,11 @@
+id = "artifact-changes-before-decision-commit"
+description = "Scenario: artifact changes before decision commit — revision 7 is evaluated and revision 8 becomes authoritative before commit; the old decision is rejected as typed stale with no active review created, and explicit artifact updates obey the same aggregate boundary."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=artifact-changes-before-decision-commit"
+timeout_seconds = 120

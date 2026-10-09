@@ -154,14 +154,22 @@ function portReason(kind: FailedLoad["kind"], reason: string | undefined): strin
   return `port load reported ${kind} without a reason`;
 }
 
-function readyOutcome(state: ShellState, pins: ShellPins): OpenReviewSessionOutcome {
-  return { kind: "ready", shell: createReviewSessionShell(state, pins) };
+function readyOutcome(
+  state: ShellState,
+  pins: ShellPins,
+  port: ReviewPersistencePort,
+): OpenReviewSessionOutcome {
+  return { kind: "ready", shell: createReviewSessionShell(state, pins, port) };
 }
 
-function loadedOutcome(snapshot: AggregateSnapshot, pins: ShellPins): OpenReviewSessionOutcome {
+function loadedOutcome(
+  snapshot: AggregateSnapshot,
+  pins: ShellPins,
+  port: ReviewPersistencePort,
+): OpenReviewSessionOutcome {
   const rejection = storedStateRejection(snapshot);
   if (rejection !== null) return { kind: "recovery_required", reason: rejection };
-  return readyOutcome(shellStateFromSnapshot(snapshot), pins);
+  return readyOutcome(shellStateFromSnapshot(snapshot), pins, port);
 }
 
 function failedLoadOutcome(outcome: FailedLoad): OpenReviewSessionOutcome {
@@ -171,9 +179,13 @@ function failedLoadOutcome(outcome: FailedLoad): OpenReviewSessionOutcome {
   return { kind: "recovery_required", reason: portReason("recovery_required", outcome.reason) };
 }
 
-function mapLoadOutcome(outcome: PortLoadOutcome, pins: ShellPins): OpenReviewSessionOutcome {
-  if (outcome.kind === "loaded") return loadedOutcome(outcome.snapshot, pins);
-  if (outcome.kind === "not_found") return readyOutcome(emptyShellState(), pins);
+function mapLoadOutcome(
+  outcome: PortLoadOutcome,
+  pins: ShellPins,
+  port: ReviewPersistencePort,
+): OpenReviewSessionOutcome {
+  if (outcome.kind === "loaded") return loadedOutcome(outcome.snapshot, pins, port);
+  if (outcome.kind === "not_found") return readyOutcome(emptyShellState(), pins, port);
   return failedLoadOutcome(outcome);
 }
 
@@ -208,5 +220,5 @@ export async function openReviewSession(
     catalog: input.catalog,
   };
   const loaded = await loadThroughPort(input.port, input.key);
-  return mapLoadOutcome(loaded, pins);
+  return mapLoadOutcome(loaded, pins, input.port);
 }

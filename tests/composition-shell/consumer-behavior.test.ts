@@ -4,7 +4,7 @@
 import { expect, it } from "vitest";
 import * as shellApi from "../../src/composition-shell";
 import {
-  behaviorSuite,
+  coreBehaviorSuite,
   CATALOG,
   expectApplied,
   FakeReviewStore,
@@ -14,9 +14,9 @@ import {
   reachActiveReview,
 } from "./consumer-support";
 
-behaviorSuite(
+coreBehaviorSuite(
   // skip reason lives in the suite name so the skipped state is self-explaining
-  "composition-shell consumer behavior — core flow (transitional RED: auto-enables when wanna-0te/15e/8k6/gcp land shell behavior)",
+  "composition-shell consumer behavior — core flow (guarded until the full first path lands: wanna-0te/15e/8k6)",
   () => {
     it("first-review — a revision-7 review completes with feedback and provenance persisted and no authorization or external action", async () => {
       const store = new FakeReviewStore();
@@ -106,9 +106,12 @@ behaviorSuite(
       const store = new FakeReviewStore();
       const { shell } = await reachActiveReview(store);
       const activeView = shell.project();
+      // reachActiveReview commits twice (artifact creation + decision commit),
+      // so the authoritative aggregate version is 2 — updated from the
+      // scaffold-era assumption that only the creation commits.
       const moved = await shell.updateArtifact({
         operationId: "artifact-revision-8",
-        expectedAggregateVersion: 1,
+        expectedAggregateVersion: 2,
         revision: 8,
         contentRef: "artifact-1/revisions/8",
       });
@@ -151,9 +154,11 @@ behaviorSuite(
       });
       if (submitted.kind !== "recorded")
         throw new Error(`expected recorded submission, got ${submitted.kind}`);
+      // create + decision + recorded feedback = aggregate version 3 (see the
+      // reachActiveReview note above).
       const moved = await shell.updateArtifact({
         operationId: "artifact-revision-8",
-        expectedAggregateVersion: 2,
+        expectedAggregateVersion: 3,
         revision: 8,
         contentRef: "artifact-1/revisions/8",
       });

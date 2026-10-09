@@ -1,0 +1,11 @@
+id = "duplicate-after-restart"
+description = "Scenario: duplicate after restart — an already recorded response ID delivered after shell reconstruction returns a typed duplicate correlated with its stored receipt and makes no second state mutation; retried operation ids behave identically within one shell lifetime."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=duplicate-after-restart"
+timeout_seconds = 120

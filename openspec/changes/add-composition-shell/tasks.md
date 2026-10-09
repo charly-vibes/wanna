@@ -22,7 +22,7 @@ passing path, and leaves structural tidying to the separate refactor ticket.
       interface, with no implicit persistence (wanna-0te).
 - [x] 2.2 RED→GREEN: need normalization → catalog/policy eligibility → engine;
       explicit mappings, empty result and preserved evidence/version pins (wanna-15e).
-- [ ] 2.3 RED→GREEN: initial decision freshness and current response completion
+- [x] 2.3 RED→GREEN: initial decision freshness and current response completion
       through atomic conditional aggregate/replay/receipt commits (wanna-8k6).
 
 Companion add-workbench-spa:1.1 builds the durable adapter after the API contract;

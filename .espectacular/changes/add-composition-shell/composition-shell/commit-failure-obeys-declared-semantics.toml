@@ -1,5 +1,5 @@
 id = "commit-failure-obeys-declared-semantics"
-description = "Scenario: commit failure obeys declared semantics (open-boundary slice) — injected load failures return the declared typed outcomes with a non-empty reason and no mutation."
+description = "Scenario: commit failure obeys declared semantics — injected failures at every shell commit boundary (open load, updateArtifact, commitDecision, submit) map to the declared typed outcomes (unavailable, unknown_effect; thrown commits never authorize retry) with no mutation and no silent double application."
 archetype = "PF"
 status = "active"
 superseded_by = ""
