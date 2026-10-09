@@ -1,0 +1,10 @@
+id = "reuse-comparison-complete"
+description = "The evaluation compares the workbench and second consumer with a direct implementation under identical acceptance scenarios and records integration effort, custom coordination and an explicit proceed, revise, narrow or defer decision."
+archetype = "NR"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+
+[[tests.vitest]]
+flags = "--testNamePattern=reuse comparison"
+timeout_seconds = 120

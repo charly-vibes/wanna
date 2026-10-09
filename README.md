@@ -64,7 +64,9 @@ The composition-shell / review-workbench prototype is implemented
 (`src/composition-shell/`, `src/review-workbench/`) with an executable
 consumer example (`examples/review-workbench/`). Its documented capabilities
 and limitations live in [`docs/review-quickstart.md`](docs/review-quickstart.md);
-surface revision history lives in
+the second-consumer reuse evidence and its recorded distribution decision live
+in [`docs/reuse-comparison.md`](docs/reuse-comparison.md); surface revision
+history lives in
 `openspec/changes/add-composition-shell/compatibility.md`.
 
 ## Provenance

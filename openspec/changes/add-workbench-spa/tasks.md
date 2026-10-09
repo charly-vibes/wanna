@@ -21,7 +21,7 @@ use red→green; structural refactoring is tracked separately as wanna-lwo.
 
 ## 3. Evidence before distribution
 
-- [ ] 3.1 Define comparison protocol, then RED→GREEN a headless second consumer
+- [x] 3.1 Define comparison protocol, then RED→GREEN a headless second consumer
       and equivalent direct baseline against the same scenarios. Record initial
       and marginal effort, remaining custom coordination, core changes, limitations
       and explicit proceed/revise/narrow/defer decision (wanna-zcq).

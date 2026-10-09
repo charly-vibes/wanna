@@ -87,16 +87,22 @@ describe("review workbench screen: first path", () => {
       "@wanna/review-indexeddb",
     ]);
     const dir = join(import.meta.dirname, "..", "..", "examples", "review-workbench");
-    for (const file of readdirSync(dir).filter((n) => n.endsWith(".ts"))) {
-      const source = readFileSync(join(dir, file), "utf8");
+    const headlessDir = join(import.meta.dirname, "..", "..", "examples", "review-headless");
+    for (const [label, scanDir] of [
+      ["review-workbench", dir],
+      ["review-headless", headlessDir],
+    ] as const) {
+    for (const file of readdirSync(scanDir).filter((n) => n.endsWith(".ts"))) {
+      const source = readFileSync(join(scanDir, file), "utf8");
       const specifiers = [...source.matchAll(/from\s+["']([^"'"]+)["']/g)].map((m) => m[1]!);
       for (const spec of specifiers) {
         if (spec.startsWith(".")) continue; // intra-example module
         expect(
           allowed.has(spec),
-          `${file} imports non-public module ${spec}`,
+          `${label}/${file} imports non-public module ${spec}`,
         ).toBe(true);
       }
+    }
     }
   });
 });
