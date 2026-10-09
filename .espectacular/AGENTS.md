@@ -67,3 +67,15 @@ Resolved surface gaps (wanna-gcp, 2026-10-09):
   reload-retains-evaluation-evidence, restart-restores-the-review,
   retirement-only-on-explicit-command, retry-requires-refreshed-snapshot,
   surface-change-ships-a-compatibility-decision).
+
+Resolved surface gaps (wanna-snh, 2026-10-10):
+- The durable review-workbench adapter landed
+  (src/review-workbench/adapters/review-indexeddb.ts, 15 contract tests in
+  tests/review-workbench/review-indexeddb.test.ts). One scenario-scoped
+  contract TOML was bound under the change overlay:
+  adapter-conflicts-serialized (pattern: "independent connections from one
+  base cannot apply"). The remaining 5 review-workbench scenarios stay
+  unbound per the no-tests-ran rule: their behavior is owned by
+  wanna-01q (review-revision-visible, stale-feedback-explained),
+  wanna-9r2 (resume-outcomes-visible), wanna-2o8 (consumer-uses-public-surface)
+  and wanna-zcq (reuse-comparison-complete).

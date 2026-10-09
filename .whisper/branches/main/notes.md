@@ -44,4 +44,14 @@
   - Consumer suites unguarded (probes + ExplicitCancelShell retired); 8 scenario TOMLs bound (23 total). session.ts split for pretender: lifecycle.ts owns commitOperation/absorb/mutationRefusal/findInteraction/cancel/reconcile.
   - Gates: ah check --run-tests 386, vitest 749, spk lint 0, openspec strict, tsc/eslint/pretender clean.
   - NOT pushed: ba404e5 on main — conservative profile, awaiting go-ahead.
-  - **Next:** bd ready → wanna-snh P1 (durable adapter preserving pending-operation identity across restart) or wanna-bql P2.
+  - **Next:** bd ready → wanna-snh P1 (durable adapter preserving pending-operation identity across restart) or wanna-bql P2. (superseded by 0b595e05b30b19f9b04688d49be94f71536c081f71262f6757299b9cf0e635ae)
+- 2026-10-09T14:23:29Z [id:0b595e05b30b19f9b04688d49be94f71536c081f71262f6757299b9cf0e635ae] (#snap) ### 2026-10-09 11:23 — snap (correction)
+  - ba404e5 + 0fdab51 PUSHED to origin/main (pre-push gates green: ah-check 338s, pretender, testaruda); wanna-gcp fully landed, pushed and closed.
+  - **Next:** /renew → bd ready → wanna-snh P1 (durable adapter preserving pending-operation identity across restart) or wanna-bql P2 (corpus OpenSpec required-section compat). (supersedes 125509bb447d9b30a0f24a56e6bf59c114cc7dd45b391c2ce60c6401d7029501)
+- 2026-10-09T14:44:46Z [id:ffb75aa734e17d4571f8617cc1c1a5e3606dae47d97850cc440942a749075045] (#snap) ### 2026-10-09 — wanna-snh landed (unpushed)
+  - wanna-snh (composition-shell add-workbench-spa 1.1) RED→GREEN: durable IndexedDB review adapter at src/review-workbench/adapters/review-indexeddb.ts implementing ReviewPersistencePort (supportsAtomicCommitAndReplay=true, dedup scope sessionId). 15 contract tests in tests/review-workbench/review-indexeddb.test.ts via fake-indexeddb (dev dep added).
+  - Key semantics: single-record aggregate store makes state/replay/receipts one atomic unit; durable pending-operation record written BEFORE every uncertain write; main commit tx spans aggregates+pending and settles pending atomically (delete on apply/duplicate/conflict); tx abort → mark pending 'aborted' → unavailable, unmarkable → unknown_effect; reconcile: receipt applied → applied, aborted → not_applied, pending-without-receipt → unknown_effect (never inferred as no-effect, survives restart); payload fingerprint guards op-id reuse (different payload → conflict); corrupt/incompatible record → load recovery_required preserving data.
+  - Fault injection hooks at real adapter boundaries (loseAckFor / abortMainWrite / abandonAfterPending), test-only.
+  - Gates: vitest 764 passing (13 todo), tsc clean, eslint clean, pretender 0 new, spk lint 0, ah check 0; overlay ah check --changes add-workbench-spa --run-tests: 363 passed, adapter-conflicts-serialized bound (5 no-toml remain — honest state per y8j convention, owned by 01q/9r2/2o8/zcq).
+  - NOT pushed: conservative profile, awaiting go-ahead.
+  - **Next:** bd ready → wanna-01q P1 (minimal review screen over public shell + this adapter) — unblocks wanna-9r2/2o8.

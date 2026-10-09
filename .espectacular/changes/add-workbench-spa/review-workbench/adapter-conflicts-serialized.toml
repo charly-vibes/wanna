@@ -1,0 +1,10 @@
+id = "adapter-conflicts-serialized"
+description = "Two independent IndexedDB connections submitting distinct responses from the same stored version: one applies, the other conflicts; reconstruction and duplicate delivery never create a second completion."
+archetype = "NR"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+
+[[tests.vitest]]
+flags = "--testNamePattern=independent connections from one base cannot both apply"
+timeout_seconds = 120
