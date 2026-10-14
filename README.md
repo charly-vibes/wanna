@@ -71,11 +71,12 @@ history lives in
 
 ## Provenance
 
-`interaction-uiux-amplification-specodelic-v2.zip` at the repo root is the
-provenance artifact for the deployed corpus: the corpus under
-`openspec/specs/` was deployed from it, then repaired to lint-clean
-(81 findings). Do not regenerate the corpus from the zip casually — treat the
-zip as read-only provenance and the corpus as the live source of truth.
+The deployed corpus under `openspec/specs/` was originally extracted from a
+provenance zip (`interaction-uiux-amplification-specodelic-v2.zip`, since
+removed from the working tree — it remains retrievable from git history,
+commit `8ef1634`) and then repaired to lint-clean (81 findings). The corpus in
+`openspec/specs/` is the live source of truth; do not regenerate it from the
+historical zip casually.
 
 ## Docs
 
