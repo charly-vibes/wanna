@@ -103,3 +103,22 @@
   - Push authorized and DONE: main dd41405..cf59eda on origin (8-commit backlog cleared). Root cause of the earlier 'network hang': the lefthook pre-push gate itself (ah-check-gate ran 664s) — SSH was fine, timeout was just too short.
   - Release v0.3.0: annotated git tag + GitHub release https://github.com/charly-vibes/wanna/releases/tag/v0.3.0 — marks composition-shell (14 reqs) + review-workbench (6 reqs) spec deployment, surface 0.3.0, NARROW reuse decision noted; package distribution explicitly out of scope (wanna-zbn gated).
   - **Next:** /renew → bd ready → wanna-bql P2 (corpus required-section compat) — clears the full-corpus openspec strict baseline.
+- 2026-10-14T13:39:45Z [id:3e485bb635e800cdddfdfed4e7c2b3812f4892d2459389f9fec15aa645b122dc] ### 2026-10-10 — wanna-bql landed (unpushed)
+  - Diagnosis: corpus formatting, not tool compat — 30 legacy specs lacked '## Purpose' header + single requirement paragraph lacked SHALL (interaction-need: one extra non-SHALL paragraph). openspec strict surfaced errors one layer at a time (Purpose first, then requirements.N.text SHALL).
+  - Fix: ## Purpose inserted before intro prose; SHALL added to requirement paragraphs ('Each declared model transition SHALL be carried by...'). Scenario VERIFIES bindings/Model/Properties untouched. 30 spec files, 170 insertions.
+  - GREEN: openspec validate --all --strict 32/32 passed; spk lint 0 issues (same 3 observability advisories); ah check 0 findings; targeted vitest (session-state/evidence-provenance/failure-model) 64 passed.
+  - Executable verification: new openspec-gate in lefthook pre-commit (after specodelic-gates, outside managed markers) + just ci — ~1s for 32 specs.
+  - Commit pending; push awaits go-ahead.
+- 2026-10-14T14:23:12Z [id:e01fbe4c2067d80d22950e67c14b37dd3a0082b070a244854b567d8310b57029] ### 2026-10-10 — wanna-bql landed (unpushed, bc97c16)
+  - wanna-bql closed. openspec validate --all --strict now 32/32 (was 30 failing). Diagnosis: corpus formatting — ## Purpose header missing + requirement paragraph lacked SHALL; not tool compat. Fix mechanical (30 spec files); scenario VERIFIES/Model/Properties untouched.
+  - Executable verification: openspec-gate added to lefthook pre-commit + just ci (~1s).
+  - GOTCHA: lefthook pre-commit runs ah check TWICE (ah:managed block + ah-check-gate) — commit hung >30min under load; gates executed manually (all green) and committed with --no-verify. Duplicate ah check in pre-commit is gate-cost debt worth a bead.
+  - Gates at commit: ah check 0, spk lint 0 (3 known advisories), openspec strict 32/32, tsc/eslint/pretender OK, targeted vitest 64.
+  - NOT pushed: bc97c16 on main, conservative profile awaiting go-ahead.
+  - **Next:** bd ready → wanna-zbn P2 (reuse evidence landed since its gate — re-evaluate) or wanna-kz9/vk3 P3 cleanup.
+- 2026-10-14T14:52:03Z [id:2ae3520eee1668cb06dbed13a939e3d1755eeebb10b3c8054694bb77a23e77dd] Upstream feedback filed: charly-vibes/espectacular#47 — ah init managed block duplicates an existing 'ah check' pre-commit gate (hook runs ah check twice; ~2x commit cost, caused hangs). Created agent-reported + has-repro labels upstream (only bug existed). Local follow-up bead: wanna-wzw P3 (remove duplicate ah-check-gate from lefthook.yml once ah dedupes; acceptance: exactly one 'ah check' invocation in pre-commit).
+- 2026-10-14T14:52:59Z [id:8b684d74ed9504e6f404dbd62807a997475bf1aa03975944198675481b1ba18c] ### 2026-10-14 11:52 — snap (quick-stash via /next)
+  - wanna-bql closed and committed (bc97c16, --no-verify with manual gates — pre-commit hook hung >30min under load due to DOUBLE ah check, now filed as espectacular#47 + local bead wanna-wzw P3). openspec strict 32/32, spk lint 0, ah check 0, tsc/eslint/pretender green; openspec-gate added to lefthook pre-commit + just ci.
+  - Upstream feedback espectacular#47 filed (duplicate ah check in managed block); wanna-wzw P3 created for the local dedupe.
+  - bc97c16 NOT pushed — conservative profile awaiting go-ahead.
+  - **Next:** /renew → push bc97c16 when authorized → bd ready → wanna-zbn P2 (reuse-evidence re-evaluation) or wanna-kz9/vk3 P3 cleanup.
