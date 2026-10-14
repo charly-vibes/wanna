@@ -6,6 +6,8 @@ statement: THE Interaction Engine SHALL evaluate normalized interaction needs th
 
 # Interaction Engine
 
+## Purpose
+
 The engine orchestrates the decision boundary between an agent's proposed human-contribution need and the trusted interaction policy/catalog. It returns decision data only; it does not render UI, execute external actions, or grant authority.
 
 ## Constraints
@@ -64,7 +66,7 @@ The engine orchestrates the decision boundary between an agent's proposed human-
 
 ### Requirement: Interaction Engine model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: accept-context moves `draft` to `normalized`
 - **WHEN** the model is in the `draft` state and the `accept_context` transition guard holds ([[interaction.engine.context_schema_valid]])

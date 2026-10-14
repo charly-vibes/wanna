@@ -6,6 +6,8 @@ statement: THE Process Model Layer SHALL represent task progression and dependen
 
 # Process Model Primitives
 
+## Purpose
+
 Process models represent lifecycle and control flow, not screen layout. The initial system supports finite-state workflows and dependency DAGs; reactive derived state, constraint models, and temporal/event histories may be layered on without forcing every task into one universal representation. A process model declares its completion conditions, waits, cancellation behavior, and recovery path.
 
 ## Constraints
@@ -62,7 +64,7 @@ Process models represent lifecycle and control flow, not screen layout. The init
 
 ### Requirement: Process Model Primitives model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: validate-process moves `draft` to `validated`
 - **WHEN** the model is in the `draft` state and the `validate_process` transition guard holds ([[process.model.completion_criteria_explicit]])

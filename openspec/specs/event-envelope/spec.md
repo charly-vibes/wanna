@@ -6,6 +6,8 @@ statement: THE Event Envelope Layer SHALL correlate, validate, deduplicate, and 
 
 # Typed Event Envelope
 
+## Purpose
+
 Events are immutable facts or commands crossing a boundary. A response event carries identity for the session, task, interaction, contract revision, event, and expected task revision. The reducer is pure and returns either a new state plus effect intents or a typed rejection. UI callbacks are adapters that create events; they do not mutate domain state directly.
 
 ## Constraints
@@ -54,7 +56,7 @@ Events are immutable facts or commands crossing a boundary. A response event car
 
 ### Requirement: Typed Event Envelope model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: validate-event moves `received` to `validated`
 - **WHEN** the model is in the `received` state and the `validate_event` transition guard holds ([[event.envelope.payload_schema_checked]])

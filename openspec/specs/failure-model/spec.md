@@ -6,6 +6,8 @@ statement: WHEN execution or interaction deviates from expected behavior, THE Fa
 
 # Failure Model
 
+## Purpose
+
 Failure is ordinary runtime state. A timeout, malformed AI proposal, inaccessible interaction, stale revision, partial transaction, conflicting edit, or user mistake must be represented explicitly rather than collapsed into a generic error.
 
 A particularly important distinction is between a known failed effect and an **unknown outcome**. Loss of acknowledgement does not prove that an external side effect did not occur.
@@ -58,7 +60,7 @@ A particularly important distinction is between a known failed effect and an **u
 
 ### Requirement: Failure Model model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: contain-failure moves `detected` to `contained`
 - **WHEN** the model is in the `detected` state and the `contain_failure` transition guard holds ([[failure.model.failure_is_typed]])

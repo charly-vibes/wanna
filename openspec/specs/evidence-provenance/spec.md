@@ -6,6 +6,8 @@ statement: THE Evidence and Provenance Layer SHALL retain traceable support for 
 
 # Evidence and Provenance
 
+## Purpose
+
 Evidence records connect a result to its inputs, transformations, model-produced proposals, deterministic policy decisions, reviewer actions, tests, and deployed revisions. Provenance supports explanation and audit; it does not imply that an input source is true or that a human approval proves correctness.
 
 ## Constraints
@@ -55,7 +57,7 @@ Evidence records connect a result to its inputs, transformations, model-produced
 
 ### Requirement: Evidence and Provenance model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: validate-evidence moves `proposed` to `validated`
 - **WHEN** the model is in the `proposed` state and the `validate_evidence` transition guard holds ([[evidence.provenance.evidence_has_identity]])

@@ -6,6 +6,8 @@ statement: THE Recovery Layer SHALL select only recovery operations whose precon
 
 # Recovery Contract
 
+## Purpose
+
 Recovery operations have different semantics and must not be conflated: `retry`, `resume`, `reconcile`, `restore`, `rollback`, `compensate`, `restart`, `abort`, `escalate`, and `take_over`.
 
 Rollback restores managed internal state. Compensation performs a new action intended to offset a previously completed external effect. They are not equivalent.
@@ -60,7 +62,7 @@ Rollback restores managed internal state. Compensation performs a new action int
 
 ### Requirement: Recovery Contract model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: validate-recovery moves `proposed` to `eligible`
 - **WHEN** the model is in the `proposed` state and the `validate_recovery` transition guard holds ([[recovery.contract.recovery_operation_typed]])

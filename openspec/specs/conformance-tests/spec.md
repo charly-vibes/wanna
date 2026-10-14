@@ -6,6 +6,8 @@ statement: THE Interaction Engine Conformance Suite SHALL detect behavioral drif
 
 # Conformance and Regression Tests
 
+## Purpose
+
 Specodelic owns the specification structure and abstract lifecycle. The TypeScript test runner owns verification of the TypeScript implementation. Each Property ID in the feature specs must map to one or more stable TypeScript test IDs or scenario files; a passing Specodelic lint is not implementation conformance.
 
 ## Constraints
@@ -69,7 +71,7 @@ Specodelic owns the specification structure and abstract lifecycle. The TypeScri
 
 ### Requirement: Conformance and Regression Tests model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: map-property-tests moves `unmapped` to `mapped`
 - **WHEN** the model is in the `unmapped` state and the `map_property_tests` transition guard holds ([[conformance.tests.every_property_mapped_to_test]])

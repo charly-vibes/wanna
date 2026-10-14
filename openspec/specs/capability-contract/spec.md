@@ -6,6 +6,8 @@ statement: THE Capability Contract Layer SHALL describe reusable operations with
 
 # Reusable Capability Contract
 
+## Purpose
+
 A capability is a reusable operation the agent can invoke after it has been registered. The contract separates what the operation promises from how it is implemented. It is compatible with both deterministic functions and LLM-backed implementations, but implementation selection and invocation policy remain explicit. Model-generated capability proposals are untrusted until validated and committed.
 
 ## Constraints
@@ -50,7 +52,7 @@ A capability is a reusable operation the agent can invoke after it has been regi
 
 ### Requirement: Reusable Capability Contract model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: validate-capability moves `proposed` to `validated`
 - **WHEN** the model is in the `proposed` state and the `validate_capability` transition guard holds ([[capability.contract.inputs_outputs_typed]])

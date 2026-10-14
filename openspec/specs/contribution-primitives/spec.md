@@ -6,6 +6,8 @@ statement: THE Contribution Primitive Layer SHALL represent the smallest semanti
 
 # Human Contribution Primitives
 
+## Purpose
+
 A contribution primitive is the smallest semantically complete unit of human participation that can emit a typed event. It is not a widget and is not a multi-step workflow. Needs explain *why* human participation is required; contribution primitives describe *what semantic contribution* the human makes; interaction patterns compose primitives; presentation contracts determine *how* a host realizes them.
 
 The initial semantic families are: `express`, `provide`, `constrain`, `select`, `order`, `allocate`, `inspect`, `annotate`, `edit`, `evaluate`, `verify`, `correct`, `delegate`, `interrupt`, `resume`, `take_over`, `authorize`, `reject`, `acknowledge`, `defer`, and `cancel`. This vocabulary is provisional and versioned: evidence or implementation experience may justify splitting, merging, or retiring primitives.
@@ -58,7 +60,7 @@ The initial semantic families are: `express`, `provide`, `constrain`, `select`, 
 
 ### Requirement: Human Contribution Primitives model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: validate-primitive moves `proposed` to `validated`
 - **WHEN** the model is in the `proposed` state and the `validate_primitive` transition guard holds ([[contribution.primitives.primitive_semantically_atomic]])

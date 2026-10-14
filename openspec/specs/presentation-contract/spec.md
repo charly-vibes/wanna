@@ -6,6 +6,8 @@ statement: THE Presentation Contract Layer SHALL translate validated interaction
 
 # Presentation Contract
 
+## Purpose
+
 A presentation contract describes the semantic role of an interaction, its content hierarchy, density, layout hints, and accessibility requirements. It does not name arbitrary host components or contain HTML, CSS, scripts, event handlers, or executable expressions. A host maps the contract onto its own trusted component catalog.
 
 Semantic intent is portable; exact visual rendering is host-specific. The same interaction should preserve meaning, response schema, and safety requirements even when a Pi TUI uses a compact form and a web host uses a richer layout.
@@ -61,7 +63,7 @@ Semantic intent is portable; exact visual rendering is host-specific. The same i
 
 ### Requirement: Presentation Contract model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: validate-presentation moves `proposed` to `validated`
 - **WHEN** the model is in the `proposed` state and the `validate_presentation` transition guard holds ([[presentation.contract.semantic_role_required]])

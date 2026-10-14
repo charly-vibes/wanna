@@ -6,6 +6,8 @@ statement: THE Host Adapter Layer SHALL preserve host-neutral interaction semant
 
 # Host Adapter Layer
 
+## Purpose
+
 Adapters translate validated interaction contracts into the capabilities of Pi's TUI, browser-based interfaces, and other terminal/web hosts. They may change layout and control affordances but may not change business meaning, bypass core validation, or confer authorization.
 
 ## Constraints
@@ -71,7 +73,7 @@ Adapters translate validated interaction contracts into the capabilities of Pi's
 
 ### Requirement: Host Adapter Layer model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: validate-received-contract moves `received` to `capability_checked`
 - **WHEN** the model is in the `received` state and the `validate_received_contract` transition guard holds ([[host.adapters.incoming_contract_valid]])

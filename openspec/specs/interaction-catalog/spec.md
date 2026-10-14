@@ -6,6 +6,8 @@ statement: THE Interaction Catalog SHALL define the trusted interaction kinds, t
 
 # Trusted Interaction Catalog
 
+## Purpose
+
 The catalog is the closed, versioned registry of interaction kinds and their response semantics. It supplies trusted schemas and mappings to the policy engine. The LLM may request or propose a catalog kind, but cannot create a new kind or alter its schema. Hosts map catalog kinds to trusted renderers.
 
 ## Initial v1 interaction kinds
@@ -76,7 +78,7 @@ A missing human contribution does not automatically imply that the catalog shoul
 
 ### Requirement: Trusted Interaction Catalog model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: validate-catalog moves `draft` to `validated`
 - **WHEN** the model is in the `draft` state and the `validate_catalog` transition guard holds ([[interaction.catalog.kind_response_schema_defined]])

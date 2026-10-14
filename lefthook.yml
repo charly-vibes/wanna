@@ -13,6 +13,10 @@ pre-commit:
     specodelic-gates:
       run: spk lint openspec
     # <!-- SPK:END -->
+    openspec-gate:
+      # corpus formatting gate: every deployed spec must pass openspec strict
+      # validation (wanna-bql). Runs after specodelic-gates; ~1s for 32 specs.
+      run: openspec validate --all --strict
     pretender-gate:
       run: pretender check --staged --mode gate
     tsc-gate:

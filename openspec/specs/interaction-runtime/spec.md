@@ -6,6 +6,8 @@ statement: THE Interaction Runtime SHALL apply validated events only when their 
 
 # Interaction Runtime
 
+## Purpose
+
 The runtime reduces validated input events against committed state. Host adapters may deliver an event more than once or out of order. The core must make acceptance/rejection explicit and must not silently apply stale or duplicate submissions.
 
 ## Constraints
@@ -70,7 +72,7 @@ The runtime reduces validated input events against committed state. Host adapter
 
 ### Requirement: Interaction Runtime model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: validate-envelope moves `active` to `validated`
 - **WHEN** the model is in the `active` state and the `validate_envelope` transition guard holds ([[interaction.runtime.event_envelope_valid]])

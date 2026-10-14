@@ -6,6 +6,8 @@ statement: THE Interaction Policy and Presentation Layers SHALL represent measur
 
 # Cognitive Ergonomics and Adaptive Stability
 
+## Purpose
+
 The system should reduce unnecessary memory burden, interruption, choice complexity, and context switching while preserving predictability and user control. Some inputs are objectively measurable (choice count, required recall, step count, destructive consequence); others such as expertise or confusion are uncertain observations and must remain advisory.
 
 ## Constraints
@@ -56,7 +58,7 @@ The system should reduce unnecessary memory burden, interruption, choice complex
 
 ### Requirement: Cognitive Ergonomics and Adaptive Stability model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: propose-adaptation moves `baseline` to `candidate_adaptation`
 - **WHEN** the model is in the `baseline` state and the `propose_adaptation` transition guard holds ([[cognitive.ergonomics.measurable_burden_separated_from_inference]])

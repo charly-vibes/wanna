@@ -6,6 +6,8 @@ statement: THE Interaction Policy SHALL return eligible interaction recommendati
 
 # Interaction Policy
 
+## Purpose
+
 The policy selects among catalog-defined interaction kinds after the task has been normalized. LLM reasoning may identify the likely contribution needed; it is not the authority for eligibility, hard constraints, ordering, or permission to execute external work.
 
 ## Constraints
@@ -70,7 +72,7 @@ The policy selects among catalog-defined interaction kinds after the task has be
 
 ### Requirement: Interaction Policy model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: begin-valid-evaluation moves `ready` to `evaluating`
 - **WHEN** the model is in the `ready` state and the `begin_valid_evaluation` transition guard holds ([[interaction.policy.policy_input_valid]])

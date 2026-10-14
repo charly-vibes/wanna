@@ -16,4 +16,5 @@ ci:
     npm test
     ah check
     spk lint openspec
+    openspec validate --all --strict
     pretender check src tests tools --mode gate

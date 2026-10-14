@@ -6,6 +6,8 @@ statement: THE Interaction Security Boundary SHALL treat agent proposals and hos
 
 # Interaction Security Boundary
 
+## Purpose
+
 The agent may describe a need for human input and propose serializable values. It may not define new executable components, permissions, policy overrides, or authority-bearing actions. The core and host adapters enforce the trusted catalog and revalidate every response.
 
 ## Constraints
@@ -57,7 +59,7 @@ The agent may describe a need for human input and propose serializable values. I
 
 ### Requirement: Interaction Security Boundary model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: accept-validated-payload moves `untrusted` to `validated`
 - **WHEN** the model is in the `untrusted` state and the `accept_validated_payload` transition guard holds ([[interaction.security.payload_passes_security_validation]])

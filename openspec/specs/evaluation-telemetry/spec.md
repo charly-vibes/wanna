@@ -6,6 +6,8 @@ statement: THE Evaluation and Telemetry Layer SHALL measure interaction quality 
 
 # Evaluation, Telemetry, and Optimization
 
+## Purpose
+
 Telemetry informs improvement but does not itself authorize policy changes. Measurements may include completion rate, correction rate, time to useful answer, abandonment, review burden, accessibility fallback, latency, token/cost use, safety failures, and outcome quality. The system must retain the distinction between agreement with a previous model and independently established correctness.
 
 ## Constraints
@@ -52,7 +54,7 @@ Telemetry informs improvement but does not itself authorize policy changes. Meas
 
 ### Requirement: Evaluation, Telemetry, and Optimization model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: evaluate-candidate moves `collecting` to `evaluated`
 - **WHEN** the model is in the `collecting` state and the `evaluate_candidate` transition guard holds ([[evaluation.telemetry.metrics_have_definitions]])

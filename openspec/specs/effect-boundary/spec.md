@@ -6,6 +6,8 @@ statement: THE Effect Boundary SHALL prevent preview, shadow evaluation, and unt
 
 # Execution and Effect Boundary
 
+## Purpose
+
 Pure decision logic and reducers return effect intents as data. A trusted executor performs approved effects through declared ports. Preview and shadow modes must isolate or suppress external effects, or use explicit test doubles, because executing two implementations against live systems can duplicate irreversible actions. Generated code is not considered sandboxed merely because it is validated as a string.
 
 ## Constraints
@@ -65,7 +67,7 @@ Pure decision logic and reducers return effect intents as data. A trusted execut
 
 ### Requirement: Execution and Effect Boundary model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: authorize-effect moves `proposed` to `authorized`
 - **WHEN** the model is in the `proposed` state and the `authorize_effect` transition guard holds ([[effect.boundary.effect_authorization_checked]])

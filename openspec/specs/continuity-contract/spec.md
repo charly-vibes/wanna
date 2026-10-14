@@ -6,6 +6,8 @@ statement: WHEN a human task is interrupted or transferred, THE Continuity Layer
 
 # Task Continuity
 
+## Purpose
+
 Persistence is not sufficient for continuity. After interruption, the human must be able to understand what was completed, what remains pending, what changed while absent, which effects are uncertain, and what requires attention.
 
 ## Constraints
@@ -57,7 +59,7 @@ Persistence is not sufficient for continuity. After interruption, the human must
 
 ### Requirement: Task Continuity model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: checkpoint-active-task moves `active` to `checkpointed`
 - **WHEN** the model is in the `active` state and the `checkpoint_active_task` transition guard holds ([[continuity.contract.checkpoint_scope_explicit]])

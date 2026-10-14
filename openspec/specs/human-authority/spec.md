@@ -6,6 +6,8 @@ statement: THE Human Authority Layer SHALL enforce authorization independently o
 
 # Human Authority and Approval
 
+## Purpose
+
 An interaction may collect consent, review, or approval, but rendering a button or receiving a click is not by itself proof of authorization. Authorization is evaluated at the trusted effect boundary against the current identity, scope, action, resource, policy version, and revision. Approval is scoped and expires or becomes stale when its material preconditions change.
 
 ## Constraints
@@ -55,7 +57,7 @@ An interaction may collect consent, review, or approval, but rendering a button 
 
 ### Requirement: Human Authority and Approval model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: request-approval moves `not_required` to `pending`
 - **WHEN** the model is in the `not_required` state and the `request_approval` transition guard holds ([[human.authority.approval_scope_explicit]])

@@ -6,6 +6,8 @@ statement: THE Change Transaction Layer SHALL apply capability and policy change
 
 # Change Transaction and Revision History
 
+## Purpose
+
 A change transaction records a base revision, candidate revision, validation results, approval requirements, commit result, and recovery pointer. Candidate construction and preview are separate from durable activation. A rollback creates a new revision that points to a previous accepted state; it does not erase the history of the failed or superseded revision.
 
 ## Constraints
@@ -58,7 +60,7 @@ A change transaction records a base revision, candidate revision, validation res
 
 ### Requirement: Change Transaction and Revision History model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: preview-change moves `draft` to `previewed`
 - **WHEN** the model is in the `draft` state and the `preview_change` transition guard holds ([[change.transaction.base_revision_pinned]])

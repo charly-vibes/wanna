@@ -6,6 +6,8 @@ statement: THE Trusted Component Catalog SHALL map semantic interaction roles to
 
 # Trusted Component Catalog
 
+## Purpose
+
 The catalog is a versioned allowlist and compatibility boundary. It defines the component roles available to each host, supported input/output semantics, limits, accessibility behavior, and fallback relationships. Agents can request semantic roles but cannot register arbitrary renderer code through ordinary interaction proposals.
 
 ## Constraints
@@ -49,7 +51,7 @@ The catalog is a versioned allowlist and compatibility boundary. It defines the 
 
 ### Requirement: Trusted Component Catalog model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: validate-catalog moves `draft` to `validated`
 - **WHEN** the model is in the `draft` state and the `validate_catalog` transition guard holds ([[component.catalog.schema_mapping_explicit]])

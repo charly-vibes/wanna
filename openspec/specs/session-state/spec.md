@@ -6,6 +6,8 @@ statement: THE Session State Layer SHALL maintain resumable interaction lifecycl
 
 # Interaction Session State
 
+## Purpose
+
 A session groups related tasks and interactions. It records active revisions, pending questions, suspended waits, cancellation, and recovery metadata. Session state must be serializable and host-neutral; ephemeral cursor position or terminal widget state belongs to the host presentation adapter unless it affects task semantics.
 
 ## Constraints
@@ -56,7 +58,7 @@ A session groups related tasks and interactions. It records active revisions, pe
 
 ### Requirement: Interaction Session State model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: suspend-session moves `open` to `suspended`
 - **WHEN** the model is in the `open` state and the `suspend_session` transition guard holds ([[session.state.session_serializable]])

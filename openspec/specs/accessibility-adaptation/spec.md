@@ -6,6 +6,8 @@ statement: THE Accessibility Adaptation Layer SHALL preserve interaction semanti
 
 # Accessibility and Adaptive Presentation
 
+## Purpose
+
 Accessibility is a correctness constraint, not a decorative preference. The host adapter maps semantic labels, descriptions, focus order, keyboard navigation, status announcements, and error associations to native mechanisms. When a requested capability cannot be represented accessibly, the adapter must choose a documented equivalent or report that the interaction is unsupported.
 
 ## Constraints
@@ -55,7 +57,7 @@ Accessibility is a correctness constraint, not a decorative preference. The host
 
 ### Requirement: Accessibility and Adaptive Presentation model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: check-accessibility moves `proposed` to `checked`
 - **WHEN** the model is in the `proposed` state and the `check_accessibility` transition guard holds ([[accessibility.adaptation.controls_have_names]])

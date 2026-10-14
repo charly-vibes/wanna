@@ -6,6 +6,8 @@ statement: WHEN a human-participation need is proposed, THE Need Normalizer SHAL
 
 # Human-Participation Need
 
+## Purpose
+
 A need describes *why* human participation is required now. It does not prescribe a widget, contribution primitive, workflow, or authority outcome. The initial vocabulary remains versioned and provisional: `provide_fact`, `clarify_intent`, `choose`, `rank`, `set_constraints`, `correct_artifact`, `review_artifact`, `diagnose`, `plan`, `verify_claim`, `authorize_action`, `steer_iteration`, `evaluate_result`, `teach_preference`, `coordinate`, and `monitor`.
 
 Several of these names describe compound activities. They remain need labels for compatibility but map through policy to one or more contribution primitives/patterns; they are not declared atomic.
@@ -73,7 +75,7 @@ separate needs.
 
 ### Requirement: Needs Are Presentation-Free and Policy-Bounded
 
-A need describes why human participation is required; it never prescribes
+A need describes why human participation is required; it SHALL never prescribe
 host components, layout, executable renderer code, or UI-specific
 authorization instructions, and it never collapses a compound human
 activity into a claimed atomic primitive. Model confidence is advisory

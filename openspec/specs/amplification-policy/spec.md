@@ -6,6 +6,8 @@ statement: THE Amplification Policy SHALL choose the least burdensome eligible i
 
 # Interaction Amplification Policy
 
+## Purpose
+
 Amplification means increasing the leverage of human input: collect several independent facts efficiently, expose meaningful alternatives, support direct correction, reveal evidence, or ask for authorization at the right time. It does not mean maximizing widgets, automation, interruption, or visual complexity.
 
 The policy is deterministic after task state, normalized need, host capabilities, risk class, user preferences, and evidence have been normalized. An LLM may propose the need or candidate description; it cannot author or bypass the trusted ranking and eligibility rules.
@@ -55,7 +57,7 @@ The policy is deterministic after task state, normalized need, host capabilities
 
 ### Requirement: Interaction Amplification Policy model transitions are observable
 
-Each declared model transition is carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
+Each declared model transition SHALL be carried by a domain-behavior scenario naming the state change it authorizes and the properties that guard it; constraints not bound to a transition are carried by invariant-holding scenarios, so every deriving property remains scenario-verified. The conformance-gate scenario closes the set: revisions that break the model are rejected by the gate with a finding naming the violated row.
 
 #### Scenario: normalize-context moves `received` to `normalized`
 - **WHEN** the model is in the `received` state and the `normalize_context` transition guard holds ([[amplification.policy.deterministic_after_normalization]])
