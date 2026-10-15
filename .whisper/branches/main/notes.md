@@ -122,3 +122,11 @@
   - Upstream feedback espectacular#47 filed (duplicate ah check in managed block); wanna-wzw P3 created for the local dedupe.
   - bc97c16 NOT pushed — conservative profile awaiting go-ahead.
   - **Next:** /renew → push bc97c16 when authorized → bd ready → wanna-zbn P2 (reuse-evidence re-evaluation) or wanna-kz9/vk3 P3 cleanup.
+- 2026-10-15T20:05:43Z [id:3871f96e1f276996449ee46103c2ceb1361830666a41809c583bdc99c8825943] ### 2026-10-15 — wanna-zbn re-scoped + add-shell-distribution landed (unpushed)
+  - wanna-zbn re-evaluated: reuse gate still NARROW (no new evidence since 10-09); re-scoped per decision record path (b) — distribution claim narrowed to semantic reuse. Coordination-line distribution stays gated on path (a) realistic-baseline re-run.
+  - add-shell-distribution proposal drafted (openspec/changes/add-shell-distribution/): semantic-reuse scope, single package @wanna/composition-shell, adapter/screen stay in-repo, publication explicitly unauthorized. Rule-of-5 review KEY CATCH: tsc-only emission contradicts Node ESM support (extensionless relative imports emitted verbatim); fixed with esbuild single-file ESM bundle (dev-only dep) + tsc declarations. Also: artifact identity decision (dist/package.json name @wanna/composition-shell), tests in tests/distribution/ build the emission themselves (no new lefthook gate).
+  - User approved; 5 tickets filed+closed (e7v RED, 5q4 build, 7v9 docs, 3e2 tidy, 4mw conformance). RED first: fresh-consumer test failed on missing emission before build landed.
+  - Commits 8ef2ca9 (docs) + cfd7954 (feat) on main, NOT pushed (conservative).
+  - GOTCHAS: esbuild bin is a native ELF — invoke directly, not via node; overlay TOMLs go under .espectacular/changes/<change>/<spec>/<scenario>.toml (spec level required); consumer typecheck needs types:[] + no console (exit-code semantics instead of stdout asserts).
+  - Gates: vitest 790 (6 new), tsc/eslint/pretender clean, ah check 0, spk lint 0, openspec strict 33/33, overlay ah check --run-tests 400 passed 0 findings.
+  - Next: /renew -> push when authorized -> openspec archive add-shell-distribution after deployment decision -> bd ready (wanna-72s P2 tambor demo or P3 cleanups vk3/kz9/wzw).
