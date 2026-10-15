@@ -1,0 +1,11 @@
+id = "no-publication-step"
+description = "Scenario: no publication step — no task, script, or gate in the distribution capability publishes to a registry or wires release automation; the package stays private and the emitted artifact records publication as separately unauthorized."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=no task, script, or gate publishes to a registry"
+timeout_seconds = 120

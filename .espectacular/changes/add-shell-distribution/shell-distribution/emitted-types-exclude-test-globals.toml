@@ -1,0 +1,11 @@
+id = "emitted-types-exclude-test-globals"
+description = "Scenario: emitted types exclude test globals — the emitted declarations contain no test globals because the build unit compiles package sources only; the ambient-type-free consumer compile is the executable check."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=declarations typecheck standalone"
+timeout_seconds = 120

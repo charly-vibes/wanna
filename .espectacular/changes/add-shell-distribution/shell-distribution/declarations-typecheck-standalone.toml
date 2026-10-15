@@ -1,0 +1,11 @@
+id = "declarations-typecheck-standalone"
+description = "Scenario: declarations typecheck standalone — a minimal consumer typechecks against the emitted declarations without access to package sources or repository-alias resolution."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=declarations typecheck standalone"
+timeout_seconds = 120

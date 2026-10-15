@@ -1,0 +1,21 @@
+{
+  "// Purpose": "separate compile unit for the distribution emission (add-shell-distribution)",
+  "// Responsibilities": "emit declarations for the composition shell subtree and the three layer barrels it composes only — tests/, examples/ and vitest globals are excluded from this build",
+  "// Rationale": "root tsconfig carries types [vitest/globals, node] and includes tests+examples; the build unit compiles package sources only so emitted declarations cannot leak test globals (openspec/changes/add-shell-distribution)",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationMap": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "types": ["node"]
+  },
+  "include": [
+    "src/composition-shell",
+    "src/engine",
+    "src/interaction-need",
+    "src/interaction-policy"
+  ]
+}

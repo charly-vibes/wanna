@@ -1,0 +1,11 @@
+id = "fresh-consumer-imports-entry"
+description = "Scenario: fresh consumer imports entry — a consumer with no repository aliases and no access to package sources imports the emitted entry point and the demonstrated consumer scenario runs through the emitted artifact."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=fresh consumer imports the entry and records the review"
+timeout_seconds = 120

@@ -5,10 +5,12 @@
   "type": "module",
   "scripts": {
     "test": "vitest run",
-    "test:catalog": "vitest run tests/catalog"
+    "test:catalog": "vitest run tests/catalog",
+    "build:dist": "node tools/build-dist.mjs"
   },
   "devDependencies": {
     "@types/node": "^26.6.4",
+    "esbuild": "^0.28.2",
     "eslint": "^9.39.5",
     "eslint-plugin-import": "^2.32.0",
     "fake-indexeddb": "^6.2.5",

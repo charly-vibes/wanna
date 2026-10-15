@@ -1,0 +1,11 @@
+id = "package-dependency-free"
+description = "Scenario: package dependency-free — the emitted package manifest declares zero runtime dependencies and the bundle contains no import statements, so no host or transport types appear in the runtime surface."
+archetype = "PF"
+status = "active"
+superseded_by = ""
+authored_with = "0.9.3"
+falsifiability_class = "safety"
+
+[[tests.vitest]]
+flags = "--testNamePattern=package declares zero runtime dependencies"
+timeout_seconds = 120
