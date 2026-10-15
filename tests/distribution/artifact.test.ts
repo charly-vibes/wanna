@@ -52,7 +52,7 @@ describe("emitted artifact manifest (add-shell-distribution)", () => {
     ) as { scripts: Record<string, string>; private: boolean };
     const scriptKeys = Object.keys(manifest.scripts);
     expect(
-      scriptKeys.filter((key) => /publish|release/i.test(key) || /publish|release/i.test(manifest.scripts[key])),
+      scriptKeys.filter((key) => /publish|release/i.test(key) || /publish|release/i.test(manifest.scripts[key] ?? "")),
     ).toEqual([]);
     // the emitted artifact is never a publish step either
     const buildScript = manifest.scripts["build:dist"];
