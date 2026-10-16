@@ -30,6 +30,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      # the @tambor/* source alias resolves against a sibling checkout (EDGE-001
+      # decision, wanna-72s): no package prerequisite, pinned rev — bump this
+      # pin when tambor releases
+      - name: Checkout tambor (pinned rev, ../tambor)
+        uses: actions/checkout@v4
+        with:
+          repository: charly-vibes/tambor
+          ref: c8ec467156da4abd9110bbcf3b7da56bbd745639
+          path: ../tambor
+
       - name: Set up Node (major matches the devenv shell)
         uses: actions/setup-node@v4
         with:

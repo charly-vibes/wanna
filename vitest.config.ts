@@ -1,6 +1,7 @@
 // Purpose: vitest configuration for wanna conformance tests
 // Responsibilities: test discovery over tests/; globals for terse spec tests; @wanna/* source aliases for consumer examples
-// Rationale: tracer-bullet phase 1 (wanna-79h) — testaruda adapter discovers .test.ts files here; wanna-01q mirrors the tsconfig paths so examples resolve without a package/workspace prerequisite
+// Rationale: tracer-bullet phase 1 (wanna-79h) — testaruda adapter discovers .test.ts files here; wanna-01q mirrors the tsconfig paths so examples resolve without a package/workspace prerequisite; wanna-72s mirrors the @tambor/* source alias the same way
+import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
@@ -8,6 +9,7 @@ export default defineConfig({
     alias: {
       "@wanna/composition-shell": "/src/composition-shell/index.ts",
       "@wanna/review-indexeddb": "/src/review-workbench/adapters/review-indexeddb/index.ts",
+      "@tambor": fileURLToPath(new URL("../tambor/src", import.meta.url)),
     },
   },
   test: {

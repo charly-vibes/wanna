@@ -48,6 +48,10 @@ export interface HeadlessReviewClient {
   submitFeedback(eventId: string, feedback: string): Promise<HeadlessSubmitOutcome>;
   /** Retire any pending review and open a fresh one for the current revision. */
   freshReview(): Promise<"active" | "refused">;
+  /** Reconcile an uncertain commit by operation id (the eventId for submits);
+   * additive for the tambor demo (wanna-72s) — `refused` is an unresolved
+   * uncertainty, so mutations stay blocked. */
+  reconcile(operationId: string): Promise<"applied" | "not_applied" | "refused">;
 }
 
 /** Host-owned identity the need proposals target (the shell does not carry it). */
@@ -178,6 +182,11 @@ class HeadlessClient implements HeadlessReviewClient {
     }
     const requested = await this.requestReview(p.taskRevision);
     return requested === "requested" ? "active" : "refused";
+  }
+
+  async reconcile(operationId: string): Promise<"applied" | "not_applied" | "refused"> {
+    const outcome = await this.shell.reconcile(operationId);
+    return outcome.kind === "unknown_effect" ? "refused" : outcome.kind;
   }
 }
 

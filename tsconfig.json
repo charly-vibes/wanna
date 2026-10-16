@@ -1,11 +1,12 @@
 // Purpose: TypeScript compiler options for the wanna corpus implementation
 // Responsibilities: strict module resolution for src/ and tests/
-// Rationale: tracer-bullet phase 1 (wanna-79h) — strict mode from the start; wanna-01q adds the examples/ consumer and the @wanna/* source aliases (no package/workspace prerequisite)
+// Rationale: tracer-bullet phase 1 (wanna-79h) — strict mode from the start; wanna-01q adds the examples/ consumer and the @wanna/* source aliases (no package/workspace prerequisite); wanna-72s adds the @tambor/* source alias (EDGE-001: pinned ../tambor checkout, no package prerequisite)
 {
   "compilerOptions": {
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
@@ -15,7 +16,8 @@
     "baseUrl": ".",
     "paths": {
       "@wanna/composition-shell": ["./src/composition-shell/index.ts"],
-      "@wanna/review-indexeddb": ["./src/review-workbench/adapters/review-indexeddb/index.ts"]
+      "@wanna/review-indexeddb": ["./src/review-workbench/adapters/review-indexeddb/index.ts"],
+      "@tambor/*": ["../tambor/src/*"]
     }
   },
   "include": ["src", "tests", "examples"]

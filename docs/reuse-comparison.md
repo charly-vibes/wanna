@@ -49,7 +49,7 @@ and first screen consumer; recorded here as the baseline construction cost.
 
 Measured in this ticket, from empty directory to green suite:
 
-- Headless consumer (`examples/review-headless`): 187 lines, one file.
+- Headless consumer (`examples/review-headless`): 196 lines, one file.
 - Direct baseline (`examples/review-baseline`): 190 lines, one file (159 lines
   before the repo's function-size gate forced a helper split — the split added
   structural plumbing, no semantics).
@@ -88,7 +88,7 @@ Not counted for either implementation:
 Every line of the implementation's own sources (declarations, flow control,
 outcome mapping; no shell or adapter internals — they are reused):
 
-- headless shell consumer: 187
+- headless shell consumer: 196
 - direct baseline: 190
 
 Public-surface imports (headless consumer): exactly one —
@@ -115,7 +115,7 @@ for the second consumer.
 ## Favorable-claim conditions
 
 - No new core behavior required: yes
-- Less consumer-owned coordination than baseline: yes — on-disk 187 vs 190,
+- Less consumer-owned coordination than baseline: yes — on-disk 196 vs 190,
   but the 3-line margin is formatting noise (the baseline's gate-forced helper
   split adds ≈30 structural lines; pre-split it was 159). The honest reading:
   the LOC condition is inconclusive on this bounded slice, and the excluded
@@ -128,7 +128,7 @@ coordination-line evidence is inconclusive on this slice.
 
 The reasoning: reuse is demonstrated on semantic coordination (one public-barrel
 import, zero core changes, every acceptance rule owned by the shell) but the
-raw coordination-line evidence is inconclusive: the on-disk margin (187 vs
+raw coordination-line evidence is inconclusive: the on-disk margin (196 vs
 190) is formatting noise, and the baseline store excludes the failure modes
 that make the shell's coordination pay off. Distribution (wanna-zbn) may not
 proceed on this LOC evidence; before revisiting, either (a) re-run the
