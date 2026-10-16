@@ -169,3 +169,13 @@
   - TypeSafe verification pass ran on the review (4 findings, 3 verified ≥0.8, 1 REVIEW_REQUIRED on the ci.yml ../tambor checkout path — still unverified on a real runner; NEXT CI RUN will prove it).
   - 5 commits unpushed on main (d26a03b fxl, 29d62da 72s, 0e3acb6/aa7f7e4 bookkeeping, 842f6bd 8ay) — conservative profile awaiting go-ahead. First push will trigger the Pages deploy.
   - **Next:** /renew → push when authorized (verify Pages deploy + the ../tambor checkout path on the real runner) → bd ready → wanna-1n3 P1.
+- 2026-10-16T17:01:08Z [id:041416e3bb44f2725be2b07f315f7c1b7d6dc29ed39b32dfc993f2d5cd4313b0] (#snap) ### 2026-10-16 ~17:05 — snap (PUSHED — all 8 commits on origin/main; demo LIVE on gh-pages)
+  - PUSH AUTHORIZED AND DONE: main 4b4e7be..bd2ad88 on origin. All workflows green: CI ✓ (incl. @tambor alias + examples typecheck), Pages ✓.
+  - THE DEMO IS LIVE: https://charly-vibes.github.io/wanna/ (HTTP 200, title verified; main.js 200). The real shell projection mounted through tambor widgets, deployed by .github/workflows/gh-pages.yml.
+  - Two deploy fixes after the first push (both proven by real runs, closing the rule-of-5 REVIEW_REQUIRED findings):
+  1. actions/checkout REJECTS path: ../tambor ('not under $GITHUB_WORKSPACE') — EDGE-001 confirmed. Fix: checkout into workspace (tambor-src/) + cp -r to ../tambor; applied to BOTH ci.yml and gh-pages.yml (5065f26).
+  2. Artifact structure: upload-pages-artifact path: page kept the review-tambor/ subdir → site lived at /wanna/review-tambor/ (verified 200 + JS live BEFORE flattening). Fix: path: page/review-tambor → /wanna/ serves index.html (bd2ad88).
+  3. Repo Pages wasn't enabled (deploy 404 'Ensure GitHub Pages has been enabled') — enabled via gh api POST /repos/charly-vibes/wanna/pages build_type=workflow. NOTE for sibling repos: enabling Pages is a one-time API call the CLI CAN do (unlike npm org creation).
+  - GOTCHA: /tmp tmpfs EDQUOT (error -122) killed the first push (ah-check-gate all test-failing on write errors) — a 15G /tmp/os2.log from another process is pressuring the shared tmpfs. Workaround that works: TMPDIR=$HOME/para/tmp/gate-tmp git push (redirects gate temp writes to real disk, 75G free). Keep using it while os2.log lives.
+  - wanna-8ay fully done: demo deployed, advertised URL verified, CI green. No open beads from this thread; next P1 is wanna-1n3 (review-session principles binding).
+  - **Next:** /renew → bd ready → wanna-1n3 P1 (wanna-zh1 P2 reuse decision now has tambor + live-demo evidence).
