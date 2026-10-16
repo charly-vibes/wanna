@@ -16,7 +16,11 @@ pre-commit:
     openspec-gate:
       # corpus formatting gate: every deployed spec must pass openspec strict
       # validation (wanna-bql). Runs after specodelic-gates; ~1s for 32 specs.
-      run: openspec validate --all --strict
+      # --no-interactive (wanna-lge): hook children inherit a TTY, which makes
+      # validate's ora spinner hot-render ANSI clear-lines forever (the documented
+      # OPEN_SPEC_INTERACTIVE=0 does NOT disable it in 0.19.0 — the spinner
+      # check reads opts.noInteractive directly). The flag exits in ~1s.
+      run: openspec validate --all --strict --no-interactive
     pretender-gate:
       run: pretender check --staged --mode gate
     tsc-gate:
