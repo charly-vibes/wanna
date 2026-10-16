@@ -1,5 +1,5 @@
 // Purpose: fresh-consumer distribution verification (add-shell-distribution 1.1)
-// Responsibilities: prove the emitted @wanna/composition-shell artifact imports,
+// Responsibilities: prove the emitted @charly-vibes/wanna artifact imports,
 // typechecks and runs the demonstrated consumer scenario outside the repository
 // aliases, with no access to src/ and no ambient types beyond the consumer's own
 // Rationale: openspec/changes/add-shell-distribution — scenarios
@@ -37,9 +37,8 @@ function emitArtifact(): void {
 
 /**
  * A minimal consumer outside the repository aliases: its own temp project with
- * a bare `@wanna/composition-shell` import resolved from the emitted artifact
- * via a node_modules symlink — the repo tsconfig paths and src/ are not
- * involved. The consumer installs no ambient types beyond its own `log`
+ * a bare `@charly-vibes/wanna` import resolved from the emitted artifact via a
+ * node_modules symlink — the repo tsconfig paths and src/ are not involved. The consumer installs no ambient types beyond its own `log`
  * declaration, so any test-global or @types/node leakage into the emitted
  * declarations breaks the compile.
  */
@@ -50,8 +49,8 @@ const CONSUMER_SOURCE = `import type {
   PortReconcileOutcome,
   ReviewPersistencePort,
   SessionTaskKey,
-} from "@wanna/composition-shell";
-import { openReviewSession } from "@wanna/composition-shell";
+} from "@charly-vibes/wanna";
+import { openReviewSession } from "@charly-vibes/wanna";
 
 /** Consumer-owned in-memory persistence port (the shell owns the coordination). */
 class MemoryPort implements ReviewPersistencePort {
@@ -222,8 +221,8 @@ function writeConsumerProject(dir: string): string {
     path.join(dir, "tsconfig.json"),
     JSON.stringify(CONSUMER_TSCONFIG, null, 2),
   );
-  mkdirSync(path.join(dir, "node_modules/@wanna"), { recursive: true });
-  symlinkSync(DIST, path.join(dir, "node_modules/@wanna/composition-shell"), "dir");
+  mkdirSync(path.join(dir, "node_modules/@charly-vibes"), { recursive: true });
+  symlinkSync(DIST, path.join(dir, "node_modules/@charly-vibes/wanna"), "dir");
   return dir;
 }
 

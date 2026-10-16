@@ -7,7 +7,12 @@ statement: THE Distribution SHALL emit the composition shell public surface as a
 # Shell Distribution
 
 Distribution turns the demonstrated semantic-reuse surface — one public barrel,
-`@wanna/composition-shell` — into an importable package artifact. The emission
+`@wanna/composition-shell` — into an importable package artifact. The emitted
+package publishes as `@charly-vibes/wanna` (naming amendment 2026-10-16: npm
+rejects scoped publishes for an unowned scope — no npm org `wanna` exists and
+org creation is web-only — so the artifact publishes under the user scope; the
+in-repo source alias keeps the `@wanna/composition-shell` name and resolves to
+`src/` without touching the registry). The emission
 compiles only the package sources, excludes test roots and test globals, and
 exposes the shell barrel through a single export. The durable IndexedDB adapter
 and the workbench screen stay in-repo: no evidence supports packaging them. A

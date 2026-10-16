@@ -29,7 +29,7 @@ describe("emitted artifact manifest (add-shell-distribution)", () => {
   });
 
   it("exports map admits only the shell public barrel (single-public-entry)", () => {
-    expect(manifest.name).toBe("@wanna/composition-shell");
+    expect(manifest.name).toBe("@charly-vibes/wanna");
     expect(Object.keys(manifest.exports)).toEqual(["."]);
   });
 
@@ -42,8 +42,10 @@ describe("emitted artifact manifest (add-shell-distribution)", () => {
     expect(matrix).toMatch(/## Explicitly unsupported[\s\S]*CommonJS require/);
     expect(matrix).toMatch(/## Explicitly unsupported[\s\S]*UMD/);
     expect(matrix).toMatch(/## Explicitly unsupported[\s\S]*native ESM support/);
-    // publication remains separately unauthorized, recorded in the artifact doc
-    expect(matrix).toMatch(/separately authorized/);
+    // publication fact recorded in the artifact doc (authorized 2026-10-16,
+    // wanna-lfk — the separate act add-shell-distribution reserved)
+    expect(matrix).toMatch(/## Publication[\s\S]*npm registry/);
+    expect(matrix).toMatch(/## Publication[\s\S]*Apache-2\.0/);
   });
 
   it("no task, script, or gate publishes to a registry (no-publication-step)", () => {

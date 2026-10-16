@@ -75,3 +75,13 @@ the emitted entry point, typechecks against the emitted declarations, and runs
 the headless consumer scenario through the emitted artifact. The emitted types
 contain no test globals. The package carries zero runtime dependencies. The
 supported runtime/module combinations are documented, and nothing is published.
+
+## Amendment — published name (2026-10-16, wanna-lfk)
+
+Publication was authorized and performed as the separately authorized act this
+proposal reserved. The emitted package publishes as **`@charly-vibes/wanna`**:
+npm rejects scoped publishes for an unowned scope (no npm org `wanna` exists;
+org creation is web-only, unavailable from the CLI), so the artifact publishes
+under the user scope. The in-repo source alias keeps `@wanna/composition-shell`
+and continues to resolve to `src/` — no in-repo import changed. The repository
+LICENSE (Apache-2.0, following dulce-de-leche) was added in the same act.
