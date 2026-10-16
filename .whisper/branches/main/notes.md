@@ -185,3 +185,7 @@
   - Upstream filed: charly-vibes/tambor#1 (their own committed screenshot as evidence); local tracker bead wanna-1ha (P3) — drop the local wrapper when tambor ships a fix.
   - Live page verified re-deployed (HTTP 200, bundle contains the scaling). ASK USER to hard-refresh and confirm readability visually.
   - **Next:** /renew → bd ready → wanna-1n3 P1.
+- 2026-10-16T18:07:00Z [id:e0f10d75d154b4723d5edc5ec68c9ae080e48b8b7d946777d9b79ec653632e75] (#snap) ### 2026-10-16 ~15:00 — snap (user confirmed: live demo renders correctly)
+  - User verified https://charly-vibes.github.io/wanna/ renders correctly after the CELL_SCALE fix (f95a4e6). wanna-8ay fully closed end-to-end: deployed, visible, readable, user-confirmed.
+  - Upstream tambor#1 + local bead wanna-1ha carry the drop-the-wrapper follow-up.
+  - **Next:** /renew → bd ready → wanna-1n3 P1 (review-session principles binding).
