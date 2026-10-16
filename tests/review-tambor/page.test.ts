@@ -166,6 +166,8 @@ describe("review-tambor mounted page (wanna-8ay)", () => {
     const stage = page.stage.host as unknown as HTMLElement;
     // the stage reserves the scaled footprint; the wrapper carries the transform
     expect(stage.style.cssText).toContain("960px");
+    // paper ground: high-contrast ink on a light stage
+    expect(stage.style.cssText).toContain("background");
     const wrapper = stage.firstElementChild as unknown as {
       style: { cssText: string };
     } | null;

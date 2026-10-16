@@ -74,13 +74,17 @@ function rescalePointer(ev: TamborEvent, scale: number): TamborEvent {
 
 /** Every drawn element renders as one unit cell: 1px text pre-scale (the
  * stage's transform scales it back up), no button chrome that would break
- * the cell grid. */
+ * the cell grid, and the paper ink so the drawn tree is readable on the
+ * light stage regardless of the page theme. */
+const INK = "#16161d";
+
 function cellFactory(doc: HostDoc): ReturnType<typeof realDomFactory> {
   const inner = realDomFactory(doc);
   return (tag: string) => {
     const el = inner(tag);
     el.style["font-size"] = "1px";
     el.style["line-height"] = "1px";
+    el.style["color"] = INK;
     if (tag === "button") {
       el.style["padding"] = "0";
       el.style["border"] = "none";
@@ -105,6 +109,12 @@ function buildStage(
   stage.host.style.setProperty("height", `${viewH * scale}px`);
   stage.host.style.setProperty("font-size", "1px");
   stage.host.style.setProperty("line-height", "1px");
+  // paper ground: the drawn tree reads cleanly on light, high-contrast ink
+  stage.host.style.setProperty("background", "#fbfaf7");
+  stage.host.style.setProperty("color", INK);
+  stage.host.style.setProperty("border-radius", "10px");
+  stage.host.style.setProperty("box-shadow", "0 2px 18px rgba(0,0,0,0.45)");
+  stage.host.style.setProperty("overflow", "hidden");
   // the wrapper carries the transform (the root's absolute-positioned
   // children have no intrinsic box of their own)
   const wrapper = new RealDomElement("div", doc);
