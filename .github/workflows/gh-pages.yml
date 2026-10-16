@@ -65,10 +65,10 @@ jobs:
       - name: Bundle the demo
         run: node tools/build-page.mjs
 
-      - name: Upload the page artifact
+      - name: Upload the page artifact (demo dir contents = site root)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: page
+          path: page/review-tambor
 
   deploy:
     name: Deploy to GitHub Pages
