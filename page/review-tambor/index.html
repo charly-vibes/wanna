@@ -20,7 +20,9 @@
       }
       h1 { font-size: 1.1rem; }
       #app p { max-width: 60ch; color: #a0a0ad; }
-      canvas { display: block; margin-top: 0.75rem; background: #16161d; }
+      /* the stage (mount glue) scales the corpus unit grid to readable cells;
+         the canvas is the transparent input surface inside it */
+      #app [data-tambor-stage], #app .tambor-stage { overflow: visible; }
     </style>
   </head>
   <body>

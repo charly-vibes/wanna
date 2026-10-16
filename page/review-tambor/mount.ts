@@ -11,6 +11,13 @@
 //   plumbing only, following tambor's spa/mount.ts wire; the demo's semantics
 //   stay in examples/review-tambor (view mapping + ops seam) and the shell.
 //   The structural HostDoc/HostElement seam keeps this testable under jsdom.
+//   The CELL_SCALE stage is demo presentation: tambor's DomBackend draws unit
+//   coordinates as raw px while text renders at browser size, so the mounted
+//   tree collapses (tambor's own logo-gallery screenshot shows the same
+//   overlap) — the stage renders 1 unit as CELL_SCALE px and divides event
+//   positions back to units before routing. Presentation only: geometry stays
+//   in unit space for routing and assertions.
+import { bounds } from "@tambor/views/model.ts";
 import { DomBackend } from "@tambor/render/dom.ts";
 import {
   RealDomElement,
@@ -22,64 +29,134 @@ import { dispatch } from "@tambor/events/dispatch.ts";
 import type { TamborEvent } from "@tambor/events/event.ts";
 import type { TamborReviewApp } from "../../examples/review-tambor";
 
+/** How many px one unit cell renders as: the browser's default text size,
+ * so a 1-unit row shows as one readable text line. */
+export const CELL_SCALE = 16;
+
 /** The mounted page handle: tambor's SpaHandle shape plus the demo's async
- * settle affordance. */
+ * settle affordance and the scaled stage. */
 export interface ReviewPageHandle {
   readonly backend: DomBackend;
   readonly app: TamborReviewApp;
   readonly root: RealDomElement;
   readonly surface: RealDomElement;
+  /** the scaled stage: 1 unit = CELL_SCALE px, root and surface inside */
+  readonly stage: RealDomElement;
   /** resolves when in-flight shell commands have refreshed the projection,
    * then re-draws the current view into the document */
   settleAndRedraw(): Promise<void>;
   unmount(): void;
 }
 
-/** The corpus wire (tambor spa/mount.ts shape): route, dispatch, re-draw;
- * the settle re-draw is the one demo-owned addition (async shell commands). */
-function wireSurface(backend: DomBackend, app: TamborReviewApp): void {
+/** The wire: route, dispatch, re-draw — then the settle re-draw. */
+function wireSurface(backend: DomBackend, app: TamborReviewApp, scale: number): void {
   backend.subscribe((ev: TamborEvent) => {
-    const intents = dispatch(app.view(), ev);
+    const routed = rescalePointer(ev, scale);
+    const intents = dispatch(app.view(), routed);
     if (intents.length > 0) app.dispatch(intents);
     backend.draw(app.view());
     void app.settle().then(() => backend.draw(app.view()));
   });
 }
 
-/** Mount the review demo into `container` of `doc`. */
+/** Pointer events arrive in scaled client px; routing and hit-testing are in
+ * unit coordinates — divide the position back (keyboard/clipboard pass through). */
+function rescalePointer(ev: TamborEvent, scale: number): TamborEvent {
+  const candidate = ev as { type?: string; pos?: readonly number[] };
+  if (candidate.pos === undefined || !candidate.type?.startsWith("mouse")) {
+    return ev;
+  }
+  return {
+    ...(candidate as unknown as Record<string, unknown>),
+    pos: [candidate.pos[0]! / scale, candidate.pos[1]! / scale],
+  } as unknown as TamborEvent;
+}
+
+/** Every drawn element renders as one unit cell: 1px text pre-scale (the
+ * stage's transform scales it back up), no button chrome that would break
+ * the cell grid. */
+function cellFactory(doc: HostDoc): ReturnType<typeof realDomFactory> {
+  const inner = realDomFactory(doc);
+  return (tag: string) => {
+    const el = inner(tag);
+    el.style["font-size"] = "1px";
+    el.style["line-height"] = "1px";
+    if (tag === "button") {
+      el.style["padding"] = "0";
+      el.style["border"] = "none";
+      el.style["background"] = "none";
+    }
+    return el;
+  };
+}
+
+/** The scaled stage: the footprint reservation (outer), the transform
+ * wrapper, and the transparent input surface, all in one subtree. */
+function buildStage(
+  doc: HostDoc,
+  app: TamborReviewApp,
+  backend: DomBackend,
+  scale: number,
+): { stage: RealDomElement; surface: RealDomElement; root: RealDomElement } {
+  const [viewW, viewH] = bounds(app.view());
+  const stage = new RealDomElement("div", doc);
+  stage.host.style.setProperty("position", "relative");
+  stage.host.style.setProperty("width", `${viewW * scale}px`);
+  stage.host.style.setProperty("height", `${viewH * scale}px`);
+  stage.host.style.setProperty("font-size", "1px");
+  stage.host.style.setProperty("line-height", "1px");
+  // the wrapper carries the transform (the root's absolute-positioned
+  // children have no intrinsic box of their own)
+  const wrapper = new RealDomElement("div", doc);
+  wrapper.host.style.setProperty("transform", `scale(${String(scale)})`);
+  wrapper.host.style.setProperty("transform-origin", "0 0");
+  stage.host.appendChild(wrapper.host);
+
+  const root = backend.root as RealDomElement;
+  wrapper.host.appendChild(root.host);
+
+  const surface = new RealDomElement("canvas", doc);
+  surface.host.style.setProperty("position", "absolute");
+  surface.host.style.setProperty("left", "0px");
+  surface.host.style.setProperty("top", "0px");
+  surface.host.style.setProperty("width", `${viewW}px`);
+  surface.host.style.setProperty("height", `${viewH}px`);
+  wrapper.host.appendChild(surface.host);
+  backend.attach(surface);
+
+  return { stage, surface, root };
+}
+
+/** Mount the review demo into `container` of `doc`, rendered at CELL_SCALE. */
 export function mountReviewDemo(
   doc: HostDoc,
   container: HostElement,
   app: TamborReviewApp,
   containerSize: readonly [number, number],
+  scale: number = CELL_SCALE,
 ): ReviewPageHandle {
   const backend = new DomBackend({
-    createElement: realDomFactory(doc),
+    createElement: cellFactory(doc),
     containerSize: containerSize as unknown as [number, number],
   });
-  wireSurface(backend, app);
+  wireSurface(backend, app, scale);
 
-  const root = backend.root as RealDomElement;
-  container.appendChild(root.host);
-
-  const surface = new RealDomElement("canvas", doc);
-  container.appendChild(surface.host);
-  backend.attach(surface);
-
+  const { stage, surface, root } = buildStage(doc, app, backend, scale);
   backend.draw(app.view());
+  container.appendChild(stage.host);
 
   return {
     backend,
     app,
     root,
     surface,
+    stage,
     settleAndRedraw: async (): Promise<void> => {
       await app.settle();
       backend.draw(app.view());
     },
     unmount: (): void => {
-      container.removeChild(root.host);
-      container.removeChild(surface.host);
+      container.removeChild(stage.host);
     },
   };
 }

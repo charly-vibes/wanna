@@ -13,6 +13,7 @@ import { IDBFactory } from "fake-indexeddb";
 import { createReviewIndexDbPort } from "../../src/review-workbench/adapters/review-indexeddb";
 import { openTamborReview } from "../../examples/review-tambor";
 import {
+  CELL_SCALE,
   mountReviewDemo,
   type ReviewPageHandle,
 } from "../../page/review-tambor/mount";
@@ -140,10 +141,14 @@ describe("review-tambor mounted page (wanna-8ay)", () => {
     expect(hostDoc().body.textContent).toContain("task revision 0");
 
     // click Advance artifact through the mounted surface (pointer events at
-    // the button's drawn centre — the same path a real mouse takes)
+    // the button's drawn centre in CLIENT pixels — the stage scales the unit
+    // grid by CELL_SCALE so 1 cell renders as a readable text cell; the wire
+    // divides the positions back to units before routing)
     const at = centreOf(page.app.view(), "Advance artifact");
     expect(at).not.toBeNull();
-    const [cx, cy] = at as [number, number];
+    const [ux, uy] = at as [number, number];
+    const cx = ux * CELL_SCALE;
+    const cy = uy * CELL_SCALE;
     const surface = page.surface.host as unknown as {
       dispatchEvent(ev: unknown): boolean;
     };
@@ -154,5 +159,17 @@ describe("review-tambor mounted page (wanna-8ay)", () => {
     await page.settleAndRedraw();
     expect(page.app.getState().view.taskRevision).toBe(1);
     expect(hostDoc().body.textContent).toContain("task revision 1");
+  });
+
+  it("scales the unit grid into readable cells in the host document", async () => {
+    const page = await mountedPage();
+    const stage = page.stage.host as unknown as HTMLElement;
+    // the stage reserves the scaled footprint; the wrapper carries the transform
+    expect(stage.style.cssText).toContain("960px");
+    const wrapper = stage.firstElementChild as unknown as {
+      style: { cssText: string };
+    } | null;
+    expect(wrapper?.style.cssText ?? "").toContain(`scale(${String(CELL_SCALE)})`);
+    expect(hostDoc().body.textContent).toContain("tambor review");
   });
 });
