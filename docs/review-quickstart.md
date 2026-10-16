@@ -31,6 +31,25 @@ public surface a red contract.
   so far (0.1.0 → 0.2.0 → 0.3.0); the compatibility record is the authority
   on what changed per revision.
 
+## Seeing it rendered: the tambor demo
+
+A third consumer mounts the same shell session through tambor's widget
+vocabulary (slider, textarea, buttons) — `examples/review-tambor/`, no new
+shell semantics, only a view mapping over the real projection. It is deployed
+as a live page: **<https://charly-vibes.github.io/wanna/>** — open it,
+submit feedback through the textarea, advance the artifact to provoke a typed
+`stale`, and reload to see restart durability (the session persists in
+IndexedDB). The fault buttons (storage down / lose ack) render the
+`unavailable` and `unknown_effect` outcomes and the reconcile path.
+
+In-repo, the same behavior is executable without a browser:
+`npx vitest run tests/review-workbench/reuse-tambor.test.ts` runs the shared
+current/stale/restart acceptance suite against the tambor-rendered UI
+(`tests/review-tambor/page.test.ts` additionally mounts it into a live DOM).
+The page bundle is built by `node tools/build-page.mjs` and deployed by
+`.github/workflows/gh-pages.yml` (pinned tambor checkout — bump that pin in
+BOTH workflows when adopting tambor changes).
+
 ## Construction
 
 Open a session shell over a declared persistence port. The result is typed —

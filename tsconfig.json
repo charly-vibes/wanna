@@ -20,5 +20,5 @@
       "@tambor/*": ["../tambor/src/*"]
     }
   },
-  "include": ["src", "tests", "examples"]
+  "include": ["src", "tests", "examples", "page"]
 }

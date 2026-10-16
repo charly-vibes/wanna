@@ -1,0 +1,31 @@
+<!doctype html>
+<!-- Purpose: the gh-pages host page for the tambor-rendered review demo (wanna-8ay)
+     Responsibilities: load the bundled demo entry; styling keeps the mounted
+       tambor canvas readable (dark ground, monospace, the unit-scaled canvas)
+     Rationale: option A — wanna-owned page deployed by
+       .github/workflows/gh-pages.yml to https://charly-vibes.github.io/wanna/ -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>wanna — review-tambor: the composition shell through tambor widgets</title>
+    <style>
+      body {
+        margin: 0;
+        padding: 1.5rem;
+        background: #16161d;
+        color: #e6e6ea;
+        font-family: ui-monospace, "JetBrains Mono", "Fira Code", monospace;
+        max-width: 720px;
+      }
+      h1 { font-size: 1.1rem; }
+      #app p { max-width: 60ch; color: #a0a0ad; }
+      canvas { display: block; margin-top: 0.75rem; background: #16161d; }
+    </style>
+  </head>
+  <body>
+    <h1>wanna · review-tambor</h1>
+    <div id="app">Booting the review shell…</div>
+    <script type="module" src="./main.js"></script>
+  </body>
+</html>

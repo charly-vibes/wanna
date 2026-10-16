@@ -21,3 +21,6 @@ specodelic/
 
 # distribution emission (add-shell-distribution) — built artifact, never tracked
 dist/
+
+# gh-pages demo bundle (wanna-8ay) — built artifact, never tracked
+page/review-tambor/main.js

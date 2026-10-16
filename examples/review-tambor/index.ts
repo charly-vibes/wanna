@@ -84,9 +84,12 @@ export async function openTamborReview(input: TamborOpenInput): Promise<TamborOp
   }
   const client = opened.client;
   const state = initialTamborState(client.view(), client.view().taskRevision + 1);
-  const inflight: Promise<unknown>[] = [];
+  // the settle chain: every tracked shell command extends the tail; every
+  // settle() caller awaits the SAME chain, so concurrent callers (the mount
+  // wire's re-draw and a test's assertion) never steal each other's work
+  const tail: { promise: Promise<unknown> } = { promise: Promise.resolve() };
   const track = (p: Promise<unknown>): void => {
-    inflight.push(p);
+    tail.promise = tail.promise.then(() => p, () => p);
   };
   // the registry closes over the holder (assigned once makeOpsApp returns)
   const holder: AppHolder = { app: {} };
@@ -100,10 +103,8 @@ export async function openTamborReview(input: TamborOpenInput): Promise<TamborOp
       opsApp.dispatch(batch);
     },
     getState: () => opsApp.getState() as ReviewTamborState,
-    settle: async () => {
-      while (inflight.length > 0) {
-        await Promise.all(inflight.splice(0));
-      }
+    settle: async (): Promise<void> => {
+      await tail.promise;
     },
     armFault: (kind: PortFault, count: number) => {
       opsApp.dispatch([["arm-fault", kind, count]]);

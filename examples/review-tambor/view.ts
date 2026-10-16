@@ -69,6 +69,7 @@ function advanceRow(s: ReviewTamborState): Elem {
       }),
     ) as Elem,
     fxButton("Advance artifact", "demo-advance", s.advanceTo, `artifact-1/revisions/${String(s.advanceTo)}`),
+    fxButton("Request review", "demo-request", s.view.taskRevision),
   ]);
 }
 

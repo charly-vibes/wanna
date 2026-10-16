@@ -68,6 +68,10 @@ the second-consumer reuse evidence and its recorded distribution decision live
 in [`docs/reuse-comparison.md`](docs/reuse-comparison.md); surface revision
 history lives in
 `openspec/changes/archive/2026-10-09-add-composition-shell/compatibility.md`.
+A live, browser-runnable rendering of the same shell session — the real
+projection mounted through tambor's widgets — is deployed to
+<https://charly-vibes.github.io/wanna/> (sources: `examples/review-tambor/`,
+`page/review-tambor/`).
 
 ## Provenance
 
