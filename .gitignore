@@ -18,7 +18,6 @@ specodelic/
 .devenv/
 .devenv.flake.nix
 .direnv/
-.gate-timing.log
 
 # distribution emission (add-shell-distribution) — built artifact, never tracked
 dist/
