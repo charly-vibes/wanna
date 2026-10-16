@@ -38,12 +38,20 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Checkout tambor (pinned rev, ../tambor)
+      # actions/checkout refuses paths outside $GITHUB_WORKSPACE (the
+      # ../tambor alias target), so the pin lands in the workspace and is
+      # copied to the sibling path the tsconfig alias expects
+      - name: Checkout tambor (pinned rev, workspace)
         uses: actions/checkout@v4
         with:
           repository: charly-vibes/tambor
           ref: c8ec467156da4abd9110bbcf3b7da56bbd745639
-          path: ../tambor
+          path: tambor-src
+
+      - name: Place tambor at ../tambor (the @tambor/* alias target)
+        run: |
+          mkdir -p ../tambor
+          cp -r tambor-src/. ../tambor/
 
       - name: Set up Node (major matches the devenv shell)
         uses: actions/setup-node@v4
