@@ -13,7 +13,6 @@ import { IDBFactory } from "fake-indexeddb";
 import { createReviewIndexDbPort } from "../../src/review-workbench/adapters/review-indexeddb";
 import { openTamborReview } from "../../examples/review-tambor";
 import {
-  CELL_SCALE,
   mountReviewDemo,
   type ReviewPageHandle,
 } from "../../page/review-tambor/mount";
@@ -156,12 +155,13 @@ function textareaCentre(view: Elem): [number, number] | null {
   return textareaHits[0] ?? null;
 }
 
-/** Pointer down+up at a drawn centre, in CLIENT pixels through the surface. */
+/** Pointer down+up at a drawn centre, in CLIENT pixels through the surface
+ * (the mounted page's EFFECTIVE scale — fit-to-width may narrow CELL_SCALE). */
 function click(page: ReviewPageHandle, at: [number, number]): void {
   const surface = page.surface.host as unknown as {
     dispatchEvent(ev: unknown): boolean;
   };
-  const [cx, cy] = [at[0] * CELL_SCALE, at[1] * CELL_SCALE];
+  const [cx, cy] = [at[0] * page.scale, at[1] * page.scale];
   surface.dispatchEvent(
     new (mouseCtor())("pointerdown", { clientX: cx, clientY: cy }),
   );
@@ -180,6 +180,18 @@ function typeKey(page: ReviewPageHandle, key: string): void {
 
 /** One mounted page over a fresh fake-indexeddb store. */
 async function mountedPage(): Promise<ReviewPageHandle> {
+  return openMounted(400, 500);
+}
+
+/** One mounted page at a mobile-width container. */
+async function mobilePage(): Promise<ReviewPageHandle> {
+  return openMounted(300, 500);
+}
+
+async function openMounted(
+  width: number,
+  height: number,
+): Promise<ReviewPageHandle> {
   const indexedDB = new IDBFactory();
   const port = await createReviewIndexDbPort({ indexedDB }, FIXTURE.key);
   const opened = await openTamborReview({
@@ -193,12 +205,10 @@ async function mountedPage(): Promise<ReviewPageHandle> {
   const doc = hostDoc();
   const container = doc.createElement("div");
   doc.body.appendChild(container);
-  return mountReviewDemo(
-    doc as never,
-    container as never,
-    opened.app,
-    [400, 500],
-  );
+  return mountReviewDemo(doc as never, container as never, opened.app, [
+    width,
+    height,
+  ]);
 }
 
 describe("review-tambor mounted page (wanna-8ay)", () => {
@@ -276,16 +286,31 @@ describe("review-tambor mounted page (wanna-8ay)", () => {
   it("scales the unit grid into readable cells in the host document", async () => {
     const page = await mountedPage();
     const stage = page.stage.host as unknown as HTMLElement;
-    // the stage reserves the scaled footprint; the wrapper carries the transform
-    expect(stage.style.cssText).toContain("960px");
+    // the stage fits the container width (never wider than it)
+    expect(Number.parseFloat(stage.style.width)).toBeLessThanOrEqual(400);
     // paper ground: high-contrast ink on a light stage
     expect(stage.style.cssText).toContain("background");
     const wrapper = stage.firstElementChild as unknown as {
       style: { cssText: string };
     } | null;
     expect(wrapper?.style.cssText ?? "").toContain(
-      `scale(${String(CELL_SCALE)})`,
+      `scale(${String(page.scale)})`,
     );
     expect(hostDoc().body.textContent).toContain("tambor review");
+  });
+
+  it("stays usable at a mobile-width container without horizontal scroll (wanna-hbm)", async () => {
+    const page = await mobilePage();
+    const stage = page.stage.host as unknown as HTMLElement;
+    // the stage fits the 300px container: no horizontal scrolling
+    expect(Number.parseFloat(stage.style.width)).toBeLessThanOrEqual(300);
+
+    // pointer routing survives the smaller scale: the real button flow works
+    click(
+      page,
+      centreOf(page.app.view(), "Advance artifact") as [number, number],
+    );
+    await page.settleAndRedraw();
+    expect(page.app.getState().view.taskRevision).toBe(1);
   });
 });

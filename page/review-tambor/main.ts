@@ -16,8 +16,12 @@ import { mountReviewDemo } from "./mount";
 
 const KEY = { sessionId: "page-demo", taskId: "artifact-1" } as const;
 
-/** The demo viewport: the mounted widget stack is ~126 cells tall. */
-const VIEWPORT: readonly [number, number] = [400, 500];
+/** The demo viewport, measured from the host (wanna-hbm): the mount scales
+ * the widget stack to fit this width, so a mobile viewport stays usable. */
+function viewport(): readonly [number, number] {
+  const w = globalThis.innerWidth ?? 400;
+  return [w - 48, globalThis.innerHeight ?? 800];
+}
 
 /** Write a plain-message failure into the container. */
 function fail(container: HTMLElement, message: string): void {
@@ -25,9 +29,14 @@ function fail(container: HTMLElement, message: string): void {
 }
 
 /** Open the shell over the browser's IndexedDB adapter. */
-async function openShell(): Promise<Parameters<typeof mountReviewDemo>[2] | { failure: string }> {
+async function openShell(): Promise<
+  Parameters<typeof mountReviewDemo>[2] | { failure: string }
+> {
   if (!globalThis.indexedDB) {
-    return { failure: "This demo needs IndexedDB — serve the page over http(s), not file://" };
+    return {
+      failure:
+        "This demo needs IndexedDB — serve the page over http(s), not file://",
+    };
   }
   const port = await createReviewIndexDbPort(
     { indexedDB: globalThis.indexedDB },
@@ -41,13 +50,17 @@ async function openShell(): Promise<Parameters<typeof mountReviewDemo>[2] | { fa
     artifactId: KEY.taskId,
   });
   if (!("app" in opened)) {
-    return { failure: `The shell refused to open the session: ${opened.kind} — ${opened.reason}` };
+    return {
+      failure: `The shell refused to open the session: ${opened.kind} — ${opened.reason}`,
+    };
   }
   return opened.app;
 }
 
 /** The scripted first path: revision 7 exists, its review is pending. */
-async function seedFirstPath(app: Parameters<typeof mountReviewDemo>[2]): Promise<void> {
+async function seedFirstPath(
+  app: Parameters<typeof mountReviewDemo>[2],
+): Promise<void> {
   app.dispatch([["demo-advance", 7, "artifact-1/revisions/7"]]);
   await app.settle();
   app.dispatch([["demo-request", 7]]);
@@ -71,7 +84,7 @@ async function boot(): Promise<void> {
     container.ownerDocument as never,
     container as never,
     opened,
-    VIEWPORT,
+    viewport(),
   );
 }
 

@@ -17,7 +17,7 @@
 //   overlap) — the stage renders 1 unit as CELL_SCALE px and divides event
 //   positions back to units before routing. Presentation only: geometry stays
 //   in unit space for routing and assertions.
-import { bounds } from "@tambor/views/model.ts";
+import { bounds, type Elem } from "@tambor/views/model.ts";
 import { DomBackend } from "@tambor/render/dom.ts";
 import {
   RealDomElement,
@@ -40,8 +40,11 @@ export interface ReviewPageHandle {
   readonly app: TamborReviewApp;
   readonly root: RealDomElement;
   readonly surface: RealDomElement;
-  /** the scaled stage: 1 unit = CELL_SCALE px, root and surface inside */
+  /** the scaled stage: 1 unit = one cell px, root and surface inside */
   readonly stage: RealDomElement;
+  /** the EFFECTIVE cell scale (CELL_SCALE narrowed to the container width) —
+   * hosts and tests convert unit coordinates to client px with it */
+  readonly scale: number;
   /** resolves when in-flight shell commands have refreshed the projection,
    * then re-draws the current view into the document */
   settleAndRedraw(): Promise<void>;
@@ -162,7 +165,20 @@ function buildStage(
   return { stage, surface, root };
 }
 
-/** Mount the review demo into `container` of `doc`, rendered at CELL_SCALE. */
+/** The EFFECTIVE cell scale: never wider than the container (wanna-hbm) —
+ * at a mobile width the preferred CELL_SCALE would overflow horizontally, so
+ * the stage scales down to fit; pointer routing and assertions use the same
+ * effective scale (geometry stays in unit space). */
+export function effectiveScale(
+  preferred: number,
+  containerWidth: number,
+  view: Elem,
+): number {
+  return Math.min(preferred, containerWidth / bounds(view)[0]);
+}
+
+/** Mount the review demo into `container` of `doc`, rendered at CELL_SCALE
+ * narrowed to the container width (fit-to-width, wanna-hbm). */
 export function mountReviewDemo(
   doc: HostDoc,
   container: HostElement,
@@ -174,9 +190,10 @@ export function mountReviewDemo(
     createElement: cellFactory(doc),
     containerSize: containerSize as unknown as [number, number],
   });
+  const eff = effectiveScale(scale, containerSize[0], app.view());
 
-  const { stage, surface, root } = buildStage(doc, app, backend, scale);
-  wireSurface(backend, app, scale, surface.host);
+  const { stage, surface, root } = buildStage(doc, app, backend, eff);
+  wireSurface(backend, app, eff, surface.host);
   backend.draw(app.view());
   container.appendChild(stage.host);
 
@@ -186,6 +203,7 @@ export function mountReviewDemo(
     root,
     surface,
     stage,
+    scale: eff,
     settleAndRedraw: async (): Promise<void> => {
       await app.settle();
       backend.draw(app.view());
