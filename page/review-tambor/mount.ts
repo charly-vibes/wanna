@@ -48,12 +48,25 @@ export interface ReviewPageHandle {
   unmount(): void;
 }
 
-/** The wire: route, dispatch, re-draw — then the settle re-draw. */
-function wireSurface(backend: DomBackend, app: TamborReviewApp, scale: number): void {
+/** The wire: route, dispatch, re-draw — then the settle re-draw. A
+ * request-focus intent also focuses the real surface so keydown/paste
+ * flow into the corpus in a real browser (tambor-e5n's DOM-focus leg). */
+function wireSurface(
+  backend: DomBackend,
+  app: TamborReviewApp,
+  scale: number,
+  focusTarget: HostElement,
+): void {
   backend.subscribe((ev: TamborEvent) => {
     const routed = rescalePointer(ev, scale);
     const intents = dispatch(app.view(), routed);
-    if (intents.length > 0) app.dispatch(intents);
+    if (intents.length > 0) {
+      app.dispatch(intents);
+      const wantsFocus = intents.some(
+        (it) => (it as unknown[])[0] === "request-focus",
+      );
+      if (wantsFocus) focusTarget.focus?.();
+    }
     backend.draw(app.view());
     void app.settle().then(() => backend.draw(app.view()));
   });
@@ -94,6 +107,26 @@ function cellFactory(doc: HostDoc): ReturnType<typeof realDomFactory> {
   };
 }
 
+/** The stage chrome: footprint reservation plus the paper ground so the
+ * drawn tree reads cleanly on light, high-contrast ink. */
+function styleStage(
+  stage: RealDomElement,
+  viewW: number,
+  viewH: number,
+  scale: number,
+): void {
+  stage.host.style.setProperty("position", "relative");
+  stage.host.style.setProperty("width", `${viewW * scale}px`);
+  stage.host.style.setProperty("height", `${viewH * scale}px`);
+  stage.host.style.setProperty("font-size", "1px");
+  stage.host.style.setProperty("line-height", "1px");
+  stage.host.style.setProperty("background", "#fbfaf7");
+  stage.host.style.setProperty("color", INK);
+  stage.host.style.setProperty("border-radius", "10px");
+  stage.host.style.setProperty("box-shadow", "0 2px 18px rgba(0,0,0,0.45)");
+  stage.host.style.setProperty("overflow", "hidden");
+}
+
 /** The scaled stage: the footprint reservation (outer), the transform
  * wrapper, and the transparent input surface, all in one subtree. */
 function buildStage(
@@ -104,17 +137,7 @@ function buildStage(
 ): { stage: RealDomElement; surface: RealDomElement; root: RealDomElement } {
   const [viewW, viewH] = bounds(app.view());
   const stage = new RealDomElement("div", doc);
-  stage.host.style.setProperty("position", "relative");
-  stage.host.style.setProperty("width", `${viewW * scale}px`);
-  stage.host.style.setProperty("height", `${viewH * scale}px`);
-  stage.host.style.setProperty("font-size", "1px");
-  stage.host.style.setProperty("line-height", "1px");
-  // paper ground: the drawn tree reads cleanly on light, high-contrast ink
-  stage.host.style.setProperty("background", "#fbfaf7");
-  stage.host.style.setProperty("color", INK);
-  stage.host.style.setProperty("border-radius", "10px");
-  stage.host.style.setProperty("box-shadow", "0 2px 18px rgba(0,0,0,0.45)");
-  stage.host.style.setProperty("overflow", "hidden");
+  styleStage(stage, viewW, viewH, scale);
   // the wrapper carries the transform (the root's absolute-positioned
   // children have no intrinsic box of their own)
   const wrapper = new RealDomElement("div", doc);
@@ -126,6 +149,8 @@ function buildStage(
   wrapper.host.appendChild(root.host);
 
   const surface = new RealDomElement("canvas", doc);
+  // the surface is the keyboard target (tambor-huu tabindex)
+  surface.host.setAttribute("tabindex", "0");
   surface.host.style.setProperty("position", "absolute");
   surface.host.style.setProperty("left", "0px");
   surface.host.style.setProperty("top", "0px");
@@ -149,9 +174,9 @@ export function mountReviewDemo(
     createElement: cellFactory(doc),
     containerSize: containerSize as unknown as [number, number],
   });
-  wireSurface(backend, app, scale);
 
   const { stage, surface, root } = buildStage(doc, app, backend, scale);
+  wireSurface(backend, app, scale, surface.host);
   backend.draw(app.view());
   container.appendChild(stage.host);
 

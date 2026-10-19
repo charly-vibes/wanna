@@ -48,7 +48,9 @@ function shellAction(
         })
         .catch((e: unknown) => {
           const reason = e instanceof Error ? e.message : String(e);
-          holder.app.value?.dispatch([["refresh", c.view(), `refused — ${reason}`]]);
+          holder.app.value?.dispatch([
+            ["refresh", c.view(), `refused — ${reason}`],
+          ]);
         }),
     );
     return state;
@@ -63,59 +65,86 @@ export function registerShellActions(
   track: (p: Promise<unknown>) => void,
 ): void {
   const action = (
-    act: (c: HeadlessReviewClient, args: readonly unknown[], state: ReviewTamborState) => Promise<ActionOutcome>,
+    act: (
+      c: HeadlessReviewClient,
+      args: readonly unknown[],
+      state: ReviewTamborState,
+    ) => Promise<ActionOutcome>,
   ) => shellAction(holder, client, track, act);
 
   /** Host-owned artifact advance (the slider + Advance button). */
-  registry.set("demo-advance", action((c, args) => c.advanceArtifact(args[0] as number, args[1] as string).then((kind) => ({
-    label:
-      kind === "applied"
-        ? `artifact advanced to revision ${String(args[0])}`
-        : outcomeLabel("refused"),
-    view: c.view(),
-  }))));
+  registry.set(
+    "demo-advance",
+    action((c, args) =>
+      c.advanceArtifact(args[0] as number, args[1] as string).then((kind) => ({
+        label:
+          kind === "applied"
+            ? `artifact advanced to revision ${String(args[0])}`
+            : outcomeLabel("refused"),
+        view: c.view(),
+      })),
+    ),
+  );
 
   /** Review request for the current revision. */
-  registry.set("demo-request", action((c, args) => c.requestReview(args[0] as number).then((kind) => ({
-    label:
-      kind === "requested"
-        ? `review of revision ${String(args[0])} pending`
-        : outcomeLabel("refused"),
-    view: c.view(),
-  }))));
+  registry.set(
+    "demo-request",
+    action((c, args) =>
+      c.requestReview(args[0] as number).then((kind) => ({
+        label:
+          kind === "requested"
+            ? `review of revision ${String(args[0])} pending`
+            : outcomeLabel("refused"),
+        view: c.view(),
+      })),
+    ),
+  );
 
   /** Feedback submission: the textarea draft against the displayed revision. */
   const lastEvent = { id: "" };
-  registry.set("demo-submit", action((c, args, state) => {
-    const eventId = (args[0] as string | undefined) ?? `event-r${String(state.view.taskRevision)}`;
-    lastEvent.id = eventId;
-    return c.submitFeedback(eventId, state.draft).then((outcome) => ({
-      label:
-        outcome.kind === "recorded"
-          ? outcomeLabel("recorded", outcome.revision)
-          : outcomeLabel(outcome.kind),
-      view: c.view(),
-    }));
-  }));
+  registry.set(
+    "demo-submit",
+    action((c, args, state) => {
+      const eventId =
+        (args[0] as string | undefined) ??
+        `event-r${String(state.view.taskRevision)}`;
+      lastEvent.id = eventId;
+      return c.submitFeedback(eventId, state.draft).then((outcome) => ({
+        label:
+          outcome.kind === "recorded"
+            ? outcomeLabel("recorded", outcome.revision)
+            : outcomeLabel(outcome.kind),
+        view: c.view(),
+      }));
+    }),
+  );
 
   /** Retire any pending review and open a fresh one for the current revision. */
-  registry.set("demo-fresh", action((c) => c.freshReview().then((kind) => ({
-    label:
-      kind === "active"
-        ? `fresh review of revision ${String(c.view().taskRevision)} active`
-        : outcomeLabel("refused"),
-    view: c.view(),
-  }))));
+  registry.set(
+    "demo-fresh",
+    action((c) =>
+      c.freshReview().then((kind) => ({
+        label:
+          kind === "active"
+            ? `fresh review of revision ${String(c.view().taskRevision)} active`
+            : outcomeLabel("refused"),
+        view: c.view(),
+      })),
+    ),
+  );
 
   /** Reconcile the uncertain commit (defaults to the last submitted event). */
-  registry.set("demo-reconcile", action((c, args) => {
-    const operationId = (args[0] as string | undefined) || lastEvent.id;
-    return c.reconcile(operationId).then((kind) => ({
-      label:
-        kind === "refused"
-          ? outcomeLabel("unknown_effect")
-          : `reconciled: ${kind} — mutations are unblocked`,
-      view: c.view(),
-    }));
-  }));
+  registry.set(
+    "demo-reconcile",
+    action((c, args) => {
+      const operationId = (args[0] as string | undefined) || lastEvent.id;
+      return c.reconcile(operationId).then((kind) => ({
+        label:
+          kind === "refused"
+            ? outcomeLabel("unknown_effect")
+            : `reconciled: ${kind} — mutations are unblocked`,
+        view: c.view(),
+      }));
+    }),
+  );
 }

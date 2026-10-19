@@ -33,7 +33,9 @@ export function makeFaultPort(inner: ReviewPersistencePort): FaultPort {
     const armed = kind;
     remaining -= 1;
     if (remaining === 0) kind = null;
-    return armed === "unknown_effect" ? { kind: "unknown_effect" } : { kind: "unavailable" };
+    return armed === "unknown_effect"
+      ? { kind: "unknown_effect" }
+      : { kind: "unavailable" };
   };
   return {
     supportsAtomicCommitAndReplay: inner.supportsAtomicCommitAndReplay,
@@ -53,7 +55,10 @@ export function makeFaultPort(inner: ReviewPersistencePort): FaultPort {
       if (kind !== null) return faulted();
       return inner.compareAndCommit(key, expectedVersion, operation);
     },
-    async reconcile(key: SessionTaskKey, operationId: string): Promise<PortReconcileOutcome> {
+    async reconcile(
+      key: SessionTaskKey,
+      operationId: string,
+    ): Promise<PortReconcileOutcome> {
       return inner.reconcile(key, operationId);
     },
   };

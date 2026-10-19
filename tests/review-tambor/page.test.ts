@@ -56,11 +56,42 @@ interface WalkNode {
   readonly y?: number;
 }
 
+/** The collected hits, per collector: the walk threads one array per target
+ * kind so a textarea hit never pollutes a button lookup. */
+const buttonHits: [number, number][] = [];
+const textareaHits: [number, number][] = [];
+
 /** Record the drawn centre of a matching button. */
-function collectButton(node: unknown, n: WalkNode, text: string, dx: number, dy: number, hits: [number, number][]): void {
+function collectButton(
+  node: unknown,
+  n: WalkNode,
+  text: string,
+  dx: number,
+  dy: number,
+): void {
   if (n.type === "button" && n.text === text) {
     const [w, h] = bounds(node as Elem);
-    hits.push([dx + w / 2, dy + h / 2]);
+    buttonHits.push([dx + w / 2, dy + h / 2]);
+  }
+}
+
+/** The KeyboardEvent constructor, reached structurally (jsdom supplies it). */
+function keyCtor(): new (type: string, init: { key: string }) => unknown {
+  const ctor = (globalThis as { KeyboardEvent?: unknown }).KeyboardEvent;
+  if (typeof ctor !== "function") throw new Error("KeyboardEvent unavailable");
+  return ctor as new (type: string, init: { key: string }) => unknown;
+}
+
+/** Record the drawn centre of a `key-press` handler node (the textarea). */
+function collectTextarea(
+  node: unknown,
+  n: WalkNode & { eventType?: string },
+  dx: number,
+  dy: number,
+): void {
+  if (n.type === "handler" && n.eventType === "key-press") {
+    const [w, h] = bounds(node as Elem);
+    textareaHits.push([dx + w / 2, dy + h / 2]);
   }
 }
 
@@ -73,40 +104,78 @@ function childNodes(n: WalkNode): readonly unknown[] {
 }
 
 /** Descend into a node's child-carrying fields. */
-function walkChildren(n: WalkNode, text: string, dx: number, dy: number, hits: [number, number][]): void {
-  for (const child of childNodes(n)) walkTree(child, text, dx, dy, hits);
+function walkChildren(n: WalkNode, text: string, dx: number, dy: number): void {
+  for (const child of childNodes(n)) walkTree(child, text, dx, dy);
 }
 
-/** One view node: translate offsets accumulate; buttons are collected. */
-function visitNode(node: unknown, n: WalkNode, text: string, dx: number, dy: number, hits: [number, number][]): void {
+/** One view node: translate offsets accumulate; targets are collected. */
+function visitNode(
+  node: unknown,
+  n: WalkNode,
+  text: string,
+  dx: number,
+  dy: number,
+): void {
   if (n.type === "translate") {
-    walkTree(n.drawable, text, dx + (n.x ?? 0), dy + (n.y ?? 0), hits);
+    walkTree(n.drawable, text, dx + (n.x ?? 0), dy + (n.y ?? 0));
     return;
   }
-  collectButton(node, n, text, dx, dy, hits);
-  walkChildren(n, text, dx, dy, hits);
+  collectButton(node, n, text, dx, dy);
+  collectTextarea(node, n as WalkNode & { eventType?: string }, dx, dy);
+  walkChildren(n, text, dx, dy);
 }
 
 /** Depth-first walk over the view tree (null is the empty subtree). */
-function walkTree(node: unknown, text: string, dx: number, dy: number, hits: [number, number][]): void {
+function walkTree(node: unknown, text: string, dx: number, dy: number): void {
   if (node == null) return;
-  visitTree(node, text, dx, dy, hits);
+  visitTree(node, text, dx, dy);
 }
 
 /** A non-null subtree: a child list or a single node. */
-function visitTree(node: unknown, text: string, dx: number, dy: number, hits: [number, number][]): void {
+function visitTree(node: unknown, text: string, dx: number, dy: number): void {
   if (Array.isArray(node)) {
-    for (const child of node) walkTree(child, text, dx, dy, hits);
+    for (const child of node) walkTree(child, text, dx, dy);
     return;
   }
-  visitNode(node, node as WalkNode, text, dx, dy, hits);
+  visitNode(node, node as WalkNode, text, dx, dy);
 }
 
 /** The drawn centre of the first button labelled `text`, in view coordinates. */
 function centreOf(view: Elem, text: string): [number, number] | null {
-  const hits: [number, number][] = [];
-  walkTree(view, text, 0, 0, hits);
-  return hits[0] ?? null;
+  buttonHits.length = 0;
+  textareaHits.length = 0;
+  walkTree(view, text, 0, 0);
+  return buttonHits[0] ?? null;
+}
+
+/** The drawn centre of the textarea (its `key-press` handler node). */
+function textareaCentre(view: Elem): [number, number] | null {
+  buttonHits.length = 0;
+  textareaHits.length = 0;
+  walkTree(view, "", 0, 0);
+  return textareaHits[0] ?? null;
+}
+
+/** Pointer down+up at a drawn centre, in CLIENT pixels through the surface. */
+function click(page: ReviewPageHandle, at: [number, number]): void {
+  const surface = page.surface.host as unknown as {
+    dispatchEvent(ev: unknown): boolean;
+  };
+  const [cx, cy] = [at[0] * CELL_SCALE, at[1] * CELL_SCALE];
+  surface.dispatchEvent(
+    new (mouseCtor())("pointerdown", { clientX: cx, clientY: cy }),
+  );
+  surface.dispatchEvent(
+    new (mouseCtor())("pointerup", { clientX: cx, clientY: cy }),
+  );
+}
+
+/** One keydown through the surface (the real keyboard path). */
+function typeKey(page: ReviewPageHandle, key: string): void {
+  const surface = page.surface.host as unknown as {
+    dispatchEvent(ev: unknown): boolean;
+  };
+  surface.dispatchEvent(new (keyCtor())("keydown", { key }));
 }
 
 /** One mounted page over a fresh fake-indexeddb store. */
@@ -124,7 +193,12 @@ async function mountedPage(): Promise<ReviewPageHandle> {
   const doc = hostDoc();
   const container = doc.createElement("div");
   doc.body.appendChild(container);
-  return mountReviewDemo(doc as never, container as never, opened.app, [400, 500]);
+  return mountReviewDemo(
+    doc as never,
+    container as never,
+    opened.app,
+    [400, 500],
+  );
 }
 
 describe("review-tambor mounted page (wanna-8ay)", () => {
@@ -146,19 +220,57 @@ describe("review-tambor mounted page (wanna-8ay)", () => {
     // divides the positions back to units before routing)
     const at = centreOf(page.app.view(), "Advance artifact");
     expect(at).not.toBeNull();
-    const [ux, uy] = at as [number, number];
-    const cx = ux * CELL_SCALE;
-    const cy = uy * CELL_SCALE;
-    const surface = page.surface.host as unknown as {
-      dispatchEvent(ev: unknown): boolean;
-    };
-    surface.dispatchEvent(new (mouseCtor())("pointerdown", { clientX: cx, clientY: cy }));
-    surface.dispatchEvent(new (mouseCtor())("pointerup", { clientX: cx, clientY: cy }));
+    click(page, at as [number, number]);
 
     // the async shell action settles, the page re-draws, the DOM shows it
     await page.settleAndRedraw();
     expect(page.app.getState().view.taskRevision).toBe(1);
     expect(hostDoc().body.textContent).toContain("task revision 1");
+  });
+
+  it("records feedback typed into the textarea through real events (wanna-6ce)", async () => {
+    const page = await mountedPage();
+
+    // click the textarea through the mounted surface (the textarea's real
+    // click path: mouse-down handler → request-focus → state-backed focus)
+    const at = textareaCentre(page.app.view());
+    expect(at).not.toBeNull();
+    click(page, at as [number, number]);
+
+    // DOM focus wiring: the surface takes keyboard focus (activeElement
+    // was BODY in the red repro)
+    expect(
+      (hostDoc() as unknown as { activeElement: unknown }).activeElement,
+    ).toBe(page.surface.host);
+
+    // type through real key events: the focused textarea inserts text
+    for (const ch of "hello") typeKey(page, ch);
+    expect(page.app.getState().draft).toBe("hello");
+
+    // a pending review first: advance the artifact, then request a review
+    // of the delivered revision (the demo's scripted first path)
+    click(
+      page,
+      centreOf(page.app.view(), "Advance artifact") as [number, number],
+    );
+    await page.settleAndRedraw();
+    click(
+      page,
+      centreOf(page.app.view(), "Request review") as [number, number],
+    );
+    await page.settleAndRedraw();
+
+    // submit through the real button; the shell records the typed feedback
+    click(
+      page,
+      centreOf(page.app.view(), "Submit feedback") as [number, number],
+    );
+    await page.settleAndRedraw();
+    expect(
+      page.app
+        .getState()
+        .view.completedReviews.some((r) => r.feedback === "hello"),
+    ).toBe(true);
   });
 
   it("scales the unit grid into readable cells in the host document", async () => {
@@ -171,7 +283,9 @@ describe("review-tambor mounted page (wanna-8ay)", () => {
     const wrapper = stage.firstElementChild as unknown as {
       style: { cssText: string };
     } | null;
-    expect(wrapper?.style.cssText ?? "").toContain(`scale(${String(CELL_SCALE)})`);
+    expect(wrapper?.style.cssText ?? "").toContain(
+      `scale(${String(CELL_SCALE)})`,
+    );
     expect(hostDoc().body.textContent).toContain("tambor review");
   });
 });
