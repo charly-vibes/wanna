@@ -1,9 +1,12 @@
 // Purpose: the demo's fault-injecting ReviewPersistencePort wrapper (wanna-72s)
 // Responsibilities: delegate every port call to the inner port verbatim, except
 //   while a fault is armed — then the next `count` commits answer with the
-//   armed failure outcome without contacting the inner port; load and
-//   reconcile always delegate (a demo fault targets the uncertain-commit path
-//   only)
+//   armed failure outcome: `unavailable` fails WITHOUT contacting the inner
+//   port (an unanswerable write), while `unknown_effect` DELEGATES the commit
+//   to the inner port and suppresses its successful acknowledgement — the
+//   committed-but-unacknowledged risk the demo's Lose-ack button advertises
+//   (wanna-5xi). Load and reconcile always delegate (a demo fault targets the
+//   uncertain-commit path only).
 // Rationale: tambor-y9d.2 descope ruling — infrastructure explicitly allowed:
 //   the lose-ack and storage-down fault buttons need a wrapper, and this is
 //   NOT a semantics copy (the outcome types are the shell's own port contract;
@@ -29,13 +32,11 @@ export interface FaultPort extends ReviewPersistencePort {
 export function makeFaultPort(inner: ReviewPersistencePort): FaultPort {
   let kind: PortFault | null = null;
   let remaining = 0;
-  const faulted = (): PortCommitOutcome => {
-    const armed = kind;
+  const consume = (): PortFault => {
+    const armed = kind as PortFault;
     remaining -= 1;
     if (remaining === 0) kind = null;
-    return armed === "unknown_effect"
-      ? { kind: "unknown_effect" }
-      : { kind: "unavailable" };
+    return armed;
   };
   return {
     supportsAtomicCommitAndReplay: inner.supportsAtomicCommitAndReplay,
@@ -52,8 +53,14 @@ export function makeFaultPort(inner: ReviewPersistencePort): FaultPort {
       expectedVersion: number | null,
       operation: PortOperation,
     ): Promise<PortCommitOutcome> {
-      if (kind !== null) return faulted();
-      return inner.compareAndCommit(key, expectedVersion, operation);
+      if (kind === null)
+        return inner.compareAndCommit(key, expectedVersion, operation);
+      if (consume() === "unavailable") return { kind: "unavailable" };
+      // lost ack: the write lands in storage, only its acknowledgement is
+      // suppressed — whatever the inner port answered, the caller's outcome
+      // is unknown (the reconciliation decides the truth)
+      await inner.compareAndCommit(key, expectedVersion, operation);
+      return { kind: "unknown_effect" };
     },
     async reconcile(
       key: SessionTaskKey,
