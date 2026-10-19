@@ -11,6 +11,10 @@ default:
     @just --list
 
 ci:
+    # ah binary floor (wanna-8kq): range selection (--base, GH#42) needs
+    # espectacular >= 0.12.0 — the ci.yml smoke pin (0.9.3) is CI-install
+    # ONLY; never run its cargo install line locally, it clobbers the real ah
+    sh -c 'ah --version | grep -q "0\.12\." || { echo "ah >= 0.12.0 required locally (cargo install --locked espectacular@0.12.0)"; exit 1; }'
     npx tsc --noEmit -p tsconfig.json
     npx eslint src
     npm test
