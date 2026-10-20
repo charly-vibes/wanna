@@ -1,7 +1,12 @@
 # composition-shell Specification
 
 ## Purpose
-TBD - created by archiving change add-composition-shell. Update Purpose after archive.
+
+Expose the revision-aware review coordination pipeline — durable review
+sessions, event-sourced state transitions, explicit cancel/refresh/reconcile
+semantics, and typed commit outcomes — through one public shell entry point, so
+host applications compose real review flows without re-implementing
+coordination, recovery, or projection semantics themselves.
 ## Requirements
 ### Requirement: Single entry-point composition
 

@@ -1,7 +1,12 @@
 # shell-distribution Specification
 
 ## Purpose
-TBD - created by archiving change add-shell-distribution. Update Purpose after archive.
+
+Govern the npm distribution of the composition shell as a fresh-consumer-
+importable artifact — a self-contained ESM bundle with type declarations
+published under the @charly-vibes scope — so the semantic-reuse claim is
+verified against a real registry install instead of in-repo source aliases
+alone.
 ## Requirements
 ### Requirement: Fresh-consumer importable artifact
 

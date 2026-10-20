@@ -1,7 +1,13 @@
 # review-workbench Specification
 
 ## Purpose
-TBD - created by archiving change add-workbench-spa. Update Purpose after archive.
+
+Define the reference workbench screen that consumes the public composition
+shell and its durable adapter through a rendered interface, making revision
+visibility, stale-feedback recovery, reviewer cancel, and restart
+reconciliation observable through real UI interactions rather than headless
+calls — the reuse evidence that coordination semantics survive a third,
+UI-bound consumer.
 ## Requirements
 ### Requirement: Revision visible
 
