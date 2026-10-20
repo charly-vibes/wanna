@@ -136,3 +136,6 @@ comparison with a realistic baseline store (can fail, conflict, lose
 acknowledgements) so exclusions stop flattering it, or (b) narrow the
 distribution claim to semantic reuse. Report existence is nonetheless complete
 per the change: archival does not depend on a favorable outcome.
+
+**Resolved** (wanna-zh1): path (b) accepted as final and path (a) deferred
+with a recorded protocol — see `docs/reuse-decision.md`.
