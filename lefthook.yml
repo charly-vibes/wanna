@@ -40,11 +40,21 @@ pre-push:
       # violations (9613 in typescript/vitest libs) that would gate every push
       run: pretender check src tests tools --mode gate
     ah-check-gate:
-      # range-based selection (ah 0.12.0, GH#42): contracts owning files in
-      # origin/main..HEAD. Falls back to the full suite when the range is
-      # empty, origin/main is unresolvable, or no capability owns the changed
-      # files (current deployed-overlay layout — see wanna-vk3 note).
-      run: ah check --run-tests --base origin/main --head HEAD
+      # Range-based selection (ah 0.12.0, GH#42; re-scoped wanna-m6g).
+      # 0.12.0 maps changed files to capabilities ONLY by path prefix
+      # (openspec/specs/<cap>/, .espectacular/<cap>/, overlays) — there is no
+      # per-contract ownership field, and ANY unmapped file conservatively
+      # runs the full suite (check.rs zero-overlap guard, never a hidden
+      # green). The mandatory .beads export commit (wanna invariant) is
+      # always unmapped, which made --base run all 400 contracts on every
+      # push. Fix: pre-filter bookkeeping paths out of the range and pass
+      # the rest via --files; a bookkeeping-only range skips the contract
+      # run entirely (.beads/issues.jsonl is not imported by any code).
+      # Everything else keeps ah's semantics: unmapped files (src/tests
+      # changes) still run the full suite by design; spec-file-only ranges
+      # narrow to the touched capabilities.
+      run: >-
+        sh -c 'files=$(git diff --name-only origin/main HEAD | grep -v "^\\.beads/" | paste -sd, -); if [ -n "$files" ]; then exec ah check --run-tests --files "$files"; else echo "ah-check-gate: bookkeeping-only push range, contract suite skipped (wanna-m6g)"; fi'
     testaruda-gate:
       # testaruda tolerates exit codes 0 (pass) and 20 (nothing selected)
       run: sh -c 'testaruda select; code=$?; test "$code" -eq 0 -o "$code" -eq 20'
