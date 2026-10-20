@@ -40,7 +40,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: charly-vibes/tambor
-          ref: c8ec467156da4abd9110bbcf3b7da56bbd745639
+          ref: dc62310877787f3f14130a4b4f29d4ff7d2bcf1c
           path: tambor-src
 
       - name: Place tambor at ../tambor (the @tambor/* alias target)
