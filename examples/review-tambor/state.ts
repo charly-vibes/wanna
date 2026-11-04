@@ -1,7 +1,7 @@
 // Purpose: plain-data state and the typed-outcome → widget-label mapping for the tambor-rendered review demo (wanna-72s)
 // Responsibilities: the ReviewTamborState shape (the projection snapshot the view renders, the textarea draft, the host advance target and the rendered outcome line) and outcomeLabel; no shell semantics — every outcome label is a rendering of a typed outcome the real shell returned
 // Rationale: tambor-y9d.2 descope ruling — shell semantics (typed submit outcomes, conditional commit, reconcile, restart durability) are owned by @wanna/composition-shell; this file may only render them
-import type { TextareaExtra } from "@tambor/components/textarea/edit.ts";
+import { initialTextareaExtra, type TextareaExtra } from "@tambor/components/textarea/edit.ts";
 import type { HeadlessView } from "../review-headless";
 
 /** The demo's plain-data state: everything the view renders is here.
@@ -25,15 +25,7 @@ export interface ReviewTamborState {
 export function textareaExtra(s: ReviewTamborState): TextareaExtra {
   const host = s as ReviewTamborState & { "::extra"?: Record<string, unknown> };
   const map = host["::extra"]?.["review-draft"];
-  return map
-    ? (map as TextareaExtra)
-    : {
-        cursor: 0,
-        "select-cursor": null,
-        "down-pos": null,
-        mpos: null,
-        "last-click": null,
-      };
+  return map ? (map as TextareaExtra) : initialTextareaExtra();
 }
 
 export function initialTamborState(
