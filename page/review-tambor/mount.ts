@@ -151,6 +151,20 @@ function buildStage(
   const root = backend.root as RealDomElement;
   wrapper.host.appendChild(root.host);
 
+  const surface = mountSurface(doc, viewW, viewH, wrapper, backend);
+
+  return { stage, surface, root };
+}
+
+/** Create the canvas surface (the keyboard target — tambor-huu tabindex),
+ * style it to the view size, mount it in the wrapper and attach the backend. */
+function mountSurface(
+  doc: HostDoc,
+  viewW: number,
+  viewH: number,
+  wrapper: RealDomElement,
+  backend: DomBackend,
+): RealDomElement {
   const surface = new RealDomElement("canvas", doc);
   // the surface is the keyboard target (tambor-huu tabindex)
   surface.host.setAttribute("tabindex", "0");
@@ -161,8 +175,7 @@ function buildStage(
   surface.host.style.setProperty("height", `${viewH}px`);
   wrapper.host.appendChild(surface.host);
   backend.attach(surface);
-
-  return { stage, surface, root };
+  return surface;
 }
 
 /** The EFFECTIVE cell scale: never wider than the container (wanna-hbm) —
@@ -204,6 +217,18 @@ export function mountReviewDemo(
     surface,
     stage,
     scale: eff,
+    ...pageHandle(container, stage, backend, app),
+  };
+}
+
+/** The lifecycle half of the handle: settle-and-redraw and unmount. */
+function pageHandle(
+  container: HostElement,
+  stage: RealDomElement,
+  backend: DomBackend,
+  app: TamborReviewApp,
+): Pick<ReviewPageHandle, "settleAndRedraw" | "unmount"> {
+  return {
     settleAndRedraw: async (): Promise<void> => {
       await app.settle();
       backend.draw(app.view());

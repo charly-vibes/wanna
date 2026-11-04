@@ -30,20 +30,23 @@ export interface FaultPort extends ReviewPersistencePort {
 }
 
 export function makeFaultPort(inner: ReviewPersistencePort): FaultPort {
-  let kind: PortFault | null = null;
-  let remaining = 0;
+  // single mutable cell — the armed fault and its remaining count change together
+  const armed: { kind: PortFault | null; remaining: number } = {
+    kind: null,
+    remaining: 0,
+  };
   const consume = (): PortFault => {
-    const armed = kind as PortFault;
-    remaining -= 1;
-    if (remaining === 0) kind = null;
-    return armed;
+    const kind = armed.kind as PortFault;
+    armed.remaining -= 1;
+    if (armed.remaining === 0) armed.kind = null;
+    return kind;
   };
   return {
     supportsAtomicCommitAndReplay: inner.supportsAtomicCommitAndReplay,
     deduplicationScope: inner.deduplicationScope,
     arm(next: PortFault, count: number): void {
-      kind = next;
-      remaining = count;
+      armed.kind = next;
+      armed.remaining = count;
     },
     async load(key: SessionTaskKey): Promise<PortLoadOutcome> {
       return inner.load(key);
@@ -53,7 +56,7 @@ export function makeFaultPort(inner: ReviewPersistencePort): FaultPort {
       expectedVersion: number | null,
       operation: PortOperation,
     ): Promise<PortCommitOutcome> {
-      if (kind === null)
+      if (armed.kind === null)
         return inner.compareAndCommit(key, expectedVersion, operation);
       if (consume() === "unavailable") return { kind: "unavailable" };
       // lost ack: the write lands in storage, only its acknowledgement is
