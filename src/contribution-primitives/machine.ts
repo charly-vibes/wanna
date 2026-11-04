@@ -90,6 +90,17 @@ function guardHolds(id: TransitionId, proposal: PrimitiveProposal, arg: Transiti
   return GUARDS[id](proposal, arg);
 }
 
+function escapeRecordFor(internals: Internals, arg: TransitionArg | undefined): EscapeRecord {
+  const outcome = arg?.escapeOutcome as EscapeOutcome;
+  const declaration = internals.proposal.escapeDeclaration;
+  return {
+    kind: internals.proposal.kind,
+    outcome,
+    workflowEffect: declaration?.[outcome] ?? ESCAPE_EFFECTS[outcome],
+    responsePayload: undefined,
+  };
+}
+
 function applyEffect(
   internals: Internals,
   id: TransitionId,
@@ -97,36 +108,21 @@ function applyEffect(
 ): void {
   if (id === "validate_primitive") {
     internals.state = "validated";
-    return;
-  }
-  if (id === "reject_invalid_primitive") {
-    internals.state = "invalid";
+  } else if (id === "reject_invalid_primitive") {
     const atomic = semanticallyAtomic(internals.proposal.kind);
+    internals.state = "invalid";
     internals.invalidReason = atomic.ok ? "invalid primitive" : atomic.reason;
-    return;
-  }
-  if (id === "activate_primitive") {
+  } else if (id === "activate_primitive") {
     internals.state = "active";
-    return;
-  }
-  if (id === "complete_primitive") {
+  } else if (id === "complete_primitive") {
     internals.state = "completed";
     internals.event = buildEvent(internals.proposal);
-    return;
-  }
-  if (id === "escape_primitive") {
-    const outcome = arg?.escapeOutcome as EscapeOutcome;
-    const declaration = internals.proposal.escapeDeclaration;
+  } else if (id === "escape_primitive") {
     internals.state = "escaped";
-    internals.escapeRecord = {
-      kind: internals.proposal.kind,
-      outcome,
-      workflowEffect: declaration?.[outcome] ?? ESCAPE_EFFECTS[outcome],
-      responsePayload: undefined,
-    };
-    return;
+    internals.escapeRecord = escapeRecordFor(internals, arg);
+  } else {
+    internals.state = "retired";
   }
-  internals.state = "retired";
 }
 
 function fireTransition(

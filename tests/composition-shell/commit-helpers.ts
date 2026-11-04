@@ -22,11 +22,33 @@ interface PortObservation {
   ops: PortOperation[];
 }
 
+/** Frozen port shape: decorators return frozen facades over an inner port. */
+function frozenPort(shape: ReviewPersistencePort): ReviewPersistencePort {
+  return Object.freeze(shape);
+}
+
+/** Assigned port shape: commit behavior spliced over a pass-through facade. */
+function assignedPort(
+  inner: ReviewPersistencePort,
+  commit: ReviewPersistencePort["compareAndCommit"],
+): ReviewPersistencePort {
+  const passthrough: ReviewPersistencePort = {
+    supportsAtomicCommitAndReplay: inner.supportsAtomicCommitAndReplay,
+    deduplicationScope: inner.deduplicationScope,
+    load: (key) => inner.load(key),
+    compareAndCommit: async () => {
+      throw new Error("assignedPort requires an explicit commit behavior");
+    },
+    reconcile: (key, operationId) => inner.reconcile(key, operationId),
+  };
+  return Object.assign(passthrough, { compareAndCommit: commit });
+}
+
 export function recordingPort(
   inner: ReviewPersistencePort,
 ): { port: ReviewPersistencePort; observed: PortObservation } {
   const observed: PortObservation = { commits: 0, ops: [] };
-  const port: ReviewPersistencePort = {
+  const port = frozenPort({
     supportsAtomicCommitAndReplay: inner.supportsAtomicCommitAndReplay,
     deduplicationScope: inner.deduplicationScope,
     load: (key) => inner.load(key),
@@ -36,7 +58,7 @@ export function recordingPort(
       return inner.compareAndCommit(key, expectedVersion, operation);
     },
     reconcile: (key, operationId) => inner.reconcile(key, operationId),
-  };
+  });
   return { port, observed };
 }
 
@@ -45,26 +67,17 @@ export function forcedOutcomePort(
   inner: ReviewPersistencePort,
   forced: PortCommitOutcome,
 ): ReviewPersistencePort {
-  return {
-    supportsAtomicCommitAndReplay: inner.supportsAtomicCommitAndReplay,
-    deduplicationScope: inner.deduplicationScope,
-    load: (key) => inner.load(key),
-    compareAndCommit: async () => forced,
-    reconcile: (key, operationId) => inner.reconcile(key, operationId),
-  };
+  return assignedPort(inner, async () => forced);
 }
 
 /** Port whose commits throw — a thrown commit can never mean certainly-not-applied. */
 export function throwingCommitPort(inner: ReviewPersistencePort): ReviewPersistencePort {
-  return {
-    supportsAtomicCommitAndReplay: inner.supportsAtomicCommitAndReplay,
-    deduplicationScope: inner.deduplicationScope,
-    load: (key) => inner.load(key),
-    compareAndCommit: async () => {
+  return assignedPort(
+    inner,
+    async () => {
       throw new Error("storage exploded mid-commit");
     },
-    reconcile: (key, operationId) => inner.reconcile(key, operationId),
-  };
+  );
 }
 
 export async function openOn(port: ReviewPersistencePort) {

@@ -4,13 +4,18 @@
 import { KIND_CONTRACT_SCHEMAS } from "../../src/interaction-contract/registries";
 import { CONTRACT_SCHEMA_VERSION } from "../../src/interaction-contract/types";
 import type { ContractResponse, InteractionContract } from "../../src/interaction-contract/types";
+import { expect } from "vitest";
 
 export const CHOOSE = "choose";
+
+function chooseSchema() {
+  return KIND_CONTRACT_SCHEMAS[CHOOSE as keyof typeof KIND_CONTRACT_SCHEMAS];
+}
 
 export function kindSchema(kind: string) {
   // unknown kinds fall back to the canonical kind's payload shape — the fixture
   // still builds a coherent record; allowlist validation rejects the kind itself
-  return KIND_CONTRACT_SCHEMAS[kind as keyof typeof KIND_CONTRACT_SCHEMAS] ?? KIND_CONTRACT_SCHEMAS[CHOOSE];
+  return KIND_CONTRACT_SCHEMAS[kind as keyof typeof KIND_CONTRACT_SCHEMAS] ?? chooseSchema();
 }
 
 export function payloadForKind(kind: string): Record<string, unknown> {
@@ -22,11 +27,10 @@ export function payloadForKind(kind: string): Record<string, unknown> {
 
 const OPTION_KINDS = new Set(["choose", "rank"]);
 
+const CANONICAL_OPTION_VALUES = ["Option A", "Option B"];
+
 function canonicalOptions(): Record<string, string>[] {
-  return [
-    { id: "opt-1", value: "Option A" },
-    { id: "opt-2", value: "Option B" },
-  ];
+  return CANONICAL_OPTION_VALUES.map((value, index) => ({ id: `opt-${index + 1}`, value }));
 }
 
 function basePayload(kind: string): Record<string, unknown> {
@@ -38,13 +42,16 @@ function basePayload(kind: string): Record<string, unknown> {
 }
 
 export function fullAccessibility(): InteractionContract["accessibility"] {
-  return {
+  const accessibility = {
     naming: "the label announces the request",
     operation: "every control is keyboard operable",
     focusNavigation: "focus order follows the declared option order",
     statusErrors: "status and errors are announced as text",
     timing: null,
   };
+  expect(typeof accessibility.naming).toBe("string");
+  expect(typeof accessibility.operation).toBe("string");
+  return accessibility;
 }
 
 export function fullEscapePaths(): InteractionContract["escapePaths"] {

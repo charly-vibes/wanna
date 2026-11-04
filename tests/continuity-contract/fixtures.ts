@@ -11,7 +11,10 @@ import type {
 } from "../../src/continuity-contract/types";
 
 export function validatedDraft(overrides: Partial<ValidatedInput> = {}): ValidatedInput {
-  return { content: "draft: summarize the incident timeline", validated: true, ...overrides };
+  return Object.assign(
+    { content: "draft: summarize the incident timeline", validated: true },
+    overrides,
+  );
 }
 
 export function validTask(overrides: Partial<ContinuityTask> = {}): ContinuityTask {
@@ -46,15 +49,17 @@ export function validScope(overrides: Partial<CheckpointScope> = {}): Checkpoint
 }
 
 export function suspendPolicy(overrides: Partial<SuspendPolicy> = {}): SuspendPolicy {
-  return { ...overrides };
+  return Object.assign({}, overrides);
 }
 
 export function validResumeContext(overrides: Partial<ResumeContext> = {}): ResumeContext {
+  // resume context mirrors the suspended task's goal/state/lists rather than restating them
+  const task = validTask();
   return {
-    priorGoal: "ship the incident summary to the on-call rotation",
-    lastConfirmedState: "timeline drafted and reviewed against ev-1",
-    completed: ["collect timeline facts", "draft summary"],
-    pending: ["review summary", "send summary"],
+    priorGoal: task.goal,
+    lastConfirmedState: task.lastConfirmedState,
+    completed: task.completed,
+    pending: task.pending,
     changedSinceSuspension: [],
     unresolvedFailures: [],
     nextAction: "review the summary draft",

@@ -42,15 +42,16 @@ export function baseLedgerWithInterruptedIdempotent(): RevisionLedger {
   return ledger;
 }
 
+function candidateWith(id: string, evidence: CandidateRevision["evidence"]): CandidateRevision {
+  return { id, evidence };
+}
+
 export function evidencedCandidate(id = "rev-2"): CandidateRevision {
-  return {
-    id,
-    evidence: { validation: ["v-1"], test: ["t-1"], safety: ["s-1"] },
-  };
+  return candidateWith(id, { validation: ["v-1"], test: ["t-1"], safety: ["s-1"] });
 }
 
 export function validationOnlyCandidate(id = "rev-2"): CandidateRevision {
-  return { id, evidence: { validation: ["v-1"] } };
+  return candidateWith(id, { validation: ["v-1"] });
 }
 
 export function bareCandidate(id = "rev-2"): CandidateRevision {

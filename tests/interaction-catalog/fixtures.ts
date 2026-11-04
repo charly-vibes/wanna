@@ -10,12 +10,12 @@ import type {
   RetirementAction,
 } from "../../src/interaction-catalog/types";
 import { INTERACTION_KINDS } from "../../src/interaction-catalog/types";
+import { expect } from "vitest";
 
 export const V1 = "interaction-catalog-1.0.0";
 
 function kindDef(kind: string, overrides: Partial<KindDefinition> = {}): KindDefinition {
-  return {
-    kind: kind as InteractionKind,
+  const def = {    kind: kind as InteractionKind,
     requiredFields: ["decision"],
     optionalFields: [],
     outcomes: ["decided"],
@@ -23,6 +23,9 @@ function kindDef(kind: string, overrides: Partial<KindDefinition> = {}): KindDef
     renderer: `host:${kind}`,
     ...overrides,
   };
+  expect(Array.isArray(def.requiredFields)).toBe(true);
+  expect(def.renderer).toMatch(/^host:/);
+  return def;
 }
 
 function mapping(needKind: string, primary: string, ...alternatives: string[]): KindMapping {
@@ -109,11 +112,19 @@ export function withoutKind(def: CatalogDefinition, kind: string): CatalogDefini
   return { ...def, kinds: def.kinds.filter((k) => k.kind !== kind) };
 }
 
-export function renameKind(def: CatalogDefinition, from: string, to: string): CatalogDefinition {
+function mapKind(
+  def: CatalogDefinition,
+  kind: string,
+  patch: Partial<KindDefinition>,
+): CatalogDefinition {
   return {
     ...def,
-    kinds: def.kinds.map((k) => (k.kind === from ? { ...k, kind: to as KindDefinition["kind"] } : k)),
+    kinds: def.kinds.map((k) => (k.kind === kind ? { ...k, ...patch } : k)),
   };
+}
+
+export function renameKind(def: CatalogDefinition, from: string, to: string): CatalogDefinition {
+  return mapKind(def, from, { kind: to as KindDefinition["kind"] });
 }
 
 export function withExtraKind(def: CatalogDefinition, kind: string): CatalogDefinition {
@@ -121,10 +132,7 @@ export function withExtraKind(def: CatalogDefinition, kind: string): CatalogDefi
 }
 
 export function withoutBounds(def: CatalogDefinition, kind: string): CatalogDefinition {
-  return {
-    ...def,
-    kinds: def.kinds.map((k) => (k.kind === kind ? { ...k, bounds: undefined as never } : k)),
-  };
+  return mapKind(def, kind, { bounds: undefined as never });
 }
 
 export function withRenderer(def: CatalogDefinition, kind: string, renderer: string): CatalogDefinition {
@@ -134,12 +142,18 @@ export function withRenderer(def: CatalogDefinition, kind: string, renderer: str
   };
 }
 
+function review(approved: boolean): CompatibilityReview {
+  const result = { reviewer: "compat-board", approved };
+  expect(typeof result.reviewer).toBe("string");
+  return result;
+}
+
 export function approvedReview(): CompatibilityReview {
-  return { reviewer: "compat-board", approved: true };
+  return review(true);
 }
 
 export function rejectedReview(): CompatibilityReview {
-  return { reviewer: "compat-board", approved: false };
+  return review(false);
 }
 
 export function reissueRetirement(): RetirementAction {

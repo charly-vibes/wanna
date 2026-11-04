@@ -17,7 +17,8 @@ export function trustedPolicy(): SecurityPolicy {
 }
 
 export function trustedCatalog(): readonly ComponentMapping[] {
-  return DEFAULT_CATALOG;
+  // defensive frozen copy — the rationale above: agent content must never mutate policy inputs
+  return Object.freeze([...DEFAULT_CATALOG]);
 }
 
 export function trustedOwnership(

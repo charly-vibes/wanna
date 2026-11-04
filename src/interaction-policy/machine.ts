@@ -179,6 +179,23 @@ function makeMachine(s: Internals): PolicyMachine {
 /** The four read-only getters are defined inline in makeMachine; actions cover the rest. */
 type PolicyMachineGetters = Pick<PolicyMachine, "state" | "lastResult" | "rejectionReason" | "lastInput">;
 
+function retryVia<N>(
+  s: Internals,
+  id: TransitionId,
+  expectedState: Internals["state"],
+  stage: (next: N) => void,
+  revert: () => void,
+  next: N,
+): TransitionResult {
+  if (s.state !== expectedState) {
+    return { ok: false, reason: `${id} cannot fire from state ${s.state}` };
+  }
+  stage(next);
+  const result = fireTransition(s, id);
+  if (!result.ok) revert();
+  return result;
+}
+
 function makeActions(s: Internals): Omit<PolicyMachine, keyof PolicyMachineGetters> {
   return {
     fire: (id) => fireTransition(s, id),
@@ -190,24 +207,10 @@ function makeActions(s: Internals): Omit<PolicyMachine, keyof PolicyMachineGette
       s.reevaluationRequested = true;
       return fireTransition(s, "reevaluate_after_recommendation");
     },
-    retryWithNewContext: (next) => {
-      if (s.state !== "no_candidate") {
-        return { ok: false, reason: `retry_after_empty_result cannot fire from state ${s.state}` };
-      }
-      s.pendingContext = next;
-      const r = fireTransition(s, "retry_after_empty_result");
-      if (!r.ok) s.pendingContext = null;
-      return r;
-    },
-    retryWithCorrectedInput: (next) => {
-      if (s.state !== "failed") {
-        return { ok: false, reason: `retry_after_failure cannot fire from state ${s.state}` };
-      }
-      s.pendingCorrected = next;
-      const r = fireTransition(s, "retry_after_failure");
-      if (!r.ok) s.pendingCorrected = null;
-      return r;
-    },
+    retryWithNewContext: (next) =>
+      retryVia(s, "retry_after_empty_result", "no_candidate", (n) => { s.pendingContext = n; }, () => { s.pendingContext = null; }, next),
+    retryWithCorrectedInput: (next) =>
+      retryVia(s, "retry_after_failure", "failed", (n) => { s.pendingCorrected = n; }, () => { s.pendingCorrected = null; }, next),
   };
 }
 

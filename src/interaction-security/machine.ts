@@ -106,31 +106,19 @@ function buildValidated(
   catalog: readonly ComponentMapping[],
 ): ValidatedInteraction {
   const component = catalogComponentFor(payload.kind, catalog) ?? "";
-  const validated: {
-    kind: string;
-    component: string;
-    label: string;
-    description?: string;
-    options?: string[];
-    url?: string;
-    taskRevision: string;
-    sessionId: string;
-    interactionId: string;
-    revision: number;
-    validatedBy: string;
-  } = {
+  const validated: ValidatedInteraction = {
     kind: payload.kind,
     component,
     label: escapeText(payload.label),
+    description: payload.description === undefined ? undefined : escapeText(payload.description),
+    options: payload.options === undefined ? undefined : payload.options.map(escapeText),
+    url: payload.url,
     taskRevision: payload.taskRevision,
     sessionId: payload.sessionId,
     interactionId: payload.interactionId,
     revision: payload.revision,
     validatedBy: SECURITY_GATE_VERSION,
   };
-  if (payload.description !== undefined) validated.description = escapeText(payload.description);
-  if (payload.options !== undefined) validated.options = payload.options.map(escapeText);
-  if (payload.url !== undefined) validated.url = payload.url;
   return validated;
 }
 

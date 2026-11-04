@@ -9,12 +9,12 @@ function stableStringify(value: unknown): string {
 }
 
 function fnv1a(input: string): string {
-  let hash = 0x811c9dc5;
-  for (let i = 0; i < input.length; i++) {
-    hash ^= input.charCodeAt(i);
-    hash = Math.imul(hash, 0x01000193) >>> 0;
-  }
-  return hash.toString(16).padStart(8, "0");
+  // split("") iterates UTF-16 code units, matching the original index loop
+  const digest = [...input.split("")].reduce(
+    (acc, unit) => Math.imul(acc ^ unit.charCodeAt(0), 0x01000193) >>> 0,
+    0x811c9dc5,
+  );
+  return digest.toString(16).padStart(8, "0");
 }
 
 export function contentHash(value: unknown): string {

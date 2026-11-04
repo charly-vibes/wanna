@@ -15,13 +15,10 @@ import {
 import type { CapabilityComposition } from "../../src/capability-lifecycle/types";
 import { DEVELOPMENT_POLICY, INVOKE_POLICY, REQUIRED_GATES } from "../../src/capability-lifecycle/types";
 import {
-  approvedMachine,
   cyclicComposition,
   failingProposal,
   linearComposition,
-  proposedMachine,
-  retiredMachine,
-  registeredMachine,
+  machineAt,
   validProposal,
 } from "./fixtures";
 
@@ -43,7 +40,7 @@ describe("capability-lifecycle properties", () => {
       );
     }
     // the guard fires before the proposal can leave the proposed state
-    const m = registeredMachine();
+    const m = machineAt("registered");
     expect(m.proposal.behavior.length).toBeGreaterThan(0);
     expect(m.proposal.tests.length).toBeGreaterThan(0);
     expect(m.proposal.provenance.length).toBeGreaterThan(0);
@@ -58,7 +55,7 @@ describe("capability-lifecycle properties", () => {
       "guard preview_is_non_committing does not hold: preview context is neither isolated nor reversible",
     );
     // previewing never installs the candidate as the active revision…
-    const m = registeredMachine();
+    const m = machineAt("registered");
     expect(m.activeRevision).toBe("rev-1");
     // …and the active revision is null before registration — preview cannot commit
     const pre = validProposal({ preview: { isolated: true, reversible: false } });
@@ -130,13 +127,13 @@ describe("capability-lifecycle properties", () => {
       "guard existing_use_distinct_from_development does not hold: invocation must use the invoke policy path (capability-invoke-policy), not the development policy path (capability-development-policy)",
     );
     // in-machine: invoking before registration is refused; invoking after is recorded on the audit trail
-    const m = proposedMachine();
+    const m = machineAt("proposed");
     const early = m.invoke({ capabilityId: "cap.export-notes", policyPath: INVOKE_POLICY });
     expect(early.ok).toBe(false);
     expect(early.reason).toBe(
       "guard existing_use_distinct_from_development does not hold: capability cap.export-notes is not registered (state: proposed)",
     );
-    const live = registeredMachine();
+    const live = machineAt("registered");
     const ok = live.invoke({ capabilityId: "cap.export-notes", policyPath: INVOKE_POLICY });
     expect(ok.ok).toBe(true);
     expect(live.history[live.history.length - 1]?.transition).toBe("invoke");
@@ -159,7 +156,7 @@ describe("capability-lifecycle properties", () => {
       "guard failed_candidate_not_active does not hold: required gate(s) failed: safety",
     );
     // the machine refuses registration of the failing candidate and keeps the active revision untouched
-    const m = approvedMachine(failingProposal());
+    const m = machineAt("approved", failingProposal());
     expect(m.fire("register_candidate").ok).toBe(false);
     expect(m.activeRevision).toBe(null);
   });
@@ -173,7 +170,7 @@ describe("capability-lifecycle properties", () => {
     );
     expect(retirementAndRecoverySupported(["rev-1"]).ok).toBe(true);
     // in-machine: retire then restore the prior accepted revision without losing audit history
-    const m = retiredMachine();
+    const m = machineAt("retired");
     expect(m.state).toBe("retired");
     const historyBefore = [...m.history];
     const r = m.restore("rev-1");

@@ -129,8 +129,8 @@ function fireArgless(s: Internals, id: TransitionId): TransitionResult {
   return arglessEffect(s, id);
 }
 
-export function createPresentationMachine(draft: PresentationContract): PresentationMachine {
-  const s: Internals = {
+function freshInternals(draft: PresentationContract): Internals {
+  return {
     state: "proposed",
     contract: draft,
     view: null,
@@ -139,6 +139,10 @@ export function createPresentationMachine(draft: PresentationContract): Presenta
     revertible: false,
     rejectionReason: null,
   };
+}
+
+export function createPresentationMachine(draft: PresentationContract): PresentationMachine {
+  const s = freshInternals(draft);
   return {
     get state() { return s.state; },
     get contract() { return s.contract; },

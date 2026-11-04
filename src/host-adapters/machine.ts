@@ -99,30 +99,14 @@ export function createHostAdapter(
 
 function adapterSurface(i: AdapterInternals): HostAdapter {
   return {
-    get contract() {
-      return i.contract;
-    },
-    get capability() {
-      return i.capability;
-    },
-    get state() {
-      return i.state;
-    },
-    get rejectionReason() {
-      return i.rejectionReason;
-    },
-    get unsupportedResult() {
-      return i.unsupportedResult;
-    },
-    get rejectedResponseReason() {
-      return i.rejectedResponseReason;
-    },
-    get commitReceipt() {
-      return i.commitReceipt;
-    },
-    get events() {
-      return [...i.events];
-    },
+    get contract() { return i.contract; },
+    get capability() { return i.capability; },
+    get state() { return i.state; },
+    get rejectionReason() { return i.rejectionReason; },
+    get unsupportedResult() { return i.unsupportedResult; },
+    get rejectedResponseReason() { return i.rejectedResponseReason; },
+    get commitReceipt() { return i.commitReceipt; },
+    get events() { return [...i.events]; },
     fire: (id, payload) => {
       const handler = HANDLERS[id];
       if (!handler) return { ok: false, reason: `unknown transition ${id}` };

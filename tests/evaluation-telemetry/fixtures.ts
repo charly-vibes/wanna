@@ -22,21 +22,30 @@ export function failureOf(result: TransitionResult | Check): string {
 }
 
 export const WORKLOAD = "wl-7";
+export const EVALUATOR_VERSION = "evaluator@3.1.0";
+
+/** Independent-copy merge for frozen-shape records. */
+function copyWith<T extends object>(base: T, overrides: Partial<T>): T {
+  return Object.assign(structuredClone(base), overrides) as T;
+}
 
 export function validMetric(overrides: Partial<MetricDefinition> = {}): MetricDefinition {
-  return {
+  return Object.assign(
+    {
     name: "correction_rate",
     unit: "ratio",
     population: "all completed interactions",
     samplingMethod: "uniform random 1-in-10",
     missingDataBehavior: "exclude from aggregate and report coverage",
     interpretationLimits: "not a correctness signal; proxy only",
-    ...overrides,
-  };
+    },
+    overrides,
+  );
 }
 
 export function validCollection(overrides: Partial<TelemetryCollection> = {}): TelemetryCollection {
-  return {
+  return Object.assign(
+    {
     mode: "live",
     purpose: "measure interaction quality for workload improvement",
     collectedFields: ["interaction_id", "latency_ms", "outcome_class"],
@@ -44,16 +53,23 @@ export function validCollection(overrides: Partial<TelemetryCollection> = {}): T
     retentionDays: 90,
     suppressesLiveEffects: false,
     usesIsolatedTestDoubles: false,
-    ...overrides,
-  };
+    },
+    overrides,
+  );
 }
 
 export function validThreshold(metric: string, value: number): PolicyThreshold {
   return { metric, operator: "<=", value };
 }
 
+/** Patched-override merge: short-circuits to a fresh copy when no overrides apply. */
+function patched<T extends object>(base: T, overrides: Partial<T>): T {
+  if (Object.keys(overrides).length === 0) return { ...base };
+  return Object.assign({ ...base }, overrides);
+}
+
 export function validGate(kind: GateKind, overrides: Partial<GateResult> = {}): GateResult {
-  return { kind, passed: true, workloadRevision: WORKLOAD, ...overrides };
+  return copyWith({ kind, passed: true, workloadRevision: WORKLOAD }, overrides);
 }
 
 export function allGatesPass(): readonly GateResult[] {
@@ -66,12 +82,14 @@ export function allGatesPass(): readonly GateResult[] {
 }
 
 export function validRecovery(overrides: Partial<RecoveryPolicy> = {}): RecoveryPolicy {
-  return {
-    declared: true,
-    fallbackFor: ["quality", "safety"],
-    allowsRollback: true,
-    ...overrides,
-  };
+  return patched(
+    {
+      declared: true,
+      fallbackFor: ["quality", "safety"],
+      allowsRollback: true,
+    },
+    overrides,
+  );
 }
 
 export function validRecord(overrides: Partial<EvaluationRecord> = {}): EvaluationRecord {
@@ -79,7 +97,7 @@ export function validRecord(overrides: Partial<EvaluationRecord> = {}): Evaluati
     candidateImplementation: "impl-candidate@2.0.0",
     incumbentImplementation: "impl-incumbent@1.4.0",
     workloadRevision: WORKLOAD,
-    evaluatorVersion: "evaluator@3.1.0",
+    evaluatorVersion: EVALUATOR_VERSION,
     policyThresholds: [validThreshold("correction_rate", 0.05)],
     metrics: [validMetric()],
     gateResults: allGatesPass(),
@@ -90,15 +108,17 @@ export function validRecord(overrides: Partial<EvaluationRecord> = {}): Evaluati
 }
 
 export function validAgreement(overrides: Partial<AgreementRecord> = {}): AgreementRecord {
-  return {
-    incumbentImplementation: "impl-incumbent@1.4.0",
-    candidateImplementation: "impl-candidate@2.0.0",
-    basis: "agreement_with_incumbent",
-    recordedAs: "agreement",
-    ...overrides,
-  };
+  return copyWith(
+    {
+      incumbentImplementation: "impl-incumbent@1.4.0",
+      candidateImplementation: "impl-candidate@2.0.0",
+      basis: "agreement_with_incumbent",
+      recordedAs: "agreement",
+    },
+    overrides,
+  );
 }
 
 export function breach(kind: "quality" | "safety"): DegradationSignal {
-  return { breachedGuard: kind, detectedBy: "evaluator@3.1.0" };
+  return patched({ breachedGuard: kind, detectedBy: EVALUATOR_VERSION } as DegradationSignal, {});
 }

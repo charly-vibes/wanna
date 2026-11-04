@@ -99,24 +99,26 @@ function isProvenance(value: unknown): value is DecisionProvenance {
   return typeof value === "object" && value !== null;
 }
 
+/** New pending interaction opened by a replayed review_opened event. */
+function pendingInteraction(event: ShellReplayEvent & { shellEvent: "review_opened" }): InteractionRecord {
+  return {
+    interactionId: event.interactionId,
+    interactionRevision: event.interactionRevision,
+    reviewId: event.reviewId,
+    revision: event.revision,
+    provenance: event.provenance,
+    status: "pending",
+    feedback: null,
+  };
+}
+
 /** Fold one event into the interaction list; completion retargets the matching interaction. */
 export function foldReplayEvent(
   interactions: readonly InteractionRecord[],
   event: ShellReplayEvent,
 ): InteractionRecord[] {
   if (event.shellEvent === "review_opened") {
-    return [
-      ...interactions,
-      {
-        interactionId: event.interactionId,
-        interactionRevision: event.interactionRevision,
-        reviewId: event.reviewId,
-        revision: event.revision,
-        provenance: event.provenance,
-        status: "pending",
-        feedback: null,
-      },
-    ];
+    return [...interactions, pendingInteraction(event)];
   }
   if (event.shellEvent === "review_retired") {
     // only a pending interaction retires; completed history is never reopened

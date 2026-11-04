@@ -118,11 +118,14 @@ export function newInternals(): EngineInternals {
   };
 }
 
-export function createEngine(): EngineSurface {
-  const t = newInternals();
-  const rows = transitionRows(t);
-  const log: RecordedTransition[] = [];
-  const fire: Fire = (id) => {
+type TransitionRow = { from: EngineState; to: EngineState; guard: () => boolean; why: string };
+
+function makeFire(
+  t: EngineInternals,
+  rows: Record<TransitionId, TransitionRow>,
+  log: RecordedTransition[],
+): Fire {
+  return (id) => {
     const row = rows[id];
     if (t.state !== row.from) return { ok: false, reason: `${id}: expected state ${row.from}, found ${t.state}` };
     if (!row.guard()) return { ok: false, reason: `${id}: guard failed — ${row.why}` };
@@ -130,6 +133,13 @@ export function createEngine(): EngineSurface {
     log.push({ id, from: row.from, to: row.to });
     return { ok: true };
   };
+}
+
+export function createEngine(): EngineSurface {
+  const t = newInternals();
+  const rows = transitionRows(t);
+  const log: RecordedTransition[] = [];
+  const fire = makeFire(t, rows, log);
   const correctContext = () => fire(t.state === "invalid_context" ? "correct_invalid_context" : "refresh_stale_context");
   const receiveRevisionBump = () => {
     if (t.currentRevision !== undefined) t.currentRevision += 1;

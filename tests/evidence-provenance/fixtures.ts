@@ -12,7 +12,8 @@ import type {
 } from "../../src/evidence-provenance/index";
 
 export function validEvidence(patch: Partial<EvidenceProposal> = {}): EvidenceProposal {
-  return {
+  return Object.assign(
+    {
     id: "ev-1",
     evidenceKind: "model_output",
     sourceRef: "artifact://result-1",
@@ -23,8 +24,9 @@ export function validEvidence(patch: Partial<EvidenceProposal> = {}): EvidencePr
     inputEvidenceRefs: ["artifact://input-1"],
     transformationRevision: "rev-7",
     sensitiveFields: [],
-    ...patch,
-  };
+    },
+    patch,
+  );
 }
 
 export function modelProposal(patch: Partial<ModelProposalRecord> = {}): ModelProposalRecord {
@@ -48,11 +50,19 @@ export function reviewRecord(patch: Partial<ReviewRecord> = {}): ReviewRecord {
 }
 
 export function redactionPolicy(patch: Partial<RedactionPolicy> = {}): RedactionPolicy {
-  return {
-    redactedFields: ["reviewer_note"],
-    accessRestrictedFields: [],
-    ...patch,
-  };
+  return Object.assign(
+    {
+      redactedFields: ["reviewer_note"],
+      accessRestrictedFields: [],
+    },
+    patch,
+  );
+}
+
+/** Merge keeping explicit undefined overrides (assign skips them; spread would too). */
+function mergedWith<T>(base: T, patch: Partial<T>): T {
+  if (Object.keys(patch).length === 0) return { ...base };
+  return { ...base, ...patch };
 }
 
 export function importedClaim(patch: {
@@ -66,7 +76,7 @@ export function importedClaim(patch: {
     evidenceClass: "empirical_evidence",
     normativeStrength: "non_normative",
   };
-  // spread — not destructuring defaults — so an explicit undefined override stays undefined
-  return { ...base, ...patch };
+  // merge — not destructuring defaults — so an explicit undefined override stays undefined
+  return mergedWith(base, patch);
 }
 

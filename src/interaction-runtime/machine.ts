@@ -171,41 +171,37 @@ function attachVia(internals: Internals): (port: PersistencePort) => void {
   };
 }
 
-function makeRuntime(internals: Internals): InteractionRuntime {
+function runtimeView(internals: Internals): Pick<
+  InteractionRuntime,
+  "state" | "committed" | "malformedReason" | "rejectionReason" | "lastFailure" | "unknownEffect" | "checkpoint" | "declaredSemantics"
+> {
   return {
-    get state() {
-      return internals.state;
-    },
-    get committed() {
-      return internals.committed;
-    },
-    get malformedReason() {
-      return internals.malformedReason;
-    },
-    get rejectionReason() {
-      return internals.rejectionReason;
-    },
-    get lastFailure() {
-      return internals.lastFailure;
-    },
-    get unknownEffect() {
-      return internals.unknownEffect;
-    },
-    get checkpoint() {
-      return internals.checkpoint;
-    },
+    get state() { return internals.state; },
+    get committed() { return internals.committed; },
+    get malformedReason() { return internals.malformedReason; },
+    get rejectionReason() { return internals.rejectionReason; },
+    get lastFailure() { return internals.lastFailure; },
+    get unknownEffect() { return internals.unknownEffect; },
+    get checkpoint() { return internals.checkpoint; },
     get declaredSemantics() {
       return internals.port ? internals.port.semantics : "no-persistence-port";
     },
-    fire: (id, input) => fireTransition(internals, id, input),
-    submit: (event) => submitEvent(internals, event),
-    poll: () => pollRuntime(internals),
-    receiveStateSnapshot: (snapshot) => receiveSnapshot(internals, snapshot),
-    resolveUnknownEffect: (provenIdempotent) => resolveUnknown(internals, provenIdempotent),
-    suspend: suspendVia(internals),
-    resume: (checkpoint) => resumeRuntime(internals, checkpoint),
-    attachPersistence: attachVia(internals),
   };
+}
+
+function makeRuntime(internals: Internals): InteractionRuntime {
+  // assign onto the view (not spread) so the live getters survive — spreading
+  // would snapshot getter values and freeze `state` at creation time
+  return Object.assign(runtimeView(internals) as InteractionRuntime, {
+    fire: (id: TransitionId, input?: EventEnvelope) => fireTransition(internals, id, input),
+    submit: (event: EventEnvelope) => submitEvent(internals, event),
+    poll: () => pollRuntime(internals),
+    receiveStateSnapshot: (snapshot: CommittedState) => receiveSnapshot(internals, snapshot),
+    resolveUnknownEffect: (provenIdempotent: boolean) => resolveUnknown(internals, provenIdempotent),
+    suspend: (reason: string) => suspendVia(internals)(reason),
+    resume: (checkpoint: ContinuityCheckpoint) => resumeRuntime(internals, checkpoint),
+    attachPersistence: (port: PersistencePort) => attachVia(internals)(port),
+  });
 }
 
 export function createInteractionRuntime(committed: CommittedState): InteractionRuntime {

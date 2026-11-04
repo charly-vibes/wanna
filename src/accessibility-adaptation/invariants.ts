@@ -147,36 +147,34 @@ export function presentationRespectsPreferences(
   return { ok: true };
 }
 
+function uncoveredTarget(
+  entities: readonly { readonly id: string }[],
+  covered: Set<string>,
+): string | null {
+  for (const entity of entities) {
+    if (!covered.has(entity.id)) return entity.id;
+  }
+  return null;
+}
+
 export function obligationsDeclared(contract: InteractionContract): Check {
+  const prefix = `accessibility_obligations_semantic does not hold`;
   if (contract.obligations.length === 0) {
     return {
       ok: false,
-      reason: `accessibility_obligations_semantic does not hold: contract ${quote(contract.contractId)} declares no semantic accessibility obligations`,
+      reason: `${prefix}: contract ${quote(contract.contractId)} declares no semantic accessibility obligations`,
     };
   }
   const covered = new Set(contract.obligations.map((obligation) => obligation.targetId));
-  for (const control of contract.controls) {
-    if (!covered.has(control.id)) {
-      return {
-        ok: false,
-        reason: `accessibility_obligations_semantic does not hold: control ${quote(control.id)} has no declared accessibility obligation`,
-      };
-    }
-  }
-  for (const operation of contract.operations) {
-    if (!covered.has(operation.id)) {
-      return {
-        ok: false,
-        reason: `accessibility_obligations_semantic does not hold: operation ${quote(operation.id)} has no declared accessibility obligation`,
-      };
-    }
-  }
-  for (const event of contract.statusEvents) {
-    if (!covered.has(event.id)) {
-      return {
-        ok: false,
-        reason: `accessibility_obligations_semantic does not hold: status event ${quote(event.id)} has no declared accessibility obligation`,
-      };
+  const kinds: readonly [readonly { readonly id: string }[], string][] = [
+    [contract.controls, "control"],
+    [contract.operations, "operation"],
+    [contract.statusEvents, "status event"],
+  ];
+  for (const [entities, kind] of kinds) {
+    const target = uncoveredTarget(entities, covered);
+    if (target !== null) {
+      return { ok: false, reason: `${prefix}: ${kind} ${quote(target)} has no declared accessibility obligation` };
     }
   }
   return { ok: true };

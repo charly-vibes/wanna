@@ -220,6 +220,19 @@ function replaceWithPrecondition(
   return { ok: true };
 }
 
+function markInto(
+  internals: Internals,
+  list: string[],
+  itemId: string,
+  op: string,
+): TransitionResult {
+  const closed = notClosed(internals);
+  if (!closed.ok) return closed;
+  const r = pushItem(list, itemId, op);
+  if (r.ok) bump(internals);
+  return r;
+}
+
 function makeMutators(internals: Internals) {
   return {
     recordPending: (interaction: PendingInteraction): TransitionResult => {
@@ -233,20 +246,10 @@ function makeMutators(internals: Internals) {
     },
     completeInteraction: (interactionId: string): TransitionResult =>
       completeOne(internals, interactionId),
-    markChanged: (itemId: string): TransitionResult => {
-      const closed = notClosed(internals);
-      if (!closed.ok) return closed;
-      const r = pushItem(internals.session.changed, itemId, "markChanged");
-      if (r.ok) bump(internals);
-      return r;
-    },
-    markUnresolved: (itemId: string): TransitionResult => {
-      const closed = notClosed(internals);
-      if (!closed.ok) return closed;
-      const r = pushItem(internals.session.unresolved, itemId, "markUnresolved");
-      if (r.ok) bump(internals);
-      return r;
-    },
+    markChanged: (itemId: string): TransitionResult =>
+      markInto(internals, internals.session.changed, itemId, "markChanged"),
+    markUnresolved: (itemId: string): TransitionResult =>
+      markInto(internals, internals.session.unresolved, itemId, "markUnresolved"),
     setNextAttention: (itemId: string | null): TransitionResult => {
       const closed = notClosed(internals);
       if (!closed.ok) return closed;

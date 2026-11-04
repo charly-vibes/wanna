@@ -23,18 +23,18 @@ function isNonEmpty(value: string | undefined): boolean {
   return typeof value === "string" && value.length > 0;
 }
 
+const REQUIRED_SCOPES: readonly [keyof ApprovalRequest, string][] = [
+  ["requestId", "request identity"],
+  ["principal", "principal"],
+  ["action", "action"],
+  ["resourceScope", "resource scope"],
+];
+
 export function approvalScopeExplicit(request: ApprovalRequest): Check {
-  if (!isNonEmpty(request.requestId)) {
-    return { ok: false, reason: "approval_scope_explicit does not hold: missing request identity" };
-  }
-  if (!isNonEmpty(request.principal)) {
-    return { ok: false, reason: "approval_scope_explicit does not hold: missing principal" };
-  }
-  if (!isNonEmpty(request.action)) {
-    return { ok: false, reason: "approval_scope_explicit does not hold: missing action" };
-  }
-  if (!isNonEmpty(request.resourceScope)) {
-    return { ok: false, reason: "approval_scope_explicit does not hold: missing resource scope" };
+  for (const [field, label] of REQUIRED_SCOPES) {
+    if (!isNonEmpty(request[field] as string)) {
+      return { ok: false, reason: `approval_scope_explicit does not hold: missing ${label}` };
+    }
   }
   if (!(RISK_CLASSES as readonly string[]).includes(request.riskClass)) {
     return {
@@ -58,35 +58,15 @@ export function approvalScopeExplicit(request: ApprovalRequest): Check {
 
 function grantCoversRequest(request: ApprovalRequest, authority: AuthorityInput): Check {
   const grant = authority as Extract<AuthorityInput, { kind: "grant" }>;
-  if (grant.principal !== request.principal) {
-    return {
-      ok: false,
-      reason: `current identity ${grant.principal} does not match the approval principal ${request.principal}`,
-    };
-  }
-  if (grant.action !== request.action) {
-    return {
-      ok: false,
-      reason: `authority does not cover the requested action: ${grant.action} vs ${request.action}`,
-    };
-  }
-  if (grant.resource !== request.resourceScope) {
-    return {
-      ok: false,
-      reason: `authority scope ${grant.resource} does not match the approval resource scope ${request.resourceScope}`,
-    };
-  }
-  if (grant.revision !== request.reviewedRevision) {
-    return {
-      ok: false,
-      reason: `authority revision ${grant.revision} does not match the reviewed revision ${request.reviewedRevision}`,
-    };
-  }
-  if (grant.policyVersion !== request.policyVersion) {
-    return {
-      ok: false,
-      reason: `authority policy version ${grant.policyVersion} does not match the request policy version ${request.policyVersion}`,
-    };
+  const mismatches: readonly [boolean, string][] = [
+    [grant.principal !== request.principal, `current identity ${grant.principal} does not match the approval principal ${request.principal}`],
+    [grant.action !== request.action, `authority does not cover the requested action: ${grant.action} vs ${request.action}`],
+    [grant.resource !== request.resourceScope, `authority scope ${grant.resource} does not match the approval resource scope ${request.resourceScope}`],
+    [grant.revision !== request.reviewedRevision, `authority revision ${grant.revision} does not match the reviewed revision ${request.reviewedRevision}`],
+    [grant.policyVersion !== request.policyVersion, `authority policy version ${grant.policyVersion} does not match the request policy version ${request.policyVersion}`],
+  ];
+  for (const [mismatch, reason] of mismatches) {
+    if (mismatch) return { ok: false, reason };
   }
   return { ok: true };
 }

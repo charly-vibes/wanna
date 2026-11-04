@@ -8,6 +8,7 @@ import type {
   NeedProposalInput,
   PortCommitOutcome,
   PortLoadOutcome,
+  PortOperation,
   ReviewPersistencePort,
   ReviewProjection,
   ReviewSessionShell,
@@ -175,6 +176,19 @@ async function evaluateNeedShell(
   return outcome;
 }
 
+async function commitAndAbsorb(
+  ctx: ShellContext,
+  operationId: string,
+  request: Omit<PortOperation, "operationId">,
+) {
+  const outcome = await commitOperation(ctx, ctx.current.aggregateVersion, {
+    operationId,
+    ...request,
+  });
+  absorbCommitOutcome(ctx, ctx.current.aggregateVersion, operationId, outcome);
+  return mapSimpleCommit(outcome);
+}
+
 async function commitDecisionCommand(
   ctx: ShellContext,
   command: Parameters<ReviewSessionShell["commitDecision"]>[0],
@@ -191,20 +205,34 @@ async function commitDecisionCommand(
   }
   const ordinal = interactionsOf(ctx).length + 1;
   const event = reviewOpenedEvent(ctx.pins.key.taskId, decision, ordinal);
-  const outcome = await commitOperation(ctx, ctx.current.aggregateVersion, {
-    operationId: command.operationId,
+  const mapped = await commitAndAbsorb(ctx, command.operationId, {
     expectedTaskRevision: decision.taskRevision,
     expectedInteractionRevision: null,
     stateChanges: { reviewOpened: event },
     replayAdditions: [event],
   });
-  absorbCommitOutcome(ctx, ctx.current.aggregateVersion, command.operationId, outcome);
-  const mapped = mapSimpleCommit(outcome);
   if ("applied" in mapped) {
     applySnapshot(ctx, mapped.applied);
     return { kind: "committed", interactionId: event.interactionId };
   }
   return mapped.typed.kind === "conflict" ? { kind: "stale" } : mapped.typed;
+}
+
+/**
+ * Current-revision preconditions ([[composition.shell.event_preconditions_current]]):
+ * the interaction must exist and the caller's revisions must match the
+ * authoritative snapshot; any mismatch is a typed stale rejection that
+ * mutates nothing.
+ */
+function submitPreconditionsStale(
+  ctx: ShellContext,
+  command: Parameters<ReviewSessionShell["submit"]>[0],
+  interaction: InteractionRecord,
+): boolean {
+  return (
+    command.expectedTaskRevision !== ctx.current.taskRevision ||
+    command.expectedInteractionRevision !== interaction.interactionRevision
+  );
 }
 
 async function submitCommand(
@@ -215,28 +243,18 @@ async function submitCommand(
   if (refusal) return refusal;
   const interaction = findInteraction(ctx, command.interactionId);
   if (interaction === null) return { kind: "stale" };
-  const preconditionMismatch =
-    command.expectedTaskRevision !== ctx.current.taskRevision ||
-    command.expectedInteractionRevision !== interaction.interactionRevision;
-  // Current-revision preconditions ([[composition.shell.event_preconditions_current]]):
-  // the interaction must exist and the caller's revisions must match the
-  // authoritative snapshot; any mismatch is a typed stale rejection that
-  // mutates nothing.
-  if (preconditionMismatch) return { kind: "stale" };
+  if (submitPreconditionsStale(ctx, command, interaction)) return { kind: "stale" };
   const event = reviewCompletedEvent(
     command.interactionId,
     command.eventId,
     command.feedback,
   );
-  const outcome = await commitOperation(ctx, ctx.current.aggregateVersion, {
-    operationId: command.eventId,
+  const mapped = await commitAndAbsorb(ctx, command.eventId, {
     expectedTaskRevision: command.expectedTaskRevision,
     expectedInteractionRevision: command.expectedInteractionRevision,
     stateChanges: { reviewCompleted: event },
     replayAdditions: [event],
   });
-  absorbCommitOutcome(ctx, ctx.current.aggregateVersion, command.eventId, outcome);
-  const mapped = mapSimpleCommit(outcome);
   if ("applied" in mapped) {
     applySnapshot(ctx, mapped.applied);
     return { kind: "recorded" };

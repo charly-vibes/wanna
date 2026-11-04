@@ -111,12 +111,16 @@ export class FakeReviewStore {
     this.config.ackLoss.add(operationId);
   }
 
+  private patchConfig(patch: Partial<StoreConfig>): void {
+    Object.assign(this.config, patch);
+  }
+
   loseNextAck(): void {
-    this.config.loseNextAck = true;
+    this.patchConfig({ loseNextAck: true });
   }
 
   setLoadOverride(outcome: PortLoadOutcome): void {
-    this.config.loadOverride = outcome;
+    this.patchConfig({ loadOverride: outcome });
   }
 
   port(key: SessionTaskKey): ReviewPersistencePort {
@@ -141,7 +145,7 @@ export class FakePort implements ReviewPersistencePort {
   ) {}
 
   get deduplicationScope(): ReadonlySet<string> {
-    return new Set([this.key.sessionId]);
+    return Object.freeze(new Set([this.key.sessionId]));
   }
 
   async load(): Promise<PortLoadOutcome> {

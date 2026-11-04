@@ -34,6 +34,11 @@ function walkedTo(state: LifecycleState, overrides: Partial<CapabilityProposal> 
   return m;
 }
 
+/** Machine walked from `proposed` through the canonical path ending at `state`. */
+export function machineAt(state: LifecycleState, overrides: Partial<CapabilityProposal> = {}): LifecycleMachine {
+  return walkedTo(state, overrides);
+}
+
 export function validProposal(overrides: Partial<CapabilityProposal> = {}): CapabilityProposal {
   return {
     capabilityId: "cap.export-notes",
@@ -66,54 +71,22 @@ export function failingProposal(): CapabilityProposal {
   });
 }
 
+function compositionOf(steps: CapabilityComposition["steps"]): CapabilityComposition {
+  return { executionBudget: 10, steps };
+}
+
 export function linearComposition(): CapabilityComposition {
-  return {
-    executionBudget: 10,
-    steps: [
-      { id: "a", capabilityId: "cap.compose.a", dependsOn: [], inputType: "text", outputType: "json", cost: 4 },
-      { id: "b", capabilityId: "cap.compose.b", dependsOn: ["a"], inputType: "json", outputType: "json", cost: 4 },
-    ],
-  };
+  return compositionOf([
+    { id: "a", capabilityId: "cap.compose.a", dependsOn: [], inputType: "text", outputType: "json", cost: 4 },
+    { id: "b", capabilityId: "cap.compose.b", dependsOn: ["a"], inputType: "json", outputType: "json", cost: 4 },
+  ]);
 }
 
 export function cyclicComposition(): CapabilityComposition {
-  return {
-    executionBudget: 10,
-    steps: [
-      { id: "a", capabilityId: "cap.compose.a", dependsOn: ["b"], inputType: "json", outputType: "json", cost: 2 },
-      { id: "b", capabilityId: "cap.compose.b", dependsOn: ["a"], inputType: "json", outputType: "json", cost: 2 },
-    ],
-  };
+  return compositionOf([
+    { id: "a", capabilityId: "cap.compose.a", dependsOn: ["b"], inputType: "json", outputType: "json", cost: 2 },
+    { id: "b", capabilityId: "cap.compose.b", dependsOn: ["a"], inputType: "json", outputType: "json", cost: 2 },
+  ]);
 }
 
-export function proposedMachine(overrides: Partial<CapabilityProposal> = {}): LifecycleMachine {
-  return walkedTo("proposed", overrides);
-}
 
-export function inspectedMachine(overrides: Partial<CapabilityProposal> = {}): LifecycleMachine {
-  return walkedTo("inspected", overrides);
-}
-
-export function previewedMachine(overrides: Partial<CapabilityProposal> = {}): LifecycleMachine {
-  return walkedTo("previewed", overrides);
-}
-
-export function evaluatedMachine(overrides: Partial<CapabilityProposal> = {}): LifecycleMachine {
-  return walkedTo("evaluated", overrides);
-}
-
-export function approvedMachine(overrides: Partial<CapabilityProposal> = {}): LifecycleMachine {
-  return walkedTo("approved", overrides);
-}
-
-export function registeredMachine(overrides: Partial<CapabilityProposal> = {}): LifecycleMachine {
-  return walkedTo("registered", overrides);
-}
-
-export function evaluatedFailingMachine(): LifecycleMachine {
-  return walkedTo("evaluated", failingProposal());
-}
-
-export function retiredMachine(overrides: Partial<CapabilityProposal> = {}): LifecycleMachine {
-  return walkedTo("retired", overrides);
-}

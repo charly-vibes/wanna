@@ -13,6 +13,7 @@ import {
   PENDING_STORE,
   transactionDone,
   type IdbObjectStoreLike,
+  type IdbRequestLike,
   type IdbTransactionLike,
 } from "./storage";
 import {
@@ -169,6 +170,35 @@ export function runMainCommit(
   );
 }
 
+interface SettleContext {
+  readonly getReq: IdbRequestLike<unknown>;
+  readonly aggregateStore: IdbObjectStoreLike;
+  readonly pendingStore: IdbObjectStoreLike;
+  readonly handles: IdbHandles;
+  readonly key: SessionTaskKey;
+  readonly expectedVersion: number | null;
+  readonly operation: PortOperation;
+  readonly fingerprint: string;
+  readonly resolve: (decision: CommitDecision) => void;
+  readonly reject: (error: Error) => void;
+  readonly tx: IdbTransactionLike;
+}
+
+function onAggregateLoaded(ctx: SettleContext): void {
+  const outcome = decideCommit(ctx.getReq.result, ctx.expectedVersion, ctx.operation, ctx.fingerprint);
+  if (outcome.kind !== "applied") {
+    ctx.pendingStore.delete(pendingId(ctx.key, ctx.operation.operationId));
+    ctx.resolve(outcome);
+    return;
+  }
+  if (ctx.handles.hooks?.abortMainWrite?.(ctx.operation.operationId) === true) {
+    ctx.reject(new Error("injected before-write failure"));
+    ctx.tx.abort();
+    return;
+  }
+  putApplied(ctx.aggregateStore, ctx.pendingStore, ctx.key, ctx.operation, outcome, ctx.resolve, ctx.reject);
+}
+
 function settleMainCommit(
   tx: IdbTransactionLike,
   resolve: (decision: CommitDecision) => void,
@@ -182,25 +212,20 @@ function settleMainCommit(
   const aggregateStore = tx.objectStore(AGGREGATE_STORE);
   const pendingStore = tx.objectStore(PENDING_STORE);
   const getReq = aggregateStore.get(aggregateId(key));
-  getReq.onsuccess = () => {
-    const outcome = decideCommit(
-      getReq.result,
+  getReq.onsuccess = () =>
+    onAggregateLoaded({
+      getReq,
+      aggregateStore,
+      pendingStore,
+      handles,
+      key,
       expectedVersion,
       operation,
       fingerprint,
-    );
-    if (outcome.kind !== "applied") {
-      pendingStore.delete(pendingId(key, operation.operationId));
-      resolve(outcome);
-      return;
-    }
-    if (handles.hooks?.abortMainWrite?.(operation.operationId) === true) {
-      reject(new Error("injected before-write failure"));
-      tx.abort();
-      return;
-    }
-    putApplied(aggregateStore, pendingStore, key, operation, outcome, resolve, reject);
-  };
+      resolve,
+      reject,
+      tx,
+    });
   getReq.onerror = () => reject(getReq.error ?? new Error("aggregate get failed"));
 }
 

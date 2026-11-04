@@ -4,14 +4,9 @@
 import { describe, it, expect } from "vitest";
 import { LIFECYCLE_TRANSITIONS } from "../../src/capability-lifecycle/machine";
 import {
-  approvedMachine,
-  evaluatedMachine,
-  evaluatedFailingMachine,
-  inspectedMachine,
-  previewedMachine,
-  proposedMachine,
-  registeredMachine,
+  machineAt,
   validProposal,
+  failingProposal,
   cyclicComposition,
 } from "./fixtures";
 
@@ -29,7 +24,7 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("inspect_candidate moves proposed → inspected when proposal_is_inspectable holds", () => {
-    const m = proposedMachine();
+    const m = machineAt("proposed");
     const r = m.fire("inspect_candidate");
     expect(r.ok).toBe(true);
     expect(m.state).toBe("inspected");
@@ -37,7 +32,7 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("inspect_candidate refuses an uninspectable proposal, naming the missing exposure exactly", () => {
-    const m = proposedMachine({ behavior: "", tests: [] });
+    const m = machineAt("proposed", { behavior: "", tests: [] });
     const r = m.fire("inspect_candidate");
     expect(r.ok).toBe(false);
     expect(r.reason).toBe(
@@ -47,7 +42,7 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("preview_candidate moves inspected → previewed without committing the candidate as the active revision", () => {
-    const m = inspectedMachine();
+    const m = machineAt("inspected");
     const r = m.fire("preview_candidate");
     expect(r.ok).toBe(true);
     expect(m.state).toBe("previewed");
@@ -55,7 +50,7 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("preview_candidate refuses when the preview context is neither isolated nor reversible", () => {
-    const m = inspectedMachine({ preview: { isolated: false, reversible: false } });
+    const m = machineAt("inspected", { preview: { isolated: false, reversible: false } });
     const r = m.fire("preview_candidate");
     expect(r.ok).toBe(false);
     expect(r.reason).toBe(
@@ -65,14 +60,14 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("evaluate_candidate moves previewed → evaluated when goal and safety checks are separate", () => {
-    const m = previewedMachine();
+    const m = machineAt("previewed");
     const r = m.fire("evaluate_candidate");
     expect(r.ok).toBe(true);
     expect(m.state).toBe("evaluated");
   });
 
   it("evaluate_candidate refuses when goal checks and safety invariants are not separate", () => {
-    const m = previewedMachine({
+    const m = machineAt("previewed", {
       evaluation: { goalChecks: [], safetyInvariants: ["no writes outside the chosen export path"] },
     });
     const r = m.fire("evaluate_candidate");
@@ -81,7 +76,7 @@ describe("capability-lifecycle transitions", () => {
       "guard goal_and_safety_checks_separate does not hold: goal checks are not declared",
     );
     // overlapping entries are not separate either
-    const m2 = previewedMachine({
+    const m2 = machineAt("previewed", {
       evaluation: {
         goalChecks: ["no writes outside the chosen export path"],
         safetyInvariants: ["no writes outside the chosen export path"],
@@ -95,14 +90,14 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("approve_candidate moves evaluated → approved when all gates for the risk class passed", () => {
-    const m = evaluatedMachine();
+    const m = machineAt("evaluated");
     const r = m.fire("approve_candidate");
     expect(r.ok).toBe(true);
     expect(m.state).toBe("approved");
   });
 
   it("approve_candidate refuses when a required gate for the risk class has not passed", () => {
-    const m = evaluatedMachine({ gateResults: [{ gate: "conformance", outcome: "passed" }] });
+    const m = machineAt("evaluated", { gateResults: [{ gate: "conformance", outcome: "passed" }] });
     const r = m.fire("approve_candidate");
     expect(r.ok).toBe(false);
     expect(r.reason).toBe(
@@ -111,7 +106,7 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("register_candidate moves approved → registered and makes the revision the active one", () => {
-    const m = approvedMachine();
+    const m = machineAt("approved");
     const r = m.fire("register_candidate");
     expect(r.ok).toBe(true);
     expect(m.state).toBe("registered");
@@ -120,7 +115,7 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("register_candidate refuses when the composition is not bounded, with the exact reason", () => {
-    const m = approvedMachine(validProposal({ composition: cyclicComposition() }));
+    const m = machineAt("approved", validProposal({ composition: cyclicComposition() }));
     const r = m.fire("register_candidate");
     expect(r.ok).toBe(false);
     expect(r.reason).toBe(
@@ -130,7 +125,7 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("reject_candidate moves evaluated → rejected when failed_candidate_not_active does not hold, recording the failure reason", () => {
-    const m = evaluatedFailingMachine();
+    const m = machineAt("evaluated", failingProposal());
     const r = m.fire("reject_candidate");
     expect(r.ok).toBe(true);
     expect(m.state).toBe("rejected");
@@ -141,7 +136,7 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("reject_candidate refuses a passing candidate — there is nothing to reject", () => {
-    const m = evaluatedMachine();
+    const m = machineAt("evaluated");
     const r = m.fire("reject_candidate");
     expect(r.ok).toBe(false);
     expect(r.reason).toBe(
@@ -151,7 +146,7 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("retire_capability moves registered → retired and supports restoring the accepted revision", () => {
-    const m = registeredMachine();
+    const m = machineAt("registered");
     const r = m.fire("retire_capability");
     expect(r.ok).toBe(true);
     expect(m.state).toBe("retired");
@@ -167,7 +162,7 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("every transition refuses to fire from a state it does not originate from", () => {
-    const m = proposedMachine();
+    const m = machineAt("proposed");
     for (const row of LIFECYCLE_TRANSITIONS) {
       if (row.from === "proposed") continue;
       const r = m.fire(row.id);
@@ -178,7 +173,7 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("restore refuses a revision that was never accepted", () => {
-    const m = registeredMachine();
+    const m = machineAt("registered");
     m.fire("retire_capability");
     const r = m.restore("rev-9");
     expect(r.ok).toBe(false);
@@ -186,7 +181,7 @@ describe("capability-lifecycle transitions", () => {
   });
 
   it("a full happy-path walk passes every guard in sequence", () => {
-    const m = proposedMachine(validProposal({ composition: {
+    const m = machineAt("proposed", validProposal({ composition: {
       executionBudget: 10,
       steps: [
         { id: "a", capabilityId: "cap.export-notes", dependsOn: [], inputType: "text", outputType: "json", cost: 2 },

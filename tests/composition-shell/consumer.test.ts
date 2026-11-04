@@ -37,6 +37,10 @@ function assertDecisionCommitted(
   if (committed.kind !== "committed") {
     throw new Error(`decision commit failed: ${committed.kind}`);
   }
+  const interactionId = committed.interactionId;
+  if (interactionId.length === 0) {
+    throw new Error("decision commit recorded an empty interaction id");
+  }
 }
 
 function assertSubmitRecorded(result: SubmitOutcome): void {

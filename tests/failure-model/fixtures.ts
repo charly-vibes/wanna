@@ -29,12 +29,14 @@ export function typedFailureRecord(overrides: Partial<FailureRecord> = {}): Fail
 }
 
 export function assessment(overrides: Partial<FailureAssessment> = {}): FailureAssessment {
-  return {
-    effectCertainty: "effect_unknown",
-    recoverability: "restart_only",
-    retrySafety: "requires_reconciliation",
-    ...overrides,
-  };
+  return Object.assign(
+    {
+      effectCertainty: "effect_unknown",
+      recoverability: "restart_only",
+      retrySafety: "requires_reconciliation",
+    },
+    overrides,
+  );
 }
 
 export function draftFailure(overrides: Partial<FailureRecord> = {}): FailureRecord {

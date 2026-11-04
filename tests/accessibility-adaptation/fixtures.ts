@@ -7,32 +7,46 @@ import type {
   InteractionContract,
 } from "../../src/accessibility-adaptation/types";
 
-export function fullHost(): HostCapabilities {
+function hostWith(flags: HostCapabilities): HostCapabilities {
   return {
+    supportsKeyboard: flags.supportsKeyboard,
+    supportsStatusAnnouncements: flags.supportsStatusAnnouncements,
+    supportsReducedMotion: flags.supportsReducedMotion,
+    supportsTextSize: flags.supportsTextSize,
+    supportsDensity: flags.supportsDensity,
+  };
+}
+
+export function fullHost(): HostCapabilities {
+  return hostWith({
     supportsKeyboard: true,
     supportsStatusAnnouncements: true,
     supportsReducedMotion: true,
     supportsTextSize: true,
     supportsDensity: true,
-  };
+  });
 }
 
 export function muteHost(): HostCapabilities {
-  return {
+  return hostWith({
     supportsKeyboard: false,
     supportsStatusAnnouncements: false,
     supportsReducedMotion: false,
     supportsTextSize: false,
     supportsDensity: false,
-  };
+  });
+}
+
+function preferencesWith(prefs: AccessibilityPreferences): AccessibilityPreferences {
+  return Object.assign({}, prefs);
 }
 
 export function noPreferences(): AccessibilityPreferences {
-  return {};
+  return preferencesWith({});
 }
 
 export function reducedMotionPreferences(): AccessibilityPreferences {
-  return { reducedMotion: true };
+  return preferencesWith({ reducedMotion: true });
 }
 
 export function validContract(overrides: Partial<InteractionContract> = {}): InteractionContract {

@@ -4,7 +4,7 @@
 //   contracts come from the interaction-contract layer — adapters consume the same shared contract
 import { validContract, responseFor } from "../interaction-contract/fixtures";
 import type { ContractResponse, InteractionContract } from "../../src/interaction-contract/types";
-import type { CoreValidator, HostCapability } from "../../src/host-adapters/types";
+import type { CoreValidation, CoreValidator, HostCapability } from "../../src/host-adapters/types";
 
 export const TUI = "pi-tui";
 export const WEB = "browser-web";
@@ -29,12 +29,16 @@ export function keyboardOnlyCapability(overrides: Partial<HostCapability> = {}):
   return capability({ inputModes: ["keyboard"], ...overrides });
 }
 
+function validatorOf(apply: () => CoreValidation): CoreValidator {
+  return () => apply();
+}
+
 export function rejectingCore(reason: string): CoreValidator {
-  return () => ({ ok: false, reason });
+  return validatorOf(() => ({ ok: false, reason }));
 }
 
 export function acceptingCore(receipt = "commit:forced"): CoreValidator {
-  return () => ({ ok: true, commitReceipt: receipt });
+  return validatorOf(() => ({ ok: true, commitReceipt: receipt }));
 }
 
 export { validContract, responseFor };

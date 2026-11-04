@@ -12,18 +12,33 @@ import type {
   PresentationSpec,
 } from "../../src/cognitive-ergonomics/types";
 
+/** Shallow-override merge (assignment form) for state claims. */
+function withOverrides<T>(base: T, overrides: Partial<T>): T {
+  return Object.assign({}, base, overrides);
+}
+
+/** Structured-literal merge for surface specs. */
+function mergedWith<T>(base: T, overrides: Partial<T>): T {
+  return { ...base, ...overrides };
+}
+
+/** Frozen-literal merge for identity records. */
+function frozenWith<T>(base: T, overrides: Partial<T>): T {
+  return Object.freeze({ ...base, ...overrides }) as T;
+}
+
 export function measurableTrigger() {
   return { metric: "choice_count" as const, value: 9, evidenceRef: "ev-1" };
 }
 
 export function inferredState(overrides: Partial<InferredState> = {}): InferredState {
-  return {
-    attribute: "confusion",
+  return withOverrides(
+    {    attribute: "confusion",
     estimate: 0.7,
     uncertain: true,
-    evidenceRefs: ["ev-2"],
-    ...overrides,
-  };
+    evidenceRefs: ["ev-2"],},
+    overrides,
+  );
 }
 
 export function adaptation(overrides: Partial<AdaptationDesign> = {}): AdaptationDesign {
@@ -45,58 +60,58 @@ export function request(overrides: Partial<AdaptationRequest> = {}): AdaptationR
 }
 
 export function interruption(overrides: Partial<InterruptionClaim> = {}): InterruptionClaim {
-  return {
-    need: "clarify scope before destructive apply",
+  return withOverrides(
+    {    need: "clarify scope before destructive apply",
     expectedBenefit: "prevents irreversible data loss",
     urgency: "deadline in two hours",
-    deferralRationale: "deferral risks an uninformed destructive apply",
-    ...overrides,
-  };
+    deferralRationale: "deferral risks an uninformed destructive apply",},
+    overrides,
+  );
 }
 
 export function presentation(overrides: Partial<PresentationSpec> = {}): PresentationSpec {
-  return {
-    surface: "deployment-target-picker",
+  return mergedWith(
+    {    surface: "deployment-target-picker",
     exposes: [
       { label: "staging", context: "current target" },
       { label: "production", context: "requires approval" },
     ],
     requiresRecallOf: [],
     equivalentExposeAvailable: false,
-    feasible: true,
-    ...overrides,
-  };
+    feasible: true,},
+    overrides,
+  );
 }
 
 export function optionSet(overrides: Partial<OptionSet> = {}): OptionSet {
-  return {
-    surface: "region-picker",
+  return mergedWith(
+    {    surface: "region-picker",
     optionCount: 6,
     heterogeneous: false,
     strategy: undefined,
-    strategyDocumented: false,
-    ...overrides,
-  };
+    strategyDocumented: false,},
+    overrides,
+  );
 }
 
 export function actionIdentity(overrides: Partial<ActionIdentity> = {}): ActionIdentity {
-  return {
-    semanticId: "deploy.rollback",
+  return frozenWith(
+    {    semanticId: "deploy.rollback",
     frequentlyUsed: true,
     consequential: true,
     placements: [
       { host: "cli", visualPlacement: "top-level", semanticIdAtHost: "deploy.rollback" },
       { host: "web", visualPlacement: "overflow-menu", semanticIdAtHost: "deploy.rollback" },
-    ],
-    ...overrides,
-  };
+    ],},
+    overrides,
+  );
 }
 
 export function confidenceSource(overrides: Partial<ConfidenceSource> = {}): ConfidenceSource {
-  return {
-    metric: "schema_validity",
+  return frozenWith(
+    {    metric: "schema_validity",
     semantics: "probability the proposal passes the canonical schema",
-    evidenceRefs: ["ev-3"],
-    ...overrides,
-  };
+    evidenceRefs: ["ev-3"],},
+    overrides,
+  );
 }

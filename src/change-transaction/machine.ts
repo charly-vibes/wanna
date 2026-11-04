@@ -160,7 +160,10 @@ function fireTransition(internals: Internals, id: TransitionId, input?: Transiti
   return applyEffect(internals, id, input);
 }
 
-function makeMachine(internals: Internals): ChangeTransaction {
+function machineView(internals: Internals): Pick<
+  ChangeTransaction,
+  "id" | "state" | "baseRevision" | "candidate" | "ledger" | "lastTransition" | "lastFailureReason"
+> {
   return {
     get id() {
       return internals.transactionId;
@@ -183,14 +186,22 @@ function makeMachine(internals: Internals): ChangeTransaction {
     get lastFailureReason() {
       return internals.lastFailureReason;
     },
-    fire: (id, input) => {
+  };
+}
+
+function makeMachine(internals: Internals): ChangeTransaction {
+  // assign onto the view (not spread) so the live getters survive — spreading
+  // would snapshot getter values and freeze `state` at creation time
+  const machine = Object.assign(machineView(internals) as ChangeTransaction, {
+    fire: (id: TransitionId, input?: TransitionInput) => {
       const result = fireTransition(internals, id, input);
       internals.lastTransition = id;
       internals.lastFailureReason = result.ok ? null : result.reason;
       return result;
     },
-    rollback: (target) => rollbackRevision(internals, target),
-  };
+    rollback: (target: string) => rollbackRevision(internals, target),
+  });
+  return machine;
 }
 
 export function createChangeTransaction(init: TransactionInit): ChangeTransaction {

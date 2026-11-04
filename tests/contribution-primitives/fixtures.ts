@@ -22,7 +22,7 @@ export function proposalOfKind(kind: PrimitiveKind, overrides: Partial<Primitive
 }
 
 export function completedPayload(payload: unknown): { responsePayload: unknown } {
-  return { responsePayload: payload };
+  return Object.assign({}, { responsePayload: payload });
 }
 
 export function escapeArg(outcome: EscapeOutcome): { escapeOutcome: EscapeOutcome } {
@@ -30,5 +30,5 @@ export function escapeArg(outcome: EscapeOutcome): { escapeOutcome: EscapeOutcom
 }
 
 export function retireArg(taxonomyRevision: string): { taxonomyRevision: string } {
-  return { taxonomyRevision: taxonomyRevision };
+  return Object.assign({}, { taxonomyRevision }) as { taxonomyRevision: string };
 }

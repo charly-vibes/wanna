@@ -44,44 +44,62 @@ export function executorConfig(overrides: Partial<ExecutorConfig> = {}): Executo
   };
 }
 
+/** Shallow-override merge for context records. */
+function contextWith<T>(base: T, overrides: Partial<T>): T {
+  return Object.assign({}, base, overrides);
+}
+
 export function authorization(overrides: Partial<AuthorizationContext> = {}): AuthorizationContext {
-  return {
-    currentPrincipal: "user-1",
-    approvalPrincipal: "user-1",
-    scope: "deploy://staging",
-    riskClass: "high",
-    approvalRecord: "approval-42",
-    revisionPrecondition: "rev-7",
-    currentRevision: "rev-7",
-    ...overrides,
-  };
+  return contextWith(
+    {
+      currentPrincipal: "user-1",
+      approvalPrincipal: "user-1",
+      scope: "deploy://staging",
+      riskClass: "high",
+      approvalRecord: "approval-42",
+      revisionPrecondition: "rev-7",
+      currentRevision: "rev-7",
+    },
+    overrides,
+  );
+}
+
+/** Independent-copy merge for outcome records (deep-copies the base first). */
+function cloneWith<T extends object>(base: T, overrides: Partial<T>): T {
+  return Object.assign(structuredClone(base), overrides) as T;
 }
 
 export function successOutcome(overrides: Partial<OutcomeRecord> = {}): OutcomeRecord {
-  return { outcome: "succeeded", detail: "effect completed", evidence: ["ev-1"], ...overrides };
+  return contextWith(
+    { outcome: "succeeded", detail: "effect completed", evidence: ["ev-1"] },
+    overrides,
+  );
 }
 
 export function failureOutcome(overrides: Partial<OutcomeRecord> = {}): OutcomeRecord {
-  return { outcome: "failed", detail: "connection refused", evidence: ["ev-2"], ...overrides };
+  return cloneWith(
+    { outcome: "failed", detail: "connection refused", evidence: ["ev-2"] },
+    overrides,
+  );
 }
 
 export function partialSuccessOutcome(overrides: Partial<OutcomeRecord> = {}): OutcomeRecord {
-  return {
-    outcome: "failed",
-    detail: "wrote 3 of 5 records before the link dropped",
-    evidence: ["ev-p1"],
-    partialSuccess: true,
-    ...overrides,
-  };
+  return Object.assign(
+    {
+      outcome: "failed",
+      detail: "wrote 3 of 5 records before the link dropped",
+      evidence: ["ev-p1"],
+      partialSuccess: true,
+    },
+    overrides,
+  );
 }
 
 export function unknownOutcome(overrides: Partial<OutcomeRecord> = {}): OutcomeRecord {
-  return {
-    outcome: "unknown",
-    detail: "acknowledgement lost after send",
-    evidence: ["ev-ack-1"],
-    ...overrides,
-  };
+  return cloneWith(
+    { outcome: "unknown", detail: "acknowledgement lost after send", evidence: ["ev-ack-1"] },
+    overrides,
+  );
 }
 
 export interface RecordingTransport {
@@ -91,13 +109,15 @@ export interface RecordingTransport {
 
 export function recordingTransport(outcome: OutcomeRecord): RecordingTransport {
   const sends: EffectIntent[] = [];
-  return {
-    sends,
-    transport: {
-      send: (intent: EffectIntent) => {
-        sends.push(intent);
-        return outcome;
-      },
+  const transport = transportOf(sends, outcome);
+  return { sends, transport };
+}
+
+function transportOf(sends: EffectIntent[], outcome: OutcomeRecord): EffectTransport {
+  return Object.freeze({
+    send: (intent: EffectIntent) => {
+      sends.push(intent);
+      return outcome;
     },
-  };
+  });
 }

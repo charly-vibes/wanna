@@ -34,40 +34,41 @@ function markAllInterrupted(operations: readonly InterruptedOperation[]): void {
   }
 }
 
-export function createRevisionLedger(init: LedgerInit): RevisionLedger {
-  const records: RevisionRecord[] = [...(init.records ?? [])];
-  const interrupted: InterruptedOperation[] = [];
-  let active = init.activeRevision;
-  let durableWriteSucceeds = true;
+type LedgerState = { active: string | null; durableWriteSucceeds: boolean };
+
+function appendDurable(state: LedgerState, records: RevisionRecord[], record: RevisionRecord): boolean {
+  if (!state.durableWriteSucceeds) return false;
+  records.push(record);
+  return true;
+}
+
+function ledgerFacade(
+  state: LedgerState,
+  records: RevisionRecord[],
+  interrupted: InterruptedOperation[],
+): RevisionLedger {
   return {
-    get activeRevision() {
-      return active;
-    },
-    get revisions() {
-      return records;
-    },
-    get interruptedOperations() {
-      return interrupted;
-    },
-    get durableWriteSucceeds() {
-      return durableWriteSucceeds;
-    },
-    set durableWriteSucceeds(value: boolean) {
-      durableWriteSucceeds = value;
-    },
+    get activeRevision() { return state.active; },
+    get revisions() { return records; },
+    get interruptedOperations() { return interrupted; },
+    get durableWriteSucceeds() { return state.durableWriteSucceeds; },
+    set durableWriteSucceeds(value: boolean) { state.durableWriteSucceeds = value; },
     revision: (id) => knownRecord(records, id),
-    isKnown: (id) => knownRecord(records, id) !== null,
+    isKnown: (id) => records.some((r) => r.id === id),
     interrupt: (op) => {
       interrupted.push(op);
     },
-    appendRecord: (record) => {
-      if (!durableWriteSucceeds) return false;
-      records.push(record);
-      return true;
-    },
+    appendRecord: (record) => appendDurable(state, records, record),
     setActivePointer: (id) => {
-      active = id;
+      state.active = id;
     },
     markInterruptedOperations: () => markAllInterrupted(interrupted),
   };
+}
+
+export function createRevisionLedger(init: LedgerInit): RevisionLedger {
+  const records: RevisionRecord[] = [...(init.records ?? [])];
+  const interrupted: InterruptedOperation[] = [];
+  const state = { active: init.activeRevision, durableWriteSucceeds: true };
+  return ledgerFacade(state, records, interrupted);
 }
