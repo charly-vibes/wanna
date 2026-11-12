@@ -30,8 +30,10 @@ pre-commit:
     eslint-gate:
       # boundary linting is independent of the test layer: runs on every commit
       run: npx eslint src
-    ah-check-gate:
-      run: ah check
+    # ah check runs ONCE per commit via the ah:managed block above — a second
+    # user gate here doubled every commit (~438s extra, wanna-wzw / ah#47;
+    # fixed ah init versions skip injection when a stage already runs ah check,
+    # and the managed block alone keeps exactly one invocation on any version).
 
 pre-push:
   commands:
