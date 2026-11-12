@@ -11,12 +11,12 @@
 //   plumbing only, following tambor's spa/mount.ts wire; the demo's semantics
 //   stay in examples/review-tambor (view mapping + ops seam) and the shell.
 //   The structural HostDoc/HostElement seam keeps this testable under jsdom.
-//   The CELL_SCALE stage is demo presentation: tambor's DomBackend draws unit
-//   coordinates as raw px while text renders at browser size, so the mounted
-//   tree collapses (tambor's own logo-gallery screenshot shows the same
-//   overlap) — the stage renders 1 unit as CELL_SCALE px and divides event
-//   positions back to units before routing. Presentation only: geometry stays
-//   in unit space for routing and assertions.
+//   Scaling is tambor's cellScale option now (wanna-1ha, tambor GH#1): the
+//   backend renders one unit as k px inside its own scaled stage and divides
+//   pointer/wheel coordinates back to units — the demo-local stage wrapper,
+//   1px clamp factory and pointer rescale from the workaround era are gone.
+//   wanna keeps only demo presentation: the paper-chrome frame, the INK ink,
+//   the transparent keyboard/pointer surface, and fit-to-width narrowing.
 import { bounds, type Elem } from "@tambor/views/model.ts";
 import { DomBackend } from "@tambor/render/dom.ts";
 import {
@@ -29,18 +29,20 @@ import { dispatch } from "@tambor/events/dispatch.ts";
 import type { TamborEvent } from "@tambor/events/event.ts";
 import type { TamborReviewApp } from "../../examples/review-tambor";
 
-/** How many px one unit cell renders as: the browser's default text size,
- * so a 1-unit row shows as one readable text line. */
+/** How many px one unit cell renders as (preferred): the browser's default
+ * text size, so a 1-unit row shows as one readable text line. Fit-to-width
+ * narrows it — see effectiveScale. */
 export const CELL_SCALE = 16;
 
 /** The mounted page handle: tambor's SpaHandle shape plus the demo's async
- * settle affordance and the scaled stage. */
+ * settle affordance and the demo's frame around tambor's scaled stage. */
 export interface ReviewPageHandle {
   readonly backend: DomBackend;
   readonly app: TamborReviewApp;
   readonly root: RealDomElement;
   readonly surface: RealDomElement;
-  /** the scaled stage: 1 unit = one cell px, root and surface inside */
+  /** the demo frame (paper chrome) around tambor's scaled stage: tambor
+   * renders 1 unit = one cell px inside it, surface beside the root */
   readonly stage: RealDomElement;
   /** the EFFECTIVE cell scale (CELL_SCALE narrowed to the container width) —
    * hosts and tests convert unit coordinates to client px with it */
@@ -53,16 +55,15 @@ export interface ReviewPageHandle {
 
 /** The wire: route, dispatch, re-draw — then the settle re-draw. A
  * request-focus intent also focuses the real surface so keydown/paste
- * flow into the corpus in a real browser (tambor-e5n's DOM-focus leg). */
+ * flow into the corpus in a real browser (tambor-e5n's DOM-focus leg).
+ * Events arrive in unit space — tambor's cellScale backend unscales them. */
 function wireSurface(
   backend: DomBackend,
   app: TamborReviewApp,
-  scale: number,
   focusTarget: HostElement,
 ): void {
   backend.subscribe((ev: TamborEvent) => {
-    const routed = rescalePointer(ev, scale);
-    const intents = dispatch(app.view(), routed);
+    const intents = dispatch(app.view(), ev);
     if (intents.length > 0) {
       app.dispatch(intents);
       const wantsFocus = intents.some(
@@ -75,42 +76,20 @@ function wireSurface(
   });
 }
 
-/** Pointer events arrive in scaled client px; routing and hit-testing are in
- * unit coordinates — divide the position back (keyboard/clipboard pass through). */
-function rescalePointer(ev: TamborEvent, scale: number): TamborEvent {
-  const candidate = ev as { type?: string; pos?: readonly number[] };
-  if (candidate.pos === undefined || !candidate.type?.startsWith("mouse")) {
-    return ev;
-  }
-  return {
-    ...(candidate as unknown as Record<string, unknown>),
-    pos: [candidate.pos[0]! / scale, candidate.pos[1]! / scale],
-  } as unknown as TamborEvent;
-}
-
-/** Every drawn element renders as one unit cell: 1px text pre-scale (the
- * stage's transform scales it back up), no button chrome that would break
- * the cell grid, and the paper ink so the drawn tree is readable on the
- * light stage regardless of the page theme. */
+/** The demo ink: paper-gray text so the drawn tree reads cleanly on the
+ * light stage regardless of the page theme (scaling/clamping is tambor's). */
 const INK = "#16161d";
 
-function cellFactory(doc: HostDoc): ReturnType<typeof realDomFactory> {
+function inkFactory(doc: HostDoc): (tag: string) => RealDomElement {
   const inner = realDomFactory(doc);
   return (tag: string) => {
     const el = inner(tag);
-    el.style["font-size"] = "1px";
-    el.style["line-height"] = "1px";
     el.style["color"] = INK;
-    if (tag === "button") {
-      el.style["padding"] = "0";
-      el.style["border"] = "none";
-      el.style["background"] = "none";
-    }
     return el;
   };
 }
 
-/** The stage chrome: footprint reservation plus the paper ground so the
+/** The frame chrome: footprint reservation plus the paper ground so the
  * drawn tree reads cleanly on light, high-contrast ink. */
 function styleStage(
   stage: RealDomElement,
@@ -121,8 +100,6 @@ function styleStage(
   stage.host.style.setProperty("position", "relative");
   stage.host.style.setProperty("width", `${viewW * scale}px`);
   stage.host.style.setProperty("height", `${viewH * scale}px`);
-  stage.host.style.setProperty("font-size", "1px");
-  stage.host.style.setProperty("line-height", "1px");
   stage.host.style.setProperty("background", "#fbfaf7");
   stage.host.style.setProperty("color", INK);
   stage.host.style.setProperty("border-radius", "10px");
@@ -130,50 +107,24 @@ function styleStage(
   stage.host.style.setProperty("overflow", "hidden");
 }
 
-/** The scaled stage: the footprint reservation (outer), the transform
- * wrapper, and the transparent input surface, all in one subtree. */
-function buildStage(
-  doc: HostDoc,
-  app: TamborReviewApp,
-  backend: DomBackend,
-  scale: number,
-): { stage: RealDomElement; surface: RealDomElement; root: RealDomElement } {
-  const [viewW, viewH] = bounds(app.view());
-  const stage = new RealDomElement("div", doc);
-  styleStage(stage, viewW, viewH, scale);
-  // the wrapper carries the transform (the root's absolute-positioned
-  // children have no intrinsic box of their own)
-  const wrapper = new RealDomElement("div", doc);
-  wrapper.host.style.setProperty("transform", `scale(${String(scale)})`);
-  wrapper.host.style.setProperty("transform-origin", "0 0");
-  stage.host.appendChild(wrapper.host);
-
-  const root = backend.root as RealDomElement;
-  wrapper.host.appendChild(root.host);
-
-  const surface = mountSurface(doc, viewW, viewH, wrapper, backend);
-
-  return { stage, surface, root };
-}
-
-/** Create the canvas surface (the keyboard target — tambor-huu tabindex),
- * style it to the view size, mount it in the wrapper and attach the backend. */
+/** The input surface beside the scaled stage: the keyboard target
+ * (tambor-huu tabindex) and the pointer origin, exactly overlaying the
+ * stage's bounds×k px footprint. Tambor's attach divides positions by the
+ * cell scale — the surface rect IS that footprint. */
 function mountSurface(
   doc: HostDoc,
   viewW: number,
   viewH: number,
-  wrapper: RealDomElement,
+  scale: number,
   backend: DomBackend,
 ): RealDomElement {
   const surface = new RealDomElement("canvas", doc);
-  // the surface is the keyboard target (tambor-huu tabindex)
   surface.host.setAttribute("tabindex", "0");
   surface.host.style.setProperty("position", "absolute");
   surface.host.style.setProperty("left", "0px");
   surface.host.style.setProperty("top", "0px");
-  surface.host.style.setProperty("width", `${viewW}px`);
-  surface.host.style.setProperty("height", `${viewH}px`);
-  wrapper.host.appendChild(surface.host);
+  surface.host.style.setProperty("width", `${viewW * scale}px`);
+  surface.host.style.setProperty("height", `${viewH * scale}px`);
   backend.attach(surface);
   return surface;
 }
@@ -191,7 +142,9 @@ export function effectiveScale(
 }
 
 /** Mount the review demo into `container` of `doc`, rendered at CELL_SCALE
- * narrowed to the container width (fit-to-width, wanna-hbm). */
+ * narrowed to the container width (fit-to-width, wanna-hbm). Tambor's
+ * cellScale option owns the scaled stage; the demo frame adds paper chrome
+ * and hosts the input surface beside it. */
 export function mountReviewDemo(
   doc: HostDoc,
   container: HostElement,
@@ -199,14 +152,23 @@ export function mountReviewDemo(
   containerSize: readonly [number, number],
   scale: number = CELL_SCALE,
 ): ReviewPageHandle {
-  const backend = new DomBackend({
-    createElement: cellFactory(doc),
-    containerSize: containerSize as unknown as [number, number],
-  });
+  const [viewW, viewH] = bounds(app.view());
   const eff = effectiveScale(scale, containerSize[0], app.view());
 
-  const { stage, surface, root } = buildStage(doc, app, backend, eff);
-  wireSurface(backend, app, eff, surface.host);
+  const backend = new DomBackend({
+    createElement: inkFactory(doc),
+    containerSize: containerSize as unknown as [number, number],
+    cellScale: eff,
+  });
+  const root = backend.root as RealDomElement;
+
+  const stage = new RealDomElement("div", doc);
+  styleStage(stage, viewW, viewH, eff);
+  stage.host.appendChild(root.host);
+  const surface = mountSurface(doc, viewW, viewH, eff, backend);
+  stage.host.appendChild(surface.host);
+
+  wireSurface(backend, app, surface.host);
   backend.draw(app.view());
   container.appendChild(stage.host);
 

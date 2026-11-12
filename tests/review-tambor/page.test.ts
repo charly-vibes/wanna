@@ -225,9 +225,9 @@ describe("review-tambor mounted page (wanna-8ay)", () => {
     expect(hostDoc().body.textContent).toContain("task revision 0");
 
     // click Advance artifact through the mounted surface (pointer events at
-    // the button's drawn centre in CLIENT pixels — the stage scales the unit
-    // grid by CELL_SCALE so 1 cell renders as a readable text cell; the wire
-    // divides the positions back to units before routing)
+    // the button's drawn centre in CLIENT pixels — tambor's cellScale stage
+    // renders 1 unit as one readable cell and unscales positions before
+    // routing)
     const at = centreOf(page.app.view(), "Advance artifact");
     expect(at).not.toBeNull();
     click(page, at as [number, number]);
@@ -290,12 +290,20 @@ describe("review-tambor mounted page (wanna-8ay)", () => {
     expect(Number.parseFloat(stage.style.width)).toBeLessThanOrEqual(400);
     // paper ground: high-contrast ink on a light stage
     expect(stage.style.cssText).toContain("background");
-    const wrapper = stage.firstElementChild as unknown as {
-      style: { cssText: string };
+    // tambor's cellScale stage (wanna-1ha): root beside the surface, the
+    // scale(k) wrapper inside the root
+    const root = stage.firstElementChild as unknown as {
+      firstElementChild: { style: { cssText: string } } | null;
     } | null;
+    const wrapper = root?.firstElementChild ?? null;
     expect(wrapper?.style.cssText ?? "").toContain(
       `scale(${String(page.scale)})`,
     );
+    // drawn text renders 1px pre-scale — one readable cell per unit
+    const span = [
+      ...stage.querySelectorAll("span"),
+    ][0] as unknown as { style: { getPropertyValue(p: string): string } };
+    expect(span?.style.getPropertyValue("font-size")).toBe("1px");
     expect(hostDoc().body.textContent).toContain("tambor review");
   });
 
